@@ -1,4 +1,4 @@
-name: Feature Branch CI
+name: Feature Branch
 
 on:
   workflow_dispatch:
