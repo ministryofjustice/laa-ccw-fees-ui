@@ -1,0 +1,48 @@
+name: "Setup"
+description: "Setup the environment, install dependencies, and generate cache key"
+inputs:
+  cookie-secret:
+    description: "The cookie secret for the application"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        cache: "npm"
+
+    - name: Generate cache key
+      id: cache-deps
+      shell: bash
+      run: echo "cache-key=$(npm ci --prefer-offline --no-audit --quiet | sha256sum | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ steps.cache-deps.outputs.cache-key }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Create .env file
+      shell: bash
+      run: |
+        echo "# Cookie secret - unique, long string to encrypt the cookies" >> .env
+        echo "COOKIE_SECRET=${{ inputs.cookie-secret }}" >> .env
+        echo "" >> .env
+        echo "# Set rate limiting - how many requests can be made by an IP over a time period" >> .env
+        echo "RATE_LIMIT_MAX=100" >> .env
+        echo "RATE_WINDOW_MS=900000#15 * 60 * 1000 = 900000" >> .env
+        echo "" >> .env
+        echo "# Service details" >> .env
+        echo "SERVICE_NAME='CCW Fees Calculator'" >> .env
+        echo "SERVICE_PHASE='Alpha'" >> .env
