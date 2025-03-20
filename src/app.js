@@ -61,7 +61,7 @@ setupDB(app).then(() => {
    */
   app.set('trust proxy', 1); // trust first proxy
   app.use(session({
-    secret: 's3Cur3', // Secret for session encryption
+    secret: Math.round(Math.random() * 100000).toString(), // Secret for session encryption
     name: 'sessionId', // Custom session ID cookie name
     resave: false, // Prevents resaving unchanged sessions
     saveUninitialized: false // Only save sessions that are modified
