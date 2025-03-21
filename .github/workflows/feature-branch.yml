@@ -40,3 +40,13 @@ jobs:
 
       - name: Test
         uses: ./.github/actions/test
+        
+  format:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Format
+        uses: ./.github/actions/format

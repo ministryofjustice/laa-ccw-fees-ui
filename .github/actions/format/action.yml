@@ -1,0 +1,19 @@
+name: "Format"
+description: "Run Prettier to check formatting"
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Restore dependencies from cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Run Prettier
+      shell: bash
+      run: npm run format:check

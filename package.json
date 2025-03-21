@@ -10,7 +10,8 @@
     "build": "npm run clean && node esbuild.js",
     "lint": "npx eslint . --ignore-pattern \"node_modules/*\" --ignore-pattern \"public/*\" --fix",
     "dev": "nodemon --watch src --ext js,scss --exec 'node start-server.js'",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "format:check": "prettier --check ."
   },
   "engines": {
     "node": "^22.13.1"
