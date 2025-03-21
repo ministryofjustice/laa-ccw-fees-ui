@@ -16,12 +16,6 @@ runs:
         node-version: 22.x
         cache: "npm"
 
-# TODO remove
-    - name: Generate cache key
-      id: cache-deps
-      shell: bash
-      run: echo "cache-key=$(npm ci --prefer-offline --no-audit --quiet | sha256sum | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
-
     - name: Cache npm dependencies
       uses: actions/cache@v4
       with:
