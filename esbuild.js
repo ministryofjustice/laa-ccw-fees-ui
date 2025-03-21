@@ -4,7 +4,7 @@ import { builtinModules } from "module";
 import dotenv from "dotenv";
 import fs from "fs-extra";
 import path from "path";
-import { getBuildNumber } from "./utils/index.js";
+import { getBuildNumber } from "./src/utils/index.js";
 
 // Load environment variables
 dotenv.config();
