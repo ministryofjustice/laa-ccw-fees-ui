@@ -1,0 +1,20 @@
+name: Lint and Format
+description: Run Prettier and ESLint
+runs:
+  using: "composite"
+  steps:
+    - name: Restore dependencies from cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Run Prettier
+      run: npm run format:check
+      shell: bash
+
+    - name: Run linter
+      run: npm run lint
+      shell: bash

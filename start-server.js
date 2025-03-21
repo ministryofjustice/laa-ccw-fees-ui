@@ -1,10 +1,10 @@
-import chokidar from 'chokidar'; // Import chokidar for file watching
-import livereload from 'livereload'; // Import livereload for live reloading
-import path from 'path'; // Import path module for handling file paths
-import { fileURLToPath } from 'url'; // Import fileURLToPath to convert file URLs to paths
-import { spawn } from 'child_process'; // Import spawn from child_process to spawn new processes
-import config from './config.js'; // Import the config
-import { build } from './esbuild.js'; // Import the build function
+import chokidar from "chokidar"; // Import chokidar for file watching
+import livereload from "livereload"; // Import livereload for live reloading
+import path from "path"; // Import path module for handling file paths
+import { fileURLToPath } from "url"; // Import fileURLToPath to convert file URLs to paths
+import { spawn } from "child_process"; // Import spawn from child_process to spawn new processes
+import config from "./config.js"; // Import the config
+import { build } from "./esbuild.js"; // Import the build function
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -31,26 +31,28 @@ const startServer = (port) => {
   // Add a delay to ensure the port is released before starting a new server process
   setTimeout(() => {
     // Spawn a new server process
-    serverProcess = spawn('node', ['public/app.js'], {
-      stdio: 'inherit', // Inherit stdio to display server logs in the console
-      env: { ...process.env, PORT: port } // Pass the environment variables, including the port
+    serverProcess = spawn("node", ["public/app.js"], {
+      stdio: "inherit", // Inherit stdio to display server logs in the console
+      env: { ...process.env, PORT: port }, // Pass the environment variables, including the port
     });
 
     // Handle server process close event
-    serverProcess.on('close', (code) => {
+    serverProcess.on("close", (code) => {
       if (code !== 0) {
         console.error(`Server process exited with code ${code}`);
       }
     });
 
     // Handle server process error event
-    serverProcess.on('error', (error) => {
-      if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${port} is already in use. Trying to restart the server on a different port...`);
+    serverProcess.on("error", (error) => {
+      if (error.code === "EADDRINUSE") {
+        console.error(
+          `Port ${port} is already in use. Trying to restart the server on a different port...`,
+        );
         // If the port is in use, try to restart the server on the next port
         setTimeout(() => startServer(port + 1), 1000);
       } else {
-        console.error('Server process error:', sanitizeError(error));
+        console.error("Server process error:", sanitizeError(error));
       }
     });
   }, 1000); // 1-second delay to ensure the port is released
@@ -74,36 +76,36 @@ const start = async () => {
   startServer(config.app.port);
 
   // If in development mode, set up livereload and file watching
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     // Start livereload server
     livereloadServer = livereload.createServer();
-    livereloadServer.watch(path.join(__dirname, 'public'));
+    livereloadServer.watch(path.join(__dirname, "public"));
 
     // Watch for changes in JS and SCSS files
-    const watcher = chokidar.watch('src/**/*.{js,scss}', {
+    const watcher = chokidar.watch("src/**/*.{js,scss}", {
       ignored: /node_modules/, // Ignore node_modules directory
       persistent: true, // Keep watching for changes
     });
 
     // Handle file change event
-    watcher.on('change', async (filePath) => {
+    watcher.on("change", async (filePath) => {
       console.log(`File ${filePath} has been changed. Rebuilding...`);
       // Rebuild the project
       await build();
       // Refresh livereload server
-      livereloadServer.refresh('/');
+      livereloadServer.refresh("/");
       // Restart the server
       startServer(config.app.port);
     });
 
     // Handle watcher ready event
-    watcher.on('ready', () => {
-      console.log('Watching for file changes...');
+    watcher.on("ready", () => {
+      console.log("Watching for file changes...");
     });
 
     // Handle watcher error event
-    watcher.on('error', (error) => {
-      console.error('Watcher error:', sanitizeError(error));
+    watcher.on("error", (error) => {
+      console.error("Watcher error:", sanitizeError(error));
     });
   }
 };
@@ -121,7 +123,10 @@ const sanitizeError = (error) => {
   delete sanitizedError.stack; // Remove stack trace
   // Remove any other sensitive information if necessary
   if (sanitizedError.message) {
-    sanitizedError.message = sanitizedError.message.replace(/sensitive information/g, '[REDACTED]');
+    sanitizedError.message = sanitizedError.message.replace(
+      /sensitive information/g,
+      "[REDACTED]",
+    );
   }
   return sanitizedError;
 };
@@ -129,6 +134,6 @@ const sanitizeError = (error) => {
 // Start the build and server process
 start().catch((error) => {
   // Log sanitized error
-  console.error('Start script failed:', sanitizeError(error));
+  console.error("Start script failed:", sanitizeError(error));
   process.exit(1);
 });

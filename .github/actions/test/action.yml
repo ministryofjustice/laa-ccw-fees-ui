@@ -1,0 +1,23 @@
+name: "Test"
+description: "Run tests"
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Restore dependencies from cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Build the app
+      shell: bash
+      run: npm run build
+
+    - name: Run tests
+      shell: bash
+      run: npm run test

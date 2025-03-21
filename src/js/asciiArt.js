@@ -11,10 +11,10 @@
  * @type {string[]}
  */
 const messages = [
-    "Welcome to GOVUK Frontend Express.",
-    "Like what you see? Want to work with us?",
-    "View our job availabilities or sign up for alerts:",
-    "{URL link to your departments jobs}" // Update this dynamically if needed
+  "Welcome to GOVUK Frontend Express.",
+  "Like what you see? Want to work with us?",
+  "View our job availabilities or sign up for alerts:",
+  "{URL link to your departments jobs}", // Update this dynamically if needed
 ];
 
 /**
@@ -27,7 +27,7 @@ const getFormattedMessage = () => messages.join("\n");
  * Displays an ASCII Art displayAsciiBanner.js with department name in the console.
  */
 const displayConsoleBanner = () => {
-    console.log(`
+  console.log(`
   __  __  ____       _ 
  |  \\/  |/ __ \\     | |
  | \\  / | |  | |    | |

@@ -1,5 +1,5 @@
 // src/utils/buildHelper.ts
-import fs from 'fs';
+import fs from "fs";
 
 /**
  * Generate a random build number as a string.
@@ -19,6 +19,6 @@ export const getBuildNumber = () => {
 export const getLatestBuildFile = (directory, prefix, extension) => {
   const files = fs.readdirSync(directory);
   const pattern = new RegExp(`^${prefix}\\.\\d+\\.${extension}$`);
-  const matchingFiles = files.filter(file => pattern.test(file));
-  return matchingFiles.length > 0 ? matchingFiles[0] : '';
+  const matchingFiles = files.filter((file) => pattern.test(file));
+  return matchingFiles.length > 0 ? matchingFiles[0] : "";
 };
