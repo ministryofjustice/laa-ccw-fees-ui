@@ -16,16 +16,17 @@ runs:
         node-version: 22.x
         cache: "npm"
 
+# TODO remove
     - name: Generate cache key
       id: cache-deps
       shell: bash
       run: echo "cache-key=$(npm ci --prefer-offline --no-audit --quiet | sha256sum | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
 
-    - name: Cache dependencies
+    - name: Cache npm dependencies
       uses: actions/cache@v4
       with:
-        path: node_modules
-        key: ${{ runner.os }}-node-${{ steps.cache-deps.outputs.cache-key }}
+        path: '~/.npm'
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
 
