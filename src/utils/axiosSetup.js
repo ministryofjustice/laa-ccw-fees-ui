@@ -11,9 +11,10 @@ import config from '../../config.js';
  */
 export const axiosMiddleware = (req, _res, next) => {
 
-  const protocol = config.API_PROTOCOL;
-  const host = config.API_HOST
-  const baseURL = `${protocol}://${host}`;
+  const protocol = config.API.PROTOCOL;
+  const host = config.API.HOST
+  const version = config.API.VERSION
+  const baseURL = `${protocol}://${host}/${version}`;
 
   req.axiosMiddleware = create({
     axiosInstance: axios,
