@@ -1,4 +1,5 @@
 # CCW Fees Calculator Alpha UI
+
 [![Standards Icon]][Standards Link]
 
 CCW Fees Calculator Alpha UI
@@ -49,10 +50,12 @@ nvm install node
 ```
 
 ## Testing
-To run unit tests, which are using [Jest](https://jestjs.io/), run 
-```npm run test```
+
+To run unit tests, which are using [Jest](https://jestjs.io/), run
+`npm run test`
 
 ## Formatter
+
 Prettier formatter is used to ensure consistency across individual files.
 To run Prettier and see what files may need updating:
 
@@ -61,6 +64,7 @@ npm run format:check
 ```
 
 To have Prettier apply changes:
+
 ```shell
 npm run format:fix
 ```
@@ -74,6 +78,7 @@ npm run lint
 ```
 
 ## Acknowledgment and Attribution
+
 This project uses code from the [GovUk-Frontend-Express template](https://github.com/ministryofjustice/govuk-frontend-express)
 
 ## Licence
