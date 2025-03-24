@@ -1,4 +1,5 @@
 # CCW Fees Calculator Alpha UI
+
 [![Standards Icon]][Standards Link]
 
 CCW Fees Calculator Alpha UI
@@ -16,20 +17,24 @@ cp .env.example .env
 ### Align to the Node Version specified for this project
 
 If using Node Version Manager (nvm), use the following command to switch to the correct version:
+
 ```shell
 nvm use
 nvm install
 ```
 
 ### Install dependencies and run application for development
+
 ```shell
 npm install
 npm run build
 npm run dev
 ```
+
 Then, load http://localhost:3000/ in your browser to access the app.
 
 ### Install dependencies and run application for production
+
 ```shell
 npm install
 npm run build
@@ -45,10 +50,12 @@ nvm install node
 ```
 
 ## Testing
-To run unit tests, which are using [Jest](https://jestjs.io/), run 
-```npm run test```
+
+To run unit tests, which are using [Jest](https://jestjs.io/), run
+`npm run test`
 
 ## Formatter
+
 Prettier formatter is used to ensure consistency across individual files.
 To run Prettier and see what files may need updating:
 
@@ -57,13 +64,11 @@ npm run format:check
 ```
 
 To have Prettier apply changes:
+
 ```shell
 npm run format:fix
 ```
 
-## Linter
-ESLint is a static code analysis tool for identifying and fixing problems in JavaScript code. It helps maintain code 
-quality and consistency across a project by enforcing a set of coding standards and best practices. ESLint can catch 
 syntax errors, stylistic issues, and potential bugs before they become actual problems.
 
 To run ESlint:
@@ -73,8 +78,8 @@ npm run lint
 ```
 
 ## Acknowledgment and Attribution
-This project uses code from the [GovUk-Frontend-Express template](https://github.com/ministryofjustice/govuk-frontend-express)
 
+This project uses code from the [GovUk-Frontend-Express template](https://github.com/ministryofjustice/govuk-frontend-express)
 
 ## Licence
 

@@ -9,10 +9,13 @@
     "clean": "rimraf public",
     "build": "npm run clean && node esbuild.js",
     "lint": "npx eslint . --ignore-pattern \"node_modules/*\" --ignore-pattern \"public/*\" --fix",
-    "dev": "nodemon --watch src --ext js,scss --exec 'node start-server.js'"
+    "dev": "nodemon --watch src --ext js,scss --exec 'node start-server.js'",
+    "test": "jest --passWithNoTests",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "engines": {
-    "node": "22.13.1"
+    "node": "^22.13.1"
   },
   "dependencies": {
     "axios": "^1.8.4",
@@ -20,7 +23,6 @@
     "chalk": "^5.4.1",
     "compression": "^1.7.4",
     "cookie-parser": "~1.4.6",
-    "crypto": "^1.0.1",
     "csrf-sync": "^4.0.3",
     "debug": "~4.4.0",
     "dotenv": "^16.4.7",
@@ -40,7 +42,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "chokidar": "4.0.3",
+    "chokidar": "^3.6.0",
     "connect-livereload": "^0.6.1",
     "esbuild": "^0.25.0",
     "esbuild-plugin-copy": "^2.1.1",
@@ -50,6 +52,7 @@
     "eslint-plugin-jsdoc": "^50.6.8",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.14.0",
+    "jest": "^29.7.0",
     "livereload": "^0.9.3",
     "middleware-axios": "^2.1.6",
     "nodemon": "^3.1.9",

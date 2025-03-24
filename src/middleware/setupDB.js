@@ -1,4 +1,4 @@
-import { initializeDB } from '../utils/sqliteSetup.js';
+import { initializeDB } from "../utils/sqliteSetup.js";
 
 /**
  * Sets up the database and attaches it to the request object.
@@ -6,7 +6,7 @@ import { initializeDB } from '../utils/sqliteSetup.js';
  */
 export const setupDB = async (app) => {
   try {
-		const db = await initializeDB();
+    const db = await initializeDB();
     /**
      * Middleware to attach the database to the request object.
      * @param {object} req - The request object.
@@ -15,13 +15,13 @@ export const setupDB = async (app) => {
      */
     const dbRequest = (req, res, next) => {
       req.db = db;
-			next();
+      next();
     };
 
     app.use(dbRequest);
-    console.log('Database initialized and middleware set up.');
+    console.log("Database initialized and middleware set up.");
   } catch (error) {
-    console.error('Failed to initialize database:', error);
+    console.error("Failed to initialize database:", error);
     process.exit(1);
   }
 };
