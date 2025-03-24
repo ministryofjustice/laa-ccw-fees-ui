@@ -11,3 +11,5 @@ node_modules/
 # MOJ Express Skeleton
 public/
 .env
+
+coverage/

@@ -9,6 +9,11 @@ const config = {
   RATE_WINDOW_MS: parseInt(process.env.RATE_WINDOW_MS, 10) || 15 * 60 * 1000,
   SERVICE_NAME: process.env.SERVICE_NAME,
   SERVICE_PHASE: process.env.SERVICE_PHASE,
+  API: {
+    PROTOCOL: process.env.API_PROTOCOL,
+    HOST: process.env.API_HOST,
+    VERSION: process.env.API_VERSION,
+  },
   app: {
     port: process.env.PORT || 3000,
     environment: process.env.NODE_ENV || "development",

@@ -10,7 +10,7 @@
     "build": "npm run clean && node esbuild.js",
     "lint": "npx eslint . --ignore-pattern \"node_modules/*\" --ignore-pattern \"public/*\" --fix",
     "dev": "nodemon --watch src --ext js,scss --exec 'node start-server.js'",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write ."
   },
@@ -18,29 +18,26 @@
     "node": "^22.13.1"
   },
   "dependencies": {
-    "axios": "^1.8.4",
-    "body-parser": "^1.20.3",
     "chalk": "^5.4.1",
     "compression": "^1.7.4",
     "cookie-parser": "~1.4.6",
     "csrf-sync": "^4.0.3",
-    "debug": "~4.4.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.0",
-    "express-validator": "^7.2.1",
     "figlet": "^1.8.0",
     "fs-extra": "^11.3.0",
     "govuk-frontend": "^5.8.0",
     "helmet": "^8.0.0",
-    "http-errors": "~2.0.0",
     "morgan": "~1.10.0",
     "nunjucks": "^3.2.4",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.26.3",
+    "@babel/preset-env": "^7.26.9",
     "@eslint/js": "^9.19.0",
     "chokidar": "^3.6.0",
     "connect-livereload": "^0.6.1",
@@ -58,6 +55,7 @@
     "nodemon": "^3.1.9",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
-    "sass": "^1.77.8"
+    "sass": "^1.77.8",
+    "supertest": "^7.1.0"
   }
 }
