@@ -12,7 +12,7 @@ const config = {
   API: {
     PROTOCOL: process.env.API_PROTOCOL,
     HOST: process.env.API_HOST,
-    VERSION: process.env.API_VERSION
+    VERSION: process.env.API_VERSION,
   },
   app: {
     port: process.env.PORT || 3000,

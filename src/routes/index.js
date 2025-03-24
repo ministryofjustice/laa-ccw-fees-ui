@@ -3,14 +3,15 @@ const router = express.Router();
 
 /* GET home page. */
 router.get("/", async (req, res) => {
-
   try {
-  
-  const response = await req.axiosMiddleware.get("/");
+    const response = await req.axiosMiddleware.get("/");
 
-  res.render("main/index", { response } );
+    res.render("main/index", { response });
   } catch {
-    res.render('main/error', {status: "An error occurred", error: "An error occurred :(."});
+    res.render("main/error", {
+      status: "An error occurred",
+      error: "An error occurred :(.",
+    });
   }
 });
 

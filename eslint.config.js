@@ -8,7 +8,7 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.jest
+        ...globals.jest,
       },
       ecmaVersion: "latest",
       sourceType: "module",
