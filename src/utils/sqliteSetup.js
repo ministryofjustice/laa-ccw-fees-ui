@@ -9,10 +9,10 @@ sqlite3.verbose();
  * @returns {Promise<sqlite3.Database>} A promise that resolves to the SQLite database connection.
  */
 export const initializeDB = async () => {
-    const db = await open({
+  const db = await open({
     filename: ":memory:", // Using in-memory database for simplicity, use a file path for persistent storage
     driver: sqlite3.Database,
-    });
+  });
 
   // Initialize your database schema here.
   await db.exec(`
