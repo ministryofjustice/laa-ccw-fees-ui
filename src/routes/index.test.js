@@ -167,6 +167,7 @@ describe("POST /", () => {
 
 describe("GET /result", () => {
   let app;
+  let resultValue;
   app = express();
 
   beforeEach(() => {
@@ -174,7 +175,7 @@ describe("GET /result", () => {
     // Mock the middleware
     app.use((req, _res, next) => {
       req.session = {
-        result: "246.00"
+        result: resultValue
       }
       next();
     });
@@ -186,6 +187,7 @@ describe("GET /result", () => {
 
 
   it("should render result page", async () => {
+    resultValue = "246.00"
 
     const response = await request(app)
       .get("/result")
@@ -195,19 +197,28 @@ describe("GET /result", () => {
     expect(response.text).toContain("You should have £246.00");
   });
 
-  //TODO error if data missing
-  // it("should render error page if fails to load page", async () => {
+  describe("should error", () => {
 
-  //   csrfMock.mockImplementation(() => {
-  //     throw new Error("token problems");
-  //   });
+    beforeAll(() => {
+      // We expect the error case to call console.error, so stop jest treating it as a test failure
+      jest.spyOn(console, 'error').mockImplementation(() => { });
+    })
 
-  //   const response = await request(app)
-  //     .get("/")
-  //     .expect("Content-Type", /html/)
-  //     .expect(200);
+    afterAll(() => {
+      console.error.mockRestore();
+    })
 
-  //   expect(response.text).toContain("An error occurred");
-  // });
+    it("when data from session is missing", async () => {
+      resultValue = null;
+
+      const response = await request(app)
+        .post("/")
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+    });
+
+  })
 
 });
