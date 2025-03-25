@@ -2,6 +2,8 @@ import express from "express";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  //TODO start page should probably clear out any left over session data
+
   try {
     res.render("main/index", { csrfToken: req.csrfToken() });
   } catch (ex) {
@@ -15,14 +17,23 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
 
   try {
-    console.log('in post')
-    const response = await req.axiosMiddleware.post("/fees/" + req.body.fee);
+    const fee = req.body.fee;
+
+    if (fee == null || isNaN(fee)){
+      throw new Error("Fee not defined");
+    }
+
+    const response = await req.axiosMiddleware.post("/fees/" + fee);
     const number = response.data
-    console.log(number)
+
+    // Save this so it can be displayed on the result page
     req.session.result = number;
-    console.log("before redirect")
+
     res.redirect("/result")
-  } catch {
+  } catch (ex) {
+
+    console.error("Error occurred during POST /: {}", ex.message)
+
     res.render("main/error", {
       status: "An error occurred",
       error: "An error occurred posting the answer.",

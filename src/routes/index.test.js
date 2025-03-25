@@ -52,11 +52,13 @@ describe("GET /", () => {
 describe("POST /", () => {
   let app;
   let mockSession = {};
+  let formData;
   const renderMock = jest.fn();
   app = express();
 
   beforeEach(() => {
 
+    formData = 123;
     mockSession = {};
     renderMock.mockReset();
 
@@ -68,7 +70,7 @@ describe("POST /", () => {
       req.session = mockSession;
 
       req.body = {
-        fee: 123
+        fee: formData
       }
 
       next();
@@ -77,6 +79,7 @@ describe("POST /", () => {
 
     // Would be nice to mock the nunjucks rendering but not managed to figure that bit out
     nunjucksSetup(app);
+
   });
 
 
@@ -98,25 +101,67 @@ describe("POST /", () => {
     expect(renderMock).toHaveBeenCalledWith("/fees/123")
   });
 
-  it("should error if api call fails", async () => {
+  describe("should error", () => {
 
-    renderMock.mockImplementation(() => {
-      throw new Error("API connection issue");
+    beforeAll(() => {
+      // We expect the error case to call console.error, so stop jest treating it as a test failure
+      jest.spyOn(console, 'error').mockImplementation(() => { });
+    })
+
+    afterAll(() => {
+      console.error.mockRestore();
+    })
+
+    it("when api call fails", async () => {
+
+      renderMock.mockImplementation(() => {
+        throw new Error("API connection issue");
+      });
+
+      const response = await request(app)
+        .post("/")
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+
+      expect(mockSession.result).toBeUndefined();
+
+      expect(renderMock).toHaveBeenCalledWith("/fees/123")
     });
 
-    const response = await request(app)
-      .post("/")
-      .expect("Content-Type", /html/)
-      .expect(200);
+    it("when data from form is missing", async () => {
 
-    expect(response.text).toContain("An error occurred");
+      formData = null;
 
-    expect(mockSession.result).toBeUndefined();
+      const response = await request(app)
+        .post("/")
+        .expect("Content-Type", /html/)
+        .expect(200);
 
-    expect(renderMock).toHaveBeenCalledWith("/fees/123")
-  });
+      expect(response.text).toContain("An error occurred");
 
-  //TODO error if data missing
+      expect(mockSession.result).toBeUndefined();
+
+      expect(renderMock).toHaveBeenCalledTimes(0)
+    });
+
+    it("when data from form is not the right type", async () => {
+
+      formData = "hello";
+
+      const response = await request(app)
+        .post("/")
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+
+      expect(mockSession.result).toBeUndefined();
+
+      expect(renderMock).toHaveBeenCalledTimes(0)
+    });
+  })
 
 });
 
@@ -150,7 +195,7 @@ describe("GET /result", () => {
     expect(response.text).toContain("You should have £246.00");
   });
 
-    //TODO error if data missing
+  //TODO error if data missing
   // it("should render error page if fails to load page", async () => {
 
   //   csrfMock.mockImplementation(() => {
