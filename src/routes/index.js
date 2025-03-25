@@ -7,7 +7,7 @@ router.get("/", async (req, res) => {
   } catch (ex) {
     res.render("main/error", {
       status: "An error occurred",
-      error: "An error occurred :(.",
+      error: "An error occurred.",
     });
   }
 });
@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
   } catch {
     res.render("main/error", {
       status: "An error occurred",
-      error: "An error occurred posting the answer :(.",
+      error: "An error occurred posting the answer.",
     });
   }
 });
