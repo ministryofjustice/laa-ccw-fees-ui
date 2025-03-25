@@ -103,15 +103,6 @@ describe("POST /", () => {
 
   describe("should error", () => {
 
-    beforeAll(() => {
-      // We expect the error case to call console.error, so stop jest treating it as a test failure
-      jest.spyOn(console, 'error').mockImplementation(() => { });
-    })
-
-    afterAll(() => {
-      console.error.mockRestore();
-    })
-
     it("when api call fails", async () => {
 
       renderMock.mockImplementation(() => {
@@ -167,16 +158,14 @@ describe("POST /", () => {
 
 describe("GET /result", () => {
   let app;
-  let resultValue;
+  let mockSession = {};
   app = express();
 
   beforeEach(() => {
 
     // Mock the middleware
     app.use((req, _res, next) => {
-      req.session = {
-        result: resultValue
-      }
+      req.session =mockSession;
       next();
     });
     app.use("/", indexRouter);
@@ -187,7 +176,9 @@ describe("GET /result", () => {
 
 
   it("should render result page", async () => {
-    resultValue = "246.00"
+    mockSession = {
+      "result": "246.00"
+    };
 
     const response = await request(app)
       .get("/result")
@@ -197,28 +188,28 @@ describe("GET /result", () => {
     expect(response.text).toContain("You should have £246.00");
   });
 
-  describe("should error", () => {
-
-    beforeAll(() => {
-      // We expect the error case to call console.error, so stop jest treating it as a test failure
-      jest.spyOn(console, 'error').mockImplementation(() => { });
-    })
-
-    afterAll(() => {
-      console.error.mockRestore();
-    })
-
-    it("when data from session is missing", async () => {
-      resultValue = null;
+    it("should error when data from session is missing", async () => {
+      mockSession = {
+        "someOtherField": "blah"
+    };
 
       const response = await request(app)
-        .post("/")
+        .get("/result")
         .expect("Content-Type", /html/)
         .expect(200);
 
       expect(response.text).toContain("An error occurred");
     });
 
-  })
+    it("should error when session is missing", async () => {
+      mockSession = null;
+
+      const response = await request(app)
+        .get("/result")
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+    });
 
 });

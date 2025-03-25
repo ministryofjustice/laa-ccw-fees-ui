@@ -7,6 +7,8 @@ router.get("/", async (req, res) => {
   try {
     res.render("main/index", { csrfToken: req.csrfToken() });
   } catch (ex) {
+    console.error("Error loading page /: {}", ex.message)
+
     res.render("main/error", {
       status: "An error occurred",
       error: "An error occurred.",
@@ -42,9 +44,25 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/result", (req, res) => {
-  console.log("followed redirect")
 
-  res.render("main/result", {number: req.session.result })
+  try {
+    const result = req.session?.result;
+
+    if (result == null){
+      throw new Error("Result not defined");
+    }
+
+    res.render("main/result", {number: result })
+  } catch (ex) {
+
+    console.error("Error occurred while loading /result: {}", ex.message)
+
+    res.render("main/error", {
+      status: "An error occurred",
+      error: "An error occurred loading the page.",
+    });
+  }
+
 });
 
 export default router;
