@@ -9,7 +9,6 @@ describe("GET /", () => {
   app = express();
 
   beforeEach(() => {
-
     // Mock the middleware
     app.use((req, _res, next) => {
       req.csrfToken = csrfMock;
@@ -21,10 +20,8 @@ describe("GET /", () => {
     nunjucksSetup(app);
   });
 
-
   it("should render index page", async () => {
-
-    csrfMock.mockReturnValue('mocked-csrf-token');
+    csrfMock.mockReturnValue("mocked-csrf-token");
     const response = await request(app)
       .get("/")
       .expect("Content-Type", /html/)
@@ -34,7 +31,6 @@ describe("GET /", () => {
   });
 
   it("should render error page if fails to load page", async () => {
-
     csrfMock.mockImplementation(() => {
       throw new Error("token problems");
     });
@@ -46,7 +42,6 @@ describe("GET /", () => {
 
     expect(response.text).toContain("An error occurred");
   });
-
 });
 
 describe("POST /", () => {
@@ -57,7 +52,6 @@ describe("POST /", () => {
   app = express();
 
   beforeEach(() => {
-
     formData = 123;
     mockSession = {};
     renderMock.mockReset();
@@ -70,8 +64,8 @@ describe("POST /", () => {
       req.session = mockSession;
 
       req.body = {
-        fee: formData
-      }
+        fee: formData,
+      };
 
       next();
     });
@@ -79,32 +73,24 @@ describe("POST /", () => {
 
     // Would be nice to mock the nunjucks rendering but not managed to figure that bit out
     nunjucksSetup(app);
-
   });
 
-
   it("should redirect to result page if successful call service", async () => {
-
     renderMock.mockReturnValue({
       status: 200,
-      data: "236.00"
+      data: "236.00",
     });
 
-    await request(app)
-      .post("/")
-      .expect(302)
-      .expect('Location', '/result');
+    await request(app).post("/").expect(302).expect("Location", "/result");
 
     // Save value so result page can load it
     expect(mockSession.result).toEqual("236.00");
 
-    expect(renderMock).toHaveBeenCalledWith("/fees/123")
+    expect(renderMock).toHaveBeenCalledWith("/fees/123");
   });
 
   describe("should error", () => {
-
     it("when api call fails", async () => {
-
       renderMock.mockImplementation(() => {
         throw new Error("API connection issue");
       });
@@ -118,11 +104,10 @@ describe("POST /", () => {
 
       expect(mockSession.result).toBeUndefined();
 
-      expect(renderMock).toHaveBeenCalledWith("/fees/123")
+      expect(renderMock).toHaveBeenCalledWith("/fees/123");
     });
 
     it("when data from form is missing", async () => {
-
       formData = null;
 
       const response = await request(app)
@@ -134,11 +119,10 @@ describe("POST /", () => {
 
       expect(mockSession.result).toBeUndefined();
 
-      expect(renderMock).toHaveBeenCalledTimes(0)
+      expect(renderMock).toHaveBeenCalledTimes(0);
     });
 
     it("when data from form is not the right type", async () => {
-
       formData = "hello";
 
       const response = await request(app)
@@ -150,10 +134,9 @@ describe("POST /", () => {
 
       expect(mockSession.result).toBeUndefined();
 
-      expect(renderMock).toHaveBeenCalledTimes(0)
+      expect(renderMock).toHaveBeenCalledTimes(0);
     });
-  })
-
+  });
 });
 
 describe("GET /result", () => {
@@ -162,10 +145,9 @@ describe("GET /result", () => {
   app = express();
 
   beforeEach(() => {
-
     // Mock the middleware
     app.use((req, _res, next) => {
-      req.session =mockSession;
+      req.session = mockSession;
       next();
     });
     app.use("/", indexRouter);
@@ -174,10 +156,9 @@ describe("GET /result", () => {
     nunjucksSetup(app);
   });
 
-
   it("should render result page", async () => {
     mockSession = {
-      "result": "246.00"
+      result: "246.00",
     };
 
     const response = await request(app)
@@ -188,28 +169,27 @@ describe("GET /result", () => {
     expect(response.text).toContain("You should have £246.00");
   });
 
-    it("should error when data from session is missing", async () => {
-      mockSession = {
-        "someOtherField": "blah"
+  it("should error when data from session is missing", async () => {
+    mockSession = {
+      someOtherField: "blah",
     };
 
-      const response = await request(app)
-        .get("/result")
-        .expect("Content-Type", /html/)
-        .expect(200);
+    const response = await request(app)
+      .get("/result")
+      .expect("Content-Type", /html/)
+      .expect(200);
 
-      expect(response.text).toContain("An error occurred");
-    });
+    expect(response.text).toContain("An error occurred");
+  });
 
-    it("should error when session is missing", async () => {
-      mockSession = null;
+  it("should error when session is missing", async () => {
+    mockSession = null;
 
-      const response = await request(app)
-        .get("/result")
-        .expect("Content-Type", /html/)
-        .expect(200);
+    const response = await request(app)
+      .get("/result")
+      .expect("Content-Type", /html/)
+      .expect(200);
 
-      expect(response.text).toContain("An error occurred");
-    });
-
+    expect(response.text).toContain("An error occurred");
+  });
 });
