@@ -3,7 +3,6 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block content %}
-    <h1 class="govuk-heading-xl">{{config.SERVICE_NAME}}</h1>
 
     <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
