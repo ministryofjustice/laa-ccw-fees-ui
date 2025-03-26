@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", (req, res) => {
   //TODO start page should probably clear out any left over session data
 
   try {
@@ -16,7 +16,26 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", (req, res) => {
+    res.redirect("/feeEntry");
+});
+
+router.get("/feeEntry", (req, res) => {
+  //TODO start page should probably clear out any left over session data
+
+  try {
+    res.render("main/feeEntry", { csrfToken: req.csrfToken() });
+  } catch (ex) {
+    console.error("Error loading page /feeEntry: {}", ex.message);
+
+    res.render("main/error", {
+      status: "An error occurred",
+      error: "An error occurred.",
+    });
+  }
+});
+
+router.post("/feeEntry", async (req, res) => {
   try {
     const fee = req.body.fee;
 

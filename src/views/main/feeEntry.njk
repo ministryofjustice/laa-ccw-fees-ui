@@ -7,9 +7,20 @@
 
     <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {{ govukInput({
+            label: {
+                text: "Enter a number and the API will double it?",
+                classes: "govuk-label--l",
+                isPageHeading: true
+            },
+            classes: "govuk-input--width-10",
+            name: "fee",
+            prefix: {text: "£"}
+        })}}
+        
         {# This is not valid button text for a real govuk app #}
         {{ govukButton({
-            text: "Start now",
+            text: "Send",
             preventDoubleClick: true,
             type: "submit"
         }) }}
