@@ -112,7 +112,7 @@ describe("GET /result", () => {
 
   it("should render result page", async () => {
     mockSession = {
-      data: { result: "246.00", lawCategory: "Immigration" },
+      data: { result: "246.00", lawCategory: "immigration" },
     };
 
     const response = await request(app)

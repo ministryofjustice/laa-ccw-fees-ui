@@ -34,11 +34,9 @@ export async function postFeeEntryPage(req, res) {
 
     const response = await req.axiosMiddleware.post("/fees/" + fee);
     const number = response.data;
-    console.log(req.session?.data);
 
     // Save this so it can be displayed on the result page
     req.session.data.result = number;
-    console.log(req.session?.data);
 
     res.redirect("/result");
   } catch (ex) {

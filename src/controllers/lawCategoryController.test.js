@@ -18,17 +18,18 @@ describe("GET /law-category", () => {
   app = express();
   let mockSession;
 
+  getLawCategories.mockReturnValue([
+    {
+      id: "family",
+      description: "Family",
+    },
+    {
+      id: "immigration",
+      description: "Immigration",
+    },
+  ]);
+
   beforeEach(() => {
-    getLawCategories.mockReturnValue([
-      {
-        id: "family",
-        description: "Family",
-      },
-      {
-        id: "immigration",
-        description: "Immigration",
-      },
-    ]);
 
     // Mock the middleware
     app.use((req, _res, next) => {
@@ -87,22 +88,16 @@ describe("POST /law-category", () => {
   let app;
   let mockSession = {};
   let formData;
-  const renderMock = jest.fn();
   app = express();
 
   beforeEach(() => {
     formData = "family";
-    renderMock.mockReset();
 
     // Mock the middleware
     app.use((req, _res, next) => {
       mockSession = {
         data: {},
       };
-
-      // Make sure it exists
-      req.axiosMiddleware = req.axiosMiddleware || {};
-      req.axiosMiddleware.post = renderMock;
       req.session = mockSession;
 
       req.body = {

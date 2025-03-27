@@ -8,6 +8,7 @@ import {
   postFeeEntryPage,
   showFeeEntryPage,
 } from "../controllers/feeEntryController";
+import { getLawCategoryDescription } from "../service/lawCategoryService";
 export const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -51,7 +52,7 @@ router.get("/result", (req, res) => {
       throw new Error("Law category not defined");
     }
 
-    res.render("main/result", { number: result, category: lawCategory });
+    res.render("main/result", { number: result, category: getLawCategoryDescription(lawCategory) });
   } catch (ex) {
     console.error("Error occurred while loading /result: {}", ex.message);
 
