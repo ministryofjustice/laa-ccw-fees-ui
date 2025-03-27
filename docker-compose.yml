@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+    networks:
+      - laa
+    ports:
+      - "3000:3000"
+    environment:
+      - API_PROTOCOL=https
+      - API_HOST=laa-ccw-fees-service-dev.apps.live.cloud-platform.service.justice.gov.uk
+      - API_VERSION=v1
+
+networks:
+  laa:
