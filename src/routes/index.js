@@ -1,5 +1,6 @@
 import express from "express";
-const router = express.Router();
+import { postLawCategoryPage, showLawCategoryPage } from "../controllers/lawCategoryController";
+export const router = express.Router();
 
 router.get("/", (req, res) => {
   try {
@@ -20,47 +21,9 @@ router.post("/", (req, res) => {
   res.redirect("/law-category");
 });
 
-router.get("/law-category", (req, res) => {
+router.get("/law-category", showLawCategoryPage);
 
-  try {
-    console.log(req.session?.data)
-
-    res.render("main/lawCategory", { csrfToken: req.csrfToken() });
-  } catch (ex) {
-    console.error("Error loading page /law-category: {}", ex.message);
-
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred.",
-    });
-  }
-});
-
-router.post("/law-category", async (req, res) => {
-  try {
-    const category = req.body.category;
-    console.log(req.session?.data)
-
-    //TODO make sure it is in the list...
-    if (category == null) {
-      throw new Error("Law Category not defined");
-    }
-    console.log(req.session?.data)
-
-    req.session.data.lawCategory = category;
-    console.log(req.session?.data)
-
-    res.redirect("/fee-entry");
-  } catch (ex) {
-    console.error("Error occurred during POST /law-category: {}", ex.message);
-
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred posting the answer.",
-    });
-  }
-});
-
+router.post("/law-category", postLawCategoryPage);
 
 router.get("/fee-entry", (req, res) => {
 

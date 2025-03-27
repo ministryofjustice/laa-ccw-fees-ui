@@ -195,7 +195,7 @@ describe("POST /fee-entry", () => {
 
       expect(response.text).toContain("An error occurred");
 
-      expect(mockSession.result).toBeUndefined();
+      expect(mockSession.data.result).toBeUndefined();
 
       expect(renderMock).toHaveBeenCalledWith("/fees/123");
     });
@@ -210,7 +210,7 @@ describe("POST /fee-entry", () => {
 
       expect(response.text).toContain("An error occurred");
 
-      expect(mockSession.result).toBeUndefined();
+      expect(mockSession.data.result).toBeUndefined();
 
       expect(renderMock).toHaveBeenCalledTimes(0);
     });
@@ -225,7 +225,7 @@ describe("POST /fee-entry", () => {
 
       expect(response.text).toContain("An error occurred");
 
-      expect(mockSession.result).toBeUndefined();
+      expect(mockSession.data.result).toBeUndefined();
 
       expect(renderMock).toHaveBeenCalledTimes(0);
     });
