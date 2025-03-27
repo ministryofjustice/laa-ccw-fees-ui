@@ -63,10 +63,6 @@ describe("POST /", () => {
       req.axiosMiddleware.post = renderMock;
       req.session = mockSession;
 
-      req.body = {
-        fee: formData,
-      };
-
       next();
     });
     app.use("/", indexRouter);
@@ -75,15 +71,28 @@ describe("POST /", () => {
     nunjucksSetup(app);
   });
 
-  it("should redirect to fee entry page", async () => {
- 
-    await request(app).post("/").expect(302).expect("Location", "/feeEntry");
+  it("should redirect to law category page", async () => {
+    mockSession = {
+      'data': {
+        'field1': 'blah',
+        'field2': 'foo'
+      },
+      'otherstuff': true
+    };
+
+    await request(app).post("/").expect(302).expect("Location", "/law-category");
+
+    // Should remove any legacy data
+    expect(mockSession).toEqual({
+      'data': {},
+      'otherstuff': true
+    })
 
   });
 
 });
 
-describe("GET /feeEntry", () => {
+describe("GET /fee-entry", () => {
   let app;
   const csrfMock = jest.fn();
   app = express();
@@ -103,7 +112,7 @@ describe("GET /feeEntry", () => {
   it("should render fee entry page", async () => {
     csrfMock.mockReturnValue("mocked-csrf-token");
     const response = await request(app)
-      .get("/feeEntry")
+      .get("/fee-entry")
       .expect("Content-Type", /html/)
       .expect(200);
 
@@ -116,7 +125,7 @@ describe("GET /feeEntry", () => {
     });
 
     const response = await request(app)
-      .get("/feeEntry")
+      .get("/fee-entry")
       .expect("Content-Type", /html/)
       .expect(200);
 
@@ -124,7 +133,7 @@ describe("GET /feeEntry", () => {
   });
 });
 
-describe("POST /feeEntry", () => {
+describe("POST /fee-entry", () => {
   let app;
   let mockSession = {};
   let formData;
@@ -138,6 +147,10 @@ describe("POST /feeEntry", () => {
 
     // Mock the middleware
     app.use((req, _res, next) => {
+      mockSession = {
+        'data': {}
+      };
+
       // Make sure it exists
       req.axiosMiddleware = req.axiosMiddleware || {};
       req.axiosMiddleware.post = renderMock;
@@ -161,10 +174,10 @@ describe("POST /feeEntry", () => {
       data: "236.00",
     });
 
-    await request(app).post("/feeEntry").expect(302).expect("Location", "/result");
+    await request(app).post("/fee-entry").expect(302).expect("Location", "/result");
 
     // Save value so result page can load it
-    expect(mockSession.result).toEqual("236.00");
+    expect(mockSession.data.result).toEqual("236.00");
 
     expect(renderMock).toHaveBeenCalledWith("/fees/123");
   });
@@ -176,7 +189,7 @@ describe("POST /feeEntry", () => {
       });
 
       const response = await request(app)
-        .post("/feeEntry")
+        .post("/fee-entry")
         .expect("Content-Type", /html/)
         .expect(200);
 
@@ -191,7 +204,7 @@ describe("POST /feeEntry", () => {
       formData = null;
 
       const response = await request(app)
-        .post("/feeEntry")
+        .post("/fee-entry")
         .expect("Content-Type", /html/)
         .expect(200);
 
@@ -206,7 +219,7 @@ describe("POST /feeEntry", () => {
       formData = "hello";
 
       const response = await request(app)
-        .post("/feeEntry")
+        .post("/fee-entry")
         .expect("Content-Type", /html/)
         .expect(200);
 
@@ -221,10 +234,13 @@ describe("POST /feeEntry", () => {
 
 describe("GET /result", () => {
   let app;
-  let mockSession = {};
+  let mockSession;
   app = express();
 
   beforeEach(() => {
+
+   mockSession = {};
+    
     // Mock the middleware
     app.use((req, _res, next) => {
       req.session = mockSession;
@@ -238,7 +254,7 @@ describe("GET /result", () => {
 
   it("should render result page", async () => {
     mockSession = {
-      result: "246.00",
+      data: { result: "246.00"},
     };
 
     const response = await request(app)
@@ -251,7 +267,7 @@ describe("GET /result", () => {
 
   it("should error when data from session is missing", async () => {
     mockSession = {
-      someOtherField: "blah",
+      data: {someOtherField: "blah"},
     };
 
     const response = await request(app)

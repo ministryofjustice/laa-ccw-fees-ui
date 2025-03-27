@@ -2,8 +2,6 @@ import express from "express";
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  //TODO start page should probably clear out any left over session data
-
   try {
     res.render("main/index", { csrfToken: req.csrfToken() });
   } catch (ex) {
@@ -17,16 +15,19 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-    res.redirect("/feeEntry");
+  // Remove any old data. They have restarted
+  req.session.data = {}
+  res.redirect("/law-category");
 });
 
-router.get("/feeEntry", (req, res) => {
-  //TODO start page should probably clear out any left over session data
+router.get("/law-category", (req, res) => {
 
   try {
-    res.render("main/feeEntry", { csrfToken: req.csrfToken() });
+    console.log(req.session?.data)
+
+    res.render("main/lawCategory", { csrfToken: req.csrfToken() });
   } catch (ex) {
-    console.error("Error loading page /feeEntry: {}", ex.message);
+    console.error("Error loading page /law-category: {}", ex.message);
 
     res.render("main/error", {
       status: "An error occurred",
@@ -35,7 +36,49 @@ router.get("/feeEntry", (req, res) => {
   }
 });
 
-router.post("/feeEntry", async (req, res) => {
+router.post("/law-category", async (req, res) => {
+  try {
+    const category = req.body.category;
+    console.log(req.session?.data)
+
+    //TODO make sure it is in the list...
+    if (category == null) {
+      throw new Error("Law Category not defined");
+    }
+    console.log(req.session?.data)
+
+    req.session.data.lawCategory = category;
+    console.log(req.session?.data)
+
+    res.redirect("/fee-entry");
+  } catch (ex) {
+    console.error("Error occurred during POST /law-category: {}", ex.message);
+
+    res.render("main/error", {
+      status: "An error occurred",
+      error: "An error occurred posting the answer.",
+    });
+  }
+});
+
+
+router.get("/fee-entry", (req, res) => {
+
+  try {
+    console.log(req.session?.data)
+
+    res.render("main/feeEntry", { csrfToken: req.csrfToken() });
+  } catch (ex) {
+    console.error("Error loading page /fee-entry: {}", ex.message);
+
+    res.render("main/error", {
+      status: "An error occurred",
+      error: "An error occurred.",
+    });
+  }
+});
+
+router.post("/fee-entry", async (req, res) => {
   try {
     const fee = req.body.fee;
 
@@ -45,13 +88,15 @@ router.post("/feeEntry", async (req, res) => {
 
     const response = await req.axiosMiddleware.post("/fees/" + fee);
     const number = response.data;
+    console.log(req.session?.data)
 
     // Save this so it can be displayed on the result page
-    req.session.result = number;
+    req.session.data.result = number;
+    console.log(req.session?.data)
 
     res.redirect("/result");
   } catch (ex) {
-    console.error("Error occurred during POST /: {}", ex.message);
+    console.error("Error occurred during POST /fee-entry: {}", ex.message);
 
     res.render("main/error", {
       status: "An error occurred",
@@ -62,13 +107,17 @@ router.post("/feeEntry", async (req, res) => {
 
 router.get("/result", (req, res) => {
   try {
-    const result = req.session?.result;
+
+    //TODO validate law category is here also
+    const result = req.session?.data?.result;
 
     if (result == null) {
       throw new Error("Result not defined");
     }
 
-    res.render("main/result", { number: result });
+    const lawCategory = req.session?.data?.lawCategory;
+
+    res.render("main/result", { number: result, category: lawCategory });
   } catch (ex) {
     console.error("Error occurred while loading /result: {}", ex.message);
 
