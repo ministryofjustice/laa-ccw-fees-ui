@@ -4,6 +4,15 @@
 
 {% block content %}
 
+    {% set items = [] %}
+
+    {% for category in categories %}
+        {{ items.push({
+            value: category.id,
+            text: category.description
+        }) | reject() }}
+    {% endfor %}
+
     <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         {{ govukRadios({
@@ -15,16 +24,7 @@
                 classes: "govuk-fieldset__legend--l"
                 }
             },
-            items: [
-                {
-                value: "family",
-                text: "Family"
-                },
-                {
-                value: "immigration",
-                text: "Immigration"
-                }
-            ]
+            items: items
             }) }}
         
         {{ govukButton({

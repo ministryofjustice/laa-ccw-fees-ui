@@ -1,8 +1,9 @@
+import { lawCategories } from "../service/lawCategoryService";
 
 export function showLawCategoryPage(req, res) {
 
     try {    
-        res.render("main/lawCategory", { csrfToken: req.csrfToken() });
+        res.render("main/lawCategory", { csrfToken: req.csrfToken(), categories: lawCategories });
       } catch (ex) {
         console.error("Error loading page /law-category: {}", ex.message);
     
