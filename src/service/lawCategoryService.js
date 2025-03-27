@@ -31,9 +31,11 @@ export function isValidLawCategory(enteredCategory) {
 /**
  * Find description of law category from given id
  * @param {string} categoryToLookup - category to get description for
- * @returns Description if available, null if not
+ * @returns {string | null} Description if available, null if not
  */
 export function getLawCategoryDescription(categoryToLookup) {
-  const categoryObject = lawCategories.find(category => category.id === categoryToLookup)
-  return categoryObject ? categoryObject.description : null
+  const categoryObject = lawCategories.find(
+    (category) => category.id === categoryToLookup,
+  );
+  return categoryObject ? categoryObject.description : null;
 }

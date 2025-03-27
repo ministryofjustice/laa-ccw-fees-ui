@@ -52,7 +52,10 @@ router.get("/result", (req, res) => {
       throw new Error("Law category not defined");
     }
 
-    res.render("main/result", { number: result, category: getLawCategoryDescription(lawCategory) });
+    res.render("main/result", {
+      number: result,
+      category: getLawCategoryDescription(lawCategory),
+    });
   } catch (ex) {
     console.error("Error occurred while loading /result: {}", ex.message);
 

@@ -30,7 +30,6 @@ describe("GET /law-category", () => {
   ]);
 
   beforeEach(() => {
-
     // Mock the middleware
     app.use((req, _res, next) => {
       req.csrfToken = csrfMock;

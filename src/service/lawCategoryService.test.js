@@ -1,4 +1,7 @@
-import { isValidLawCategory, getLawCategoryDescription } from "./lawCategoryService";
+import {
+  isValidLawCategory,
+  getLawCategoryDescription,
+} from "./lawCategoryService";
 
 describe("isValidLawCategory", () => {
   it("should return true if valid category", () => {
