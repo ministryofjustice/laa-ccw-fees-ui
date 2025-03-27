@@ -5,6 +5,7 @@ import { rateLimitSetUp } from "./rateLimitSetUp.js";
 import { axiosMiddleware } from "./axiosSetup.js";
 import { initializeDB } from "./sqliteSetup.js";
 import { displayAsciiBanner } from "./displayAsciiBanner.js";
+import { getSessionData } from "./sessionHelper.js";
 
 export {
   getBuildNumber,
@@ -15,4 +16,5 @@ export {
   axiosMiddleware,
   initializeDB,
   displayAsciiBanner,
+  getSessionData
 };

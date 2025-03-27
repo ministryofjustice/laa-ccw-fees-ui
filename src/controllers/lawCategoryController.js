@@ -1,12 +1,10 @@
 import { isValidLawCategory, getLawCategories } from "../service/lawCategoryService";
+import { getSessionData } from "../utils";
 
 export function showLawCategoryPage(req, res) {
 
     try {
-        const data = req.session?.data
-         if (data == null){
-            throw new Error("No session data found");
-        }
+        getSessionData(req);
         
         res.render("main/lawCategory", { csrfToken: req.csrfToken(), categories: getLawCategories() });
       } catch (ex) {

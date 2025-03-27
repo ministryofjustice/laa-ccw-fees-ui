@@ -1,5 +1,6 @@
 import express from "express";
 import { postLawCategoryPage, showLawCategoryPage } from "../controllers/lawCategoryController";
+import { getSessionData } from "../utils";
 export const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -28,8 +29,8 @@ router.post("/law-category", postLawCategoryPage);
 router.get("/fee-entry", (req, res) => {
 
   try {
-    console.log(req.session?.data)
 
+    getSessionData(req);
     res.render("main/feeEntry", { csrfToken: req.csrfToken() });
   } catch (ex) {
     console.error("Error loading page /fee-entry: {}", ex.message);
@@ -71,11 +72,7 @@ router.post("/fee-entry", async (req, res) => {
 router.get("/result", (req, res) => {
   try {
 
-    const data = req.session?.data
-    if (data == null){
-      throw new Error("No session data found");
-    }
-
+    const data = getSessionData(req);
     const result = data?.result;
 
     if (result == null) {

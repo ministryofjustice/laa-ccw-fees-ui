@@ -94,13 +94,20 @@ describe("POST /", () => {
 
 describe("GET /fee-entry", () => {
   let app;
+  let mockSession = {};
   const csrfMock = jest.fn();
   app = express();
 
   beforeEach(() => {
+    mockSession = {
+      'data': {}
+    };
+
     // Mock the middleware
     app.use((req, _res, next) => {
       req.csrfToken = csrfMock;
+      req.session = mockSession;
+
       next();
     });
     app.use("/", indexRouter);
@@ -131,6 +138,19 @@ describe("GET /fee-entry", () => {
 
     expect(response.text).toContain("An error occurred");
   });
+
+  it("should render error page if no session data", async () => {
+    
+    mockSession = {}
+
+    const response = await request(app)
+      .get("/fee-entry")
+      .expect("Content-Type", /html/)
+      .expect(200);
+
+    expect(response.text).toContain("An error occurred");
+  });
+
 });
 
 describe("POST /fee-entry", () => {
