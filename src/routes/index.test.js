@@ -71,23 +71,24 @@ describe("POST /", () => {
 
   it("should redirect to law category page", async () => {
     mockSession = {
-      'data': {
-        'field1': 'blah',
-        'field2': 'foo'
+      data: {
+        field1: "blah",
+        field2: "foo",
       },
-      'otherstuff': true
+      otherstuff: true,
     };
 
-    await request(app).post("/").expect(302).expect("Location", "/law-category");
+    await request(app)
+      .post("/")
+      .expect(302)
+      .expect("Location", "/law-category");
 
     // Should remove any legacy data
     expect(mockSession).toEqual({
-      'data': {},
-      'otherstuff': true
-    })
-
+      data: {},
+      otherstuff: true,
+    });
   });
-
 });
 
 describe("GET /fee-entry", () => {
@@ -98,7 +99,7 @@ describe("GET /fee-entry", () => {
 
   beforeEach(() => {
     mockSession = {
-      'data': {}
+      data: {},
     };
 
     // Mock the middleware
@@ -138,8 +139,7 @@ describe("GET /fee-entry", () => {
   });
 
   it("should render error page if no session data", async () => {
-    
-    mockSession = {}
+    mockSession = {};
 
     const response = await request(app)
       .get("/fee-entry")
@@ -148,7 +148,6 @@ describe("GET /fee-entry", () => {
 
     expect(response.text).toContain("An error occurred");
   });
-
 });
 
 describe("POST /fee-entry", () => {
@@ -166,7 +165,7 @@ describe("POST /fee-entry", () => {
     // Mock the middleware
     app.use((req, _res, next) => {
       mockSession = {
-        'data': {}
+        data: {},
       };
 
       // Make sure it exists
@@ -192,7 +191,10 @@ describe("POST /fee-entry", () => {
       data: "236.00",
     });
 
-    await request(app).post("/fee-entry").expect(302).expect("Location", "/result");
+    await request(app)
+      .post("/fee-entry")
+      .expect(302)
+      .expect("Location", "/result");
 
     // Save value so result page can load it
     expect(mockSession.data.result).toEqual("236.00");
@@ -256,9 +258,8 @@ describe("GET /result", () => {
   app = express();
 
   beforeEach(() => {
+    mockSession = {};
 
-   mockSession = {};
-    
     // Mock the middleware
     app.use((req, _res, next) => {
       req.session = mockSession;
@@ -272,7 +273,7 @@ describe("GET /result", () => {
 
   it("should render result page", async () => {
     mockSession = {
-      data: { result: "246.00", "lawCategory": "Immigration"},
+      data: { result: "246.00", lawCategory: "Immigration" },
     };
 
     const response = await request(app)
@@ -285,7 +286,7 @@ describe("GET /result", () => {
 
   it("should error when result is missing", async () => {
     mockSession = {
-      data: {lawCategory: "blah"},
+      data: { lawCategory: "blah" },
     };
 
     const response = await request(app)
@@ -298,7 +299,7 @@ describe("GET /result", () => {
 
   it("should error when law category is missing", async () => {
     mockSession = {
-      data: {result: "1234.32"},
+      data: { result: "1234.32" },
     };
 
     const response = await request(app)
@@ -322,7 +323,7 @@ describe("GET /result", () => {
 
   it("should error when session data is missing", async () => {
     mockSession = {
-      "otherField": "blah"
+      otherField: "blah",
     };
 
     const response = await request(app)

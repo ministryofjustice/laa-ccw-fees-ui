@@ -16,5 +16,5 @@ export {
   axiosMiddleware,
   initializeDB,
   displayAsciiBanner,
-  getSessionData
+  getSessionData,
 };

@@ -1,5 +1,8 @@
 import express from "express";
-import { postLawCategoryPage, showLawCategoryPage } from "../controllers/lawCategoryController";
+import {
+  postLawCategoryPage,
+  showLawCategoryPage,
+} from "../controllers/lawCategoryController";
 import { getSessionData } from "../utils";
 export const router = express.Router();
 
@@ -18,7 +21,7 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res) => {
   // Remove any old data. They have restarted
-  req.session.data = {}
+  req.session.data = {};
   res.redirect("/law-category");
 });
 
@@ -27,9 +30,7 @@ router.get("/law-category", showLawCategoryPage);
 router.post("/law-category", postLawCategoryPage);
 
 router.get("/fee-entry", (req, res) => {
-
   try {
-
     getSessionData(req);
     res.render("main/feeEntry", { csrfToken: req.csrfToken() });
   } catch (ex) {
@@ -52,11 +53,11 @@ router.post("/fee-entry", async (req, res) => {
 
     const response = await req.axiosMiddleware.post("/fees/" + fee);
     const number = response.data;
-    console.log(req.session?.data)
+    console.log(req.session?.data);
 
     // Save this so it can be displayed on the result page
     req.session.data.result = number;
-    console.log(req.session?.data)
+    console.log(req.session?.data);
 
     res.redirect("/result");
   } catch (ex) {
@@ -71,7 +72,6 @@ router.post("/fee-entry", async (req, res) => {
 
 router.get("/result", (req, res) => {
   try {
-
     const data = getSessionData(req);
     const result = data?.result;
 
@@ -79,7 +79,7 @@ router.get("/result", (req, res) => {
       throw new Error("Result not defined");
     }
 
-    const lawCategory = data?.lawCategory
+    const lawCategory = data?.lawCategory;
     if (lawCategory == null) {
       throw new Error("Law category not defined");
     }
