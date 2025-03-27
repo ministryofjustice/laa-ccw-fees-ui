@@ -2,8 +2,7 @@ name: Main Branch
 
 on:
   push:
-    #    branches: [main]
-    branches: [BILL-69-create-deployment-workflow-for-ui]
+    branches: [main]
 jobs:
   build-test:
     runs-on: ubuntu-latest
