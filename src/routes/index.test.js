@@ -254,7 +254,7 @@ describe("GET /result", () => {
 
   it("should render result page", async () => {
     mockSession = {
-      data: { result: "246.00"},
+      data: { result: "246.00", "lawCategory": "Immigration"},
     };
 
     const response = await request(app)
@@ -265,9 +265,22 @@ describe("GET /result", () => {
     expect(response.text).toContain("You should have £246.00");
   });
 
-  it("should error when data from session is missing", async () => {
+  it("should error when result is missing", async () => {
     mockSession = {
-      data: {someOtherField: "blah"},
+      data: {lawCategory: "blah"},
+    };
+
+    const response = await request(app)
+      .get("/result")
+      .expect("Content-Type", /html/)
+      .expect(200);
+
+    expect(response.text).toContain("An error occurred");
+  });
+
+  it("should error when law category is missing", async () => {
+    mockSession = {
+      data: {result: "1234.32"},
     };
 
     const response = await request(app)
@@ -280,6 +293,19 @@ describe("GET /result", () => {
 
   it("should error when session is missing", async () => {
     mockSession = null;
+
+    const response = await request(app)
+      .get("/result")
+      .expect("Content-Type", /html/)
+      .expect(200);
+
+    expect(response.text).toContain("An error occurred");
+  });
+
+  it("should error when session data is missing", async () => {
+    mockSession = {
+      "otherField": "blah"
+    };
 
     const response = await request(app)
       .get("/result")

@@ -108,14 +108,21 @@ router.post("/fee-entry", async (req, res) => {
 router.get("/result", (req, res) => {
   try {
 
-    //TODO validate law category is here also
-    const result = req.session?.data?.result;
+    const data = req.session?.data
+    if (data == null){
+      throw new Error("No session data found");
+    }
+
+    const result = data?.result;
 
     if (result == null) {
       throw new Error("Result not defined");
     }
 
-    const lawCategory = req.session?.data?.lawCategory;
+    const lawCategory = data?.lawCategory
+    if (lawCategory == null) {
+      throw new Error("Law category not defined");
+    }
 
     res.render("main/result", { number: result, category: lawCategory });
   } catch (ex) {
