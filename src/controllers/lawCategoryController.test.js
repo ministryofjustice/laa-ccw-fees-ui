@@ -13,6 +13,7 @@ describe("GET /law-category", () => {
     let app;
     const csrfMock = jest.fn();
     app = express();
+    let mockSession;
 
     beforeEach(() => {
 
@@ -30,6 +31,11 @@ describe("GET /law-category", () => {
         // Mock the middleware
         app.use((req, _res, next) => {
             req.csrfToken = csrfMock;
+            mockSession = {
+                'data': {}
+            };
+            req.session = mockSession;
+
             next();
         });
         app.use("/", indexRouter);
@@ -63,6 +69,19 @@ describe("GET /law-category", () => {
 
         expect(response.text).toContain("An error occurred");
     });
+
+    it("should render error page if no existing session data already (as skipped workflow)", async () => {
+  
+        mockSession = {}
+
+        const response = await request(app)
+            .get("/law-category")
+            .expect("Content-Type", /html/)
+            .expect(200);
+
+        expect(response.text).toContain("An error occurred");
+    });
+
 });
 
 describe("POST /law-category", () => {
@@ -74,7 +93,6 @@ describe("POST /law-category", () => {
 
     beforeEach(() => {
         formData = "family";
-        mockSession = {};
         renderMock.mockReset();
 
         // Mock the middleware

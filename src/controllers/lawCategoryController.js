@@ -2,7 +2,12 @@ import { isValidLawCategory, getLawCategories } from "../service/lawCategoryServ
 
 export function showLawCategoryPage(req, res) {
 
-    try {    
+    try {
+        const data = req.session?.data
+         if (data == null){
+            throw new Error("No session data found");
+        }
+        
         res.render("main/lawCategory", { csrfToken: req.csrfToken(), categories: getLawCategories() });
       } catch (ex) {
         console.error("Error loading page /law-category: {}", ex.message);
