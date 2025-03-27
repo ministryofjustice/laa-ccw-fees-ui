@@ -1,4 +1,4 @@
-name: deploy
+name: Main branch
 
 on:
   push:
@@ -69,22 +69,18 @@ jobs:
 
       - name: Authenticate to K8 Cluster
         run: |
-          mkdir deployments
-          cat ./.github/deployments/deployment.yml | envsubst > deployments/deployment.yml
-          cat ./.github/deployments/ingress.yml | envsubst > deployments/ingress.yml
-          cat ./.github/deployments/service.yml | envsubst > deployments/service.yml
+          cat deployments/templates/deployment.yml | envsubst > deployments/deployment.yml
+          cat deployments/templates/ingress.yml | envsubst > deployments/ingress.yml
+          cat deployments/templates/service.yml | envsubst > deployments/service.yml
         env:
+          IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
-          IMAGE_NAME: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          CP_NAMESPACE: "${{ env.APP_NAME }}-${{ env.APP_ENV }}"
 
       - name: Deploy to K8 Cluster
         run: |
           echo "${{ secrets.KUBE_CERT }}" > ca.crt
-          echo ${KUBE_NAMESPACE}
-          echo ${{ env.IMAGE_NAME }}
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
           kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
@@ -93,4 +89,3 @@ jobs:
         env:
           KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER }}
-          IMAGE_NAME: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
