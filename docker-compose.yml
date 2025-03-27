@@ -8,4 +8,3 @@ services:
       - API_PROTOCOL=https
       - API_HOST=laa-ccw-fees-service-dev.apps.live.cloud-platform.service.justice.gov.uk
       - API_VERSION=v1
-
