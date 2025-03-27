@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laa-ccw-fees-ui-deployment
+  labels:
+    app: laa-ccw-fees-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: laa-ccw-fees-ui # this should match the selector in service.yml
+  template:
+    metadata:
+      labels:
+        app: laa-ccw-fees-ui # this should match the selector in service.yml
+    spec:
+      containers:
+        - name: laa-ccw-fees-ui
+          image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+          ports:
+            - containerPort: 3000
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            runAsUser: 1001
+          env:
+            - name: API_PROTOCOL
+              value: https
+            - name: API_HOST
+              value: laa-ccw-fees-service-dev.apps.live.cloud-platform.service.justice.gov.uk
+            - name: API_VERSION
+              value: v1
