@@ -12,10 +12,19 @@ const lawCategories = [
     }
 ]
 
+/**
+ * Gets the valid law categories
+ * @returns {Array[]} the valid law categories
+ */
 export function getLawCategories(){
     return lawCategories
 }
 
-export function isValidLawCategory(expectedCategory){
-    return lawCategories.some(category => category.id === expectedCategory);
+/**
+ * Check an entered category is valid
+ * @param {string} enteredCategory - category user selected
+ * @returns {boolean} true if category is valid, false otherwise
+ */
+export function isValidLawCategory(enteredCategory){
+    return lawCategories.some(category => category.id === enteredCategory);
 }

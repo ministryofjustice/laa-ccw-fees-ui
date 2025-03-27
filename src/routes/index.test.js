@@ -47,12 +47,10 @@ describe("GET /", () => {
 describe("POST /", () => {
   let app;
   let mockSession = {};
-  let formData;
   const renderMock = jest.fn();
   app = express();
 
   beforeEach(() => {
-    formData = 123;
     mockSession = {};
     renderMock.mockReset();
 

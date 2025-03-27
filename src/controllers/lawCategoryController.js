@@ -1,6 +1,11 @@
 import { isValidLawCategory, getLawCategories } from "../service/lawCategoryService";
 import { getSessionData } from "../utils";
 
+/**
+ * Load the page for the user entering a Law Category
+ * @param {import('express').Request} req Express request object
+ * @param {import('express').Response} res Express response object
+ */
 export function showLawCategoryPage(req, res) {
 
     try {
@@ -17,6 +22,11 @@ export function showLawCategoryPage(req, res) {
       }
 }
 
+/**
+ * Process the user's entered Law Category
+ * @param {import('express').Request} req Express request object
+ * @param {import('express').Response} res Express response object
+ */
 export async function postLawCategoryPage(req, res) {
     try {
         const category = req.body.category;
