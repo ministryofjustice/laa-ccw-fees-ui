@@ -1,8 +1,29 @@
 {% extends "base.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block content %}
     <h1 class="govuk-heading-xl">{{config.SERVICE_NAME}}</h1>
 
-    {{ response.data }}
-    
+    <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {{ govukInput({
+            label: {
+                text: "Enter a number and the API will double it?",
+                classes: "govuk-label--l",
+                isPageHeading: true
+            },
+            classes: "govuk-input--width-10",
+            name: "fee",
+            prefix: {text: "£"}
+        })}}
+        
+        {# This is not valid button text for a real govuk app #}
+        {{ govukButton({
+            text: "Send",
+            preventDoubleClick: true,
+            type: "submit"
+        }) }}
+    </form>
+
 {% endblock %}
