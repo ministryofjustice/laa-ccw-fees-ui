@@ -1,7 +1,7 @@
 
 //TODO could be api call in future?
 
-export const lawCategories = [
+const lawCategories = [
     {
         id: "family",
         description: "Family"
@@ -11,3 +11,11 @@ export const lawCategories = [
         description: "Immigration"
     }
 ]
+
+export function getLawCategories(){
+    return lawCategories
+}
+
+export function isValidLawCategory(expectedCategory){
+    return lawCategories.some(category => category.id === expectedCategory);
+}

@@ -2,7 +2,12 @@ import request from "supertest";
 import express from "express";
 import { nunjucksSetup } from "../utils";
 import indexRouter from "../routes/index";
+import { isValidLawCategory, getLawCategories } from "../service/lawCategoryService";
 
+jest.mock('../service/lawCategoryService', () => ({
+    getLawCategories: jest.fn(), 
+    isValidLawCategory: jest.fn()
+  }));
 
 describe("GET /law-category", () => {
     let app;
@@ -10,6 +15,18 @@ describe("GET /law-category", () => {
     app = express();
 
     beforeEach(() => {
+
+        getLawCategories.mockReturnValue([
+            {
+                id: "family",
+                description: "Family"
+            },
+            {
+                id: "immigration",
+                description: "Immigration"
+            }
+        ])
+
         // Mock the middleware
         app.use((req, _res, next) => {
             req.csrfToken = csrfMock;
@@ -83,12 +100,16 @@ describe("POST /law-category", () => {
         nunjucksSetup(app);
     });
 
-    it("should redirect to result page if form data is supplied", async () => {
+    it("should redirect to result page if valid form data is supplied", async () => {
+
+        isValidLawCategory.mockReturnValue(true);
 
         await request(app).post("/law-category").expect(302).expect("Location", "/fee-entry");
 
         // Save value so result page can load it
         expect(mockSession.data.lawCategory).toEqual("family");
+
+        expect(isValidLawCategory).toHaveBeenCalledWith("family");
 
     });
 
@@ -108,4 +129,23 @@ describe("POST /law-category", () => {
         });
 
     });
+
+    it("when data is not valid category", async () => {
+        formData = "medical-malpractice";
+
+        isValidLawCategory.mockReturnValue(false);
+
+
+        const response = await request(app)
+            .post("/law-category")
+            .expect("Content-Type", /html/)
+            .expect(200);
+
+        expect(response.text).toContain("An error occurred");
+
+        expect(mockSession.data.lawCategory).toBeUndefined();
+        expect(isValidLawCategory).toHaveBeenCalledWith("medical-malpractice");
+
+    });
+
 });
