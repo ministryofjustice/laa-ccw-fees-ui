@@ -1,14 +1,16 @@
 import express from "express";
 import {
-  postLawCategoryPage,
-  showLawCategoryPage,
-} from "../controllers/lawCategoryController";
+  postClaimStartPage,
+  showClaimStartPage,
+} from "../controllers/claimStartController";
 import { getSessionData } from "../utils";
 import {
   postFeeEntryPage,
   showFeeEntryPage,
 } from "../controllers/feeEntryController";
 import { getLawCategoryDescription } from "../service/lawCategoryService";
+import { getUrl } from "./urls";
+
 export const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -30,9 +32,9 @@ router.post("/", (req, res) => {
   res.redirect("/law-category");
 });
 
-router.get("/law-category", showLawCategoryPage);
+router.get(getUrl("claimStart"), showClaimStartPage);
 
-router.post("/law-category", postLawCategoryPage);
+router.post(getUrl("claimStart"), postClaimStartPage);
 
 router.get("/fee-entry", showFeeEntryPage);
 

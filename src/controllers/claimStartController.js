@@ -9,16 +9,16 @@ import { getSessionData } from "../utils";
  * @param {import('express').Request} req Express request object
  * @param {import('express').Response} res Express response object
  */
-export function showLawCategoryPage(req, res) {
+export function showClaimStartPage(req, res) {
   try {
     getSessionData(req);
 
-    res.render("main/lawCategory", {
+    res.render("main/claimStart", {
       csrfToken: req.csrfToken(),
       categories: getLawCategories(),
     });
   } catch (ex) {
-    console.error("Error loading page /law-category: {}", ex.message);
+    console.error("Error loading page %s: %s",req.originalUrl, ex.message);
 
     res.render("main/error", {
       status: "An error occurred",
@@ -32,7 +32,7 @@ export function showLawCategoryPage(req, res) {
  * @param {import('express').Request} req Express request object
  * @param {import('express').Response} res Express response object
  */
-export function postLawCategoryPage(req, res) {
+export function postClaimStartPage(req, res) {
   try {
     const category = req.body.category;
 
@@ -48,7 +48,7 @@ export function postLawCategoryPage(req, res) {
 
     res.redirect("/fee-entry");
   } catch (ex) {
-    console.error("Error occurred during POST /law-category: {}", ex.message);
+    console.error("Error occurred during POST %s: %s", req.originalUrl, ex.message);
 
     res.render("main/error", {
       status: "An error occurred",

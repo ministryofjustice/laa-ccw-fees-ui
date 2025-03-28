@@ -6,13 +6,16 @@ import {
   isValidLawCategory,
   getLawCategories,
 } from "../service/lawCategoryService";
+import { getUrl } from "../routes/urls";
 
 jest.mock("../service/lawCategoryService", () => ({
   getLawCategories: jest.fn(),
   isValidLawCategory: jest.fn(),
 }));
 
-describe("GET /law-category", () => {
+const claimStartUrl = getUrl("claimStart")
+
+describe("GET /claim-start", () => {
   let app;
   const csrfMock = jest.fn();
   app = express();
@@ -46,10 +49,10 @@ describe("GET /law-category", () => {
     nunjucksSetup(app);
   });
 
-  it("should render law category page", async () => {
+  it("should render claim start page", async () => {
     csrfMock.mockReturnValue("mocked-csrf-token");
     const response = await request(app)
-      .get("/law-category")
+      .get(claimStartUrl)
       .expect("Content-Type", /html/)
       .expect(200);
 
@@ -64,7 +67,7 @@ describe("GET /law-category", () => {
     });
 
     const response = await request(app)
-      .get("/law-category")
+      .get(claimStartUrl)
       .expect("Content-Type", /html/)
       .expect(200);
 
@@ -75,7 +78,7 @@ describe("GET /law-category", () => {
     mockSession = {};
 
     const response = await request(app)
-      .get("/law-category")
+      .get(claimStartUrl)
       .expect("Content-Type", /html/)
       .expect(200);
 
@@ -83,7 +86,7 @@ describe("GET /law-category", () => {
   });
 });
 
-describe("POST /law-category", () => {
+describe("POST /claim-start", () => {
   let app;
   let mockSession = {};
   let formData;
@@ -115,7 +118,7 @@ describe("POST /law-category", () => {
     isValidLawCategory.mockReturnValue(true);
 
     await request(app)
-      .post("/law-category")
+      .post(claimStartUrl)
       .expect(302)
       .expect("Location", "/fee-entry");
 
@@ -130,7 +133,7 @@ describe("POST /law-category", () => {
       formData = null;
 
       const response = await request(app)
-        .post("/law-category")
+        .post(claimStartUrl)
         .expect("Content-Type", /html/)
         .expect(200);
 
@@ -146,7 +149,7 @@ describe("POST /law-category", () => {
     isValidLawCategory.mockReturnValue(false);
 
     const response = await request(app)
-      .post("/law-category")
+      .post(claimStartUrl)
       .expect("Content-Type", /html/)
       .expect(200);
 
