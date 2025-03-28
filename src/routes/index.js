@@ -29,7 +29,7 @@ router.get("/", (req, res) => {
 router.post("/", (req, res) => {
   // Remove any old data. They have restarted
   req.session.data = {};
-  res.redirect("/law-category");
+  res.redirect(getUrl("claimStart"));
 });
 
 router.get(getUrl("claimStart"), showClaimStartPage);
