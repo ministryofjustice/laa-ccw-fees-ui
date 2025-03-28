@@ -61,8 +61,12 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
   <script type="module" nonce="{{ cspNonce }}" src="/js/{{getAsset('govuk-frontend','min.js')}}"></script>
+  <script nonce="{{ cspNonce }}" src="/js/{{ getAsset('moj-frontend','min.js') }}"></script>
   <script type="module" nonce="{{ cspNonce }}">
     import { initAll } from "/js/{{getAsset('govuk-frontend','min.js')}}"
     initAll()
+  </script>
+  <script nonce="{{ cspNonce }}">
+    window.MOJFrontend?.initAll();
   </script>
 {% endblock %}
