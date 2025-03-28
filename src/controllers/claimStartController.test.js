@@ -13,7 +13,7 @@ jest.mock("../service/lawCategoryService", () => ({
   isValidLawCategory: jest.fn(),
 }));
 
-const claimStartUrl = getUrl("claimStart")
+const claimStartUrl = getUrl("claimStart");
 
 describe("GET /claim-start", () => {
   let app;
