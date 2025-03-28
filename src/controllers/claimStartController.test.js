@@ -56,7 +56,7 @@ describe("GET /claim-start", () => {
       .expect("Content-Type", /html/)
       .expect(200);
 
-    expect(response.text).toContain("Which category of law?");
+    expect(response.text).toContain("Category of law");
     expect(response.text).toContain("Family");
     expect(response.text).toContain("Immigration");
   });
