@@ -13,16 +13,21 @@
         }) | reject() }}
     {% endfor %}
 
+    <h1 class="govuk-heading-xl">Claim details</h1>
+    <p class="govuk-body-m">To set up your claim we need some initial information</p>
     <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         {{ govukRadios({
             name: "category",
             fieldset: {
                 legend: {
-                text: "Which category of law?",
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--l"
+                text: "Category of law",
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend--s"
                 }
+            },
+            hint: {
+                text: "Select one option"
             },
             items: items
             }) }}
