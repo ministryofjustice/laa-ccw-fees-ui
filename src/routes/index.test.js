@@ -2,6 +2,7 @@ import request from "supertest";
 import express from "express";
 import { nunjucksSetup } from "../utils";
 import indexRouter from "../routes/index";
+import { getUrl } from "./urls";
 
 describe("GET /", () => {
   let app;
@@ -81,7 +82,7 @@ describe("POST /", () => {
     await request(app)
       .post("/")
       .expect(302)
-      .expect("Location", "/law-category");
+      .expect("Location", getUrl("claimStart"));
 
     // Should remove any legacy data
     expect(mockSession).toEqual({
