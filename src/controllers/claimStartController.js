@@ -44,6 +44,14 @@ export function postClaimStartPage(req, res) {
       throw new Error("Law Category is not valid");
     }
 
+    const date = req.body.date;
+    if (date == null){
+      throw new Error("Date case was opened is not valid");
+    }
+
+    //TODO probably needs to validate its not in the future??
+
+    req.session.data.startDate = date;
     req.session.data.lawCategory = category;
 
     res.redirect("/fee-entry");

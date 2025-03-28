@@ -56,9 +56,12 @@ describe("GET /claim-start", () => {
       .expect("Content-Type", /html/)
       .expect(200);
 
-    expect(response.text).toContain("Category of law");
-    expect(response.text).toContain("Family");
-    expect(response.text).toContain("Immigration");
+    const pageContent = response.text
+
+    expect(pageContent).toContain("Category of law");
+    expect(pageContent).toContain("Family");
+    expect(pageContent).toContain("Immigration");
+    expect(pageContent).toContain("Date case was opened");
   });
 
   it("should render error page if fails to load page", async () => {
@@ -89,11 +92,13 @@ describe("GET /claim-start", () => {
 describe("POST /claim-start", () => {
   let app;
   let mockSession = {};
-  let formData;
+  let enteredLawCategory;
+  let enteredDate;
   app = express();
 
   beforeEach(() => {
-    formData = "family";
+    enteredLawCategory = "family";
+    enteredDate = "29/3/2025"
 
     // Mock the middleware
     app.use((req, _res, next) => {
@@ -103,7 +108,8 @@ describe("POST /claim-start", () => {
       req.session = mockSession;
 
       req.body = {
-        category: formData,
+        category: enteredLawCategory,
+        date: enteredDate
       };
 
       next();
@@ -122,15 +128,15 @@ describe("POST /claim-start", () => {
       .expect(302)
       .expect("Location", "/fee-entry");
 
-    // Save value so result page can load it
     expect(mockSession.data.lawCategory).toEqual("family");
+    expect(mockSession.data.startDate).toEqual("29/3/2025");
 
     expect(isValidLawCategory).toHaveBeenCalledWith("family");
   });
 
   describe("should error", () => {
-    it("when data from form is missing", async () => {
-      formData = null;
+    it("when law category from form is missing", async () => {
+      enteredLawCategory = null;
 
       const response = await request(app)
         .post(claimStartUrl)
@@ -140,11 +146,27 @@ describe("POST /claim-start", () => {
       expect(response.text).toContain("An error occurred");
 
       expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
+
     });
+
+  it("when start date from form is missing", async () => {
+    enteredDate = null;
+
+    const response = await request(app)
+      .post(claimStartUrl)
+      .expect("Content-Type", /html/)
+      .expect(200);
+
+    expect(response.text).toContain("An error occurred");
+
+    expect(mockSession.data.lawCategory).toBeUndefined();
+    expect(mockSession.data.startDate).toBeUndefined();
+
   });
 
-  it("when data is not valid category", async () => {
-    formData = "medical-malpractice";
+  it("when law category is not valid category", async () => {
+    enteredLawCategory = "medical-malpractice";
 
     isValidLawCategory.mockReturnValue(false);
 
@@ -159,3 +181,5 @@ describe("POST /claim-start", () => {
     expect(isValidLawCategory).toHaveBeenCalledWith("medical-malpractice");
   });
 });
+
+})
