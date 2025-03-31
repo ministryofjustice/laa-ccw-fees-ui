@@ -7,7 +7,7 @@ import {
   getLawCategories,
 } from "../service/lawCategoryService";
 import { getUrl } from "../routes/urls";
-import { todayString, validateEnteredDate } from "../utils/dateTimeUtils";
+import { todayString, validateEnteredDate, DateInputError } from "../utils/dateTimeUtils";
 
 jest.mock("../service/lawCategoryService", () => (
 {

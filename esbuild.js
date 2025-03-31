@@ -34,7 +34,7 @@ const copyGovukAssets = async () => {
  * that your SCSS can reference. Adjust the source and destination paths as needed.
  * @async
  * @returns {Promise<void>} Resolves when the assets are copied successfully. 
-*/
+ */
 const copyMojAssets = async () => {
   try {
     await fs.copy(
@@ -190,6 +190,11 @@ const buildGovukFrontend = async () => {
     });
 };
 
+/**
+ * Builds MOJ frontend files separately.
+ * @async
+ * @returns {Promise<void>} Resolves when `moj-frontend.js` is copied successfully.
+ */
 const buildMojFrontend = async () => {
   await esbuild
     .build({
@@ -222,7 +227,7 @@ const build = async () => {
     await buildScss();
 
     // Build JavaScript files in parallel
-    await Promise.all([buildAppJs(), buildCustomJs(), buildGovukFrontend()]);
+    await Promise.all([buildAppJs(), buildCustomJs(), buildGovukFrontend(), buildMojFrontend()]);
 
     console.log("✅ Build completed successfully.");
   } catch (error) {

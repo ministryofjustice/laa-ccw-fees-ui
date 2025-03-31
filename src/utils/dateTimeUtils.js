@@ -1,10 +1,19 @@
 import { format, isValid, parse } from "date-fns";
 const DATE_FORMAT = "dd/MM/yyyy";
 
+/**
+ * Return today's date in GB format
+ * @returns {string} today's date
+ */
 export function todayString() {
     return format(new Date(), DATE_FORMAT)
 }
 
+/**
+ * Prepend month and date with 0 if single-digit provided
+ * @param {string} inputDate - date user entered in form
+ * @returns {string} - same date with additional 0 padding if necessary 
+ */
 function addMissingZeroes(inputDate){
     const [day, month, year] = inputDate.split('/');
 
@@ -21,6 +30,12 @@ function addMissingZeroes(inputDate){
 
 }
 
+/**
+ * Check date user entered is valid - correct format, a real date and not in the future
+ * @param {string} inputDate - date user entered
+ * @returns {boolean} true if valid date
+ * @throws {DateInputError} with error context
+ */
 export function validateEnteredDate(inputDate){
 
     const formattedInput = addMissingZeroes(inputDate)
@@ -46,7 +61,14 @@ export function validateEnteredDate(inputDate){
 
 };
 
+/**
+ * Error wrapper for user date input issues
+ */
 class DateInputError extends Error{
+    /**
+     * Create DateInputError
+     * @param {string} message - reason date is invalid
+     */
     constructor(message){
         super("Date input error: " + message);
     }
