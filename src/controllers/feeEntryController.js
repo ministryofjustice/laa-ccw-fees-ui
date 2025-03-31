@@ -27,13 +27,11 @@ export function showFeeEntryPage(req, res) {
  */
 export async function postFeeEntryPage(req, res) {
   try {
-    console.log("FEE " + req.body.fee)
+    console.log("FEE " + req.body.fee);
     const fee = req.body.fee;
     if (fee == null || isNaN(fee)) {
       throw new Error("Fee not defined");
     }
-
-
 
     const response = await req.axiosMiddleware.post("/fees/" + fee);
 

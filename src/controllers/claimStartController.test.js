@@ -1,11 +1,12 @@
 import { postClaimStartPage, showClaimStartPage } from "./claimStartController";
 import {
-    getLawCategories,
-    isValidLawCategory,
+  getLawCategories,
+  isValidLawCategory,
 } from "../service/lawCategoryService";
 import {
-    todayString,
-    validateEnteredDate
+  todayString,
+  validateEnteredDate,
+  DateInputError,
 } from "../utils/dateTimeUtils";
 import { getSessionData } from "../utils";
 import { getUrl } from "../routes/urls";
@@ -16,192 +17,177 @@ jest.mock("../utils/dateTimeUtils");
 
 jest.mock("../utils/sessionHelper");
 
-const today = "31/03/2025"
+const today = "31/03/2025";
 const lawCategories = [
-    {
-        id: "family",
-        description: "Family",
-    },
-    {
-        id: "immigration",
-        description: "Immigration",
-    },
-]
-const familyLaw = "family"
+  {
+    id: "family",
+    description: "Family",
+  },
+  {
+    id: "immigration",
+    description: "Immigration",
+  },
+];
+const familyLaw = "family";
 
 describe("showClaimStartPage", () => {
+  let req = {
+    csrfToken: jest.fn(),
+  };
+  let res = {
+    render: jest.fn(),
+  };
 
-    let req = {
-        csrfToken: jest.fn()
-    }
-    let res = {
-        render: jest.fn()
-    }
+  beforeEach(() => {
+    todayString.mockReturnValue(today);
+    getLawCategories.mockReturnValue(lawCategories);
+    getSessionData.mockReturnValue({});
 
-    beforeEach(() => {
+    req.csrfToken.mockReturnValue("mocked-csrf-token");
+  });
 
-        todayString.mockReturnValue(today);
-        getLawCategories.mockReturnValue(lawCategories);
-        getSessionData.mockReturnValue({});
+  it("should render claim start page", () => {
+    showClaimStartPage(req, res);
 
-        req.csrfToken.mockReturnValue("mocked-csrf-token");
+    expect(res.render).toHaveBeenCalledWith("main/claimStart", {
+      categories: lawCategories,
+      csrfToken: "mocked-csrf-token",
+      today: today,
+    });
+  });
 
-    })
-
-    it("should render claim start page", () => {
-
-        showClaimStartPage(req, res);
-
-        expect(res.render).toHaveBeenCalledWith("main/claimStart", {
-            "categories": lawCategories,
-            csrfToken: "mocked-csrf-token",
-            today: today
-        })
-
+  it("should render error page if fails to load page", async () => {
+    req.csrfToken.mockImplementation(() => {
+      throw new Error("token problems");
     });
 
-    it("should render error page if fails to load page", async () => {
-        req.csrfToken.mockImplementation(() => {
-            throw new Error("token problems");
-        });
+    showClaimStartPage(req, res);
 
-        showClaimStartPage(req, res);
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred.",
+      status: "An error occurred",
+    });
+  });
 
-        expect(res.render).toHaveBeenCalledWith("main/error", {
-            "error": "An error occurred.",
-            "status": "An error occurred"
-        })
+  it("should render error page if no existing session data already (as skipped workflow)", async () => {
+    getSessionData.mockImplementation(() => {
+      throw new Error("No session data found");
     });
 
-    it("should render error page if no existing session data already (as skipped workflow)", async () => {
-        getSessionData.mockImplementation(() => { throw new Error("No session data found") })
+    showClaimStartPage(req, res);
 
-        showClaimStartPage(req, res);
-
-        expect(res.render).toHaveBeenCalledWith("main/error", {
-            "error": "An error occurred.",
-            "status": "An error occurred"
-        })
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred.",
+      status: "An error occurred",
     });
-
-})
+  });
+});
 
 describe("postClaimStartPage", () => {
+  let body = {};
+  let sessionData = {};
 
-    let body = {}
-    let sessionData = {}
+  let req = {
+    session: {
+      data: sessionData,
+    },
+    body: body,
+  };
+  let res = {
+    render: jest.fn(),
+    redirect: jest.fn(),
+  };
 
-    let req = {
-        session: {
-            data: sessionData
-        },
-        body: body
-    }
-    let res = {
-        render: jest.fn(),
-        redirect: jest.fn()
-    }
+  beforeEach(() => {
+    isValidLawCategory.mockReturnValue(true);
+    validateEnteredDate.mockReturnValue(true);
 
-    beforeEach(() => {
-        isValidLawCategory.mockReturnValue(true);
-        validateEnteredDate.mockReturnValue(true);
+    body.category = familyLaw;
+    body.date = today;
+  });
 
-        body.category = familyLaw;
-        body.date = today;
+  afterEach(() => {
+    sessionData = {};
+  });
 
-    })
+  it("should redirect to result page if valid form data is supplied", () => {
+    postClaimStartPage(req, res);
 
-    afterEach(() => {
-        sessionData = {}
-    })
+    expect(res.redirect).toHaveBeenCalledWith(getUrl["feeEntry"]);
+    expect(sessionData.lawCategory).toEqual(familyLaw);
+    expect(sessionData.startDate).toEqual(today);
+  });
 
-    it("should redirect to result page if valid form data is supplied", () => {
+  it("render error page when law category from form is missing", async () => {
+    body.category = null;
 
-        postClaimStartPage(req, res);
+    postClaimStartPage(req, res);
 
-        expect(res.redirect).toHaveBeenCalledWith(getUrl["feeEntry"])
-        expect(sessionData.lawCategory).toEqual(familyLaw);
-        expect(sessionData.startDate).toEqual(today);  
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred posting the answer.",
+      status: "An error occurred",
+    });
+    expect(sessionData.lawCategory).toBeUndefined();
+    expect(sessionData.startDate).toBeUndefined();
+  });
 
+  it("render error page when start date from form is missing", async () => {
+    body.date = null;
+
+    postClaimStartPage(req, res);
+
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred posting the answer.",
+      status: "An error occurred",
+    });
+    expect(sessionData.lawCategory).toBeUndefined();
+    expect(sessionData.startDate).toBeUndefined();
+  });
+
+  it("render error page when law category is invalid", async () => {
+    isValidLawCategory.mockReturnValue(false);
+
+    postClaimStartPage(req, res);
+
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred posting the answer.",
+      status: "An error occurred",
     });
 
-    it("render error page when law category from form is missing", async () => {
-        body.category = null;
+    expect(sessionData.lawCategory).toBeUndefined();
+    expect(sessionData.startDate).toBeUndefined();
+    expect(isValidLawCategory).toHaveBeenCalledWith(familyLaw);
+  });
 
-        postClaimStartPage(req, res);
+  it("render error page when date validation returns false", async () => {
+    validateEnteredDate.mockReturnValue(false);
 
-        expect(res.render).toHaveBeenCalledWith("main/error", {
-            "error": "An error occurred posting the answer.",
-            "status": "An error occurred"
-        })
-        expect(sessionData.lawCategory).toBeUndefined();
-        expect(sessionData.startDate).toBeUndefined();  
+    postClaimStartPage(req, res);
 
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred posting the answer.",
+      status: "An error occurred",
     });
 
-    it("render error page when start date from form is missing", async () => {
-        body.date = null;
+    expect(sessionData.lawCategory).toBeUndefined();
+    expect(sessionData.startDate).toBeUndefined();
+    expect(validateEnteredDate).toHaveBeenCalledWith(today);
+  });
 
-        postClaimStartPage(req, res);
-
-        expect(res.render).toHaveBeenCalledWith("main/error", {
-            "error": "An error occurred posting the answer.",
-            "status": "An error occurred"
-        })
-        expect(sessionData.lawCategory).toBeUndefined();
-        expect(sessionData.startDate).toBeUndefined();  
-
+  it("render error page when date validation throws error", async () => {
+    validateEnteredDate.mockImplementation(() => {
+      throw new DateInputError("Date error");
     });
 
-    it("render error page when law category is invalid", async () => {
-        isValidLawCategory.mockReturnValue(false);
+    postClaimStartPage(req, res);
 
-        postClaimStartPage(req, res);
-
-        expect(res.render).toHaveBeenCalledWith("main/error", {
-            "error": "An error occurred posting the answer.",
-            "status": "An error occurred"
-        })
-
-        expect(sessionData.lawCategory).toBeUndefined();
-        expect(sessionData.startDate).toBeUndefined();  
-        expect(isValidLawCategory).toHaveBeenCalledWith(familyLaw);
-
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred posting the answer.",
+      status: "An error occurred",
     });
 
-    it("render error page when date validation returns false", async () => {
-        validateEnteredDate.mockReturnValue(false);
-
-        postClaimStartPage(req, res);
-
-        expect(res.render).toHaveBeenCalledWith("main/error", {
-            "error": "An error occurred posting the answer.",
-            "status": "An error occurred"
-        })
-
-        expect(sessionData.lawCategory).toBeUndefined();
-        expect(sessionData.startDate).toBeUndefined();  
-        expect(validateEnteredDate).toHaveBeenCalledWith(today);
-
-    });
-
-    it("render error page when date validation throws error", async () => {
-      validateEnteredDate.mockImplementation(() => {
-        throw new DateInputError("Date error");
-      });
-
-        postClaimStartPage(req, res);
-
-        expect(res.render).toHaveBeenCalledWith("main/error", {
-            "error": "An error occurred posting the answer.",
-            "status": "An error occurred"
-        })
-
-        expect(sessionData.lawCategory).toBeUndefined();
-        expect(sessionData.startDate).toBeUndefined();  
-        expect(validateEnteredDate).toHaveBeenCalledWith(today);
-
-    });
-
-})
-
+    expect(sessionData.lawCategory).toBeUndefined();
+    expect(sessionData.startDate).toBeUndefined();
+    expect(validateEnteredDate).toHaveBeenCalledWith(today);
+  });
+});

@@ -2,7 +2,7 @@
 const urls = {
   claimStart: "claim-start",
   feeEntry: "fee-entry",
-  result: "result"
+  result: "result",
 };
 
 /**
