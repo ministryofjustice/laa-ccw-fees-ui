@@ -41,6 +41,15 @@ npm run build
 npm run start
 ```
 
+#### Run the application locally using Docker compose
+
+To run the application and the mock Fees Calculator service, as local Docker containers.
+
+```
+docker compose build
+docker compose up
+```
+
 #### Node Version Manager
 
 You may have to tell your local machine to use the latest version of node already installed on your device, before installing and running the application. Use the following command.

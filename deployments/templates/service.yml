@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: laa-ccw-fees-ui-service
+spec:
+  selector:
+    app: laa-ccw-fees-ui # this should match the pod label in deployment.yml
+  ports:
+    - name: https
+      port: 3000
+      targetPort: 3000

@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      # DEV API
+      #      - API_PROTOCOL=https
+      #      - API_HOST=laa-ccw-fees-service-dev.apps.live.cloud-platform.service.justice.gov.uk
+      #      - API_VERSION=v1
+      - API_PROTOCOL=http
+      - API_HOST=fees-calculator-service:8080
+      - API_VERSION=v1
+    env_file:
+      - .env
+    networks:
+      - laa
+
+  fees-service:
+    image: wiremock/wiremock:3.12.1
+    container_name: fees-calculator-service
+    entrypoint:
+      [
+        "/docker-entrypoint.sh",
+        "--global-response-templating",
+        "--disable-gzip",
+        "--verbose",
+      ]
+    volumes:
+      - ./wiremock/mappings/fees-service:/home/wiremock/mappings
+    restart: always
+    ports:
+      - "9091:8080"
+    networks:
+      - laa
+
+networks:
+  laa:

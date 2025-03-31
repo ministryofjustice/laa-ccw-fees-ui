@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/matter-codes"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": ["FAMA", "FAMC", "FAMD"]
+  }
+}
