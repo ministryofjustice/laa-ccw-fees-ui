@@ -7,18 +7,21 @@ import {
   getLawCategories,
 } from "../service/lawCategoryService";
 import { getUrl } from "../routes/urls";
-import { todayString, validateEnteredDate, DateInputError } from "../utils/dateTimeUtils";
+import {
+  todayString,
+  validateEnteredDate,
+  DateInputError,
+} from "../utils/dateTimeUtils";
 
-jest.mock("../service/lawCategoryService", () => (
-{
+jest.mock("../service/lawCategoryService", () => ({
   getLawCategories: jest.fn(),
   isValidLawCategory: jest.fn(),
 }));
 
 jest.mock("../utils/DateTimeUtils", () => ({
   validateEnteredDate: jest.fn(),
-  todayString: jest.fn()
-}))
+  todayString: jest.fn(),
+}));
 
 const claimStartUrl = getUrl("claimStart");
 
@@ -42,7 +45,6 @@ describe("GET /claim-start", () => {
   todayString.mockReturnValue("31/03/2025");
 
   beforeEach(() => {
-
     app.use((req, _res, next) => {
       req.csrfToken = csrfMock;
       mockSession = {
@@ -65,7 +67,7 @@ describe("GET /claim-start", () => {
       .expect("Content-Type", /html/)
       .expect(200);
 
-    const pageContent = response.text
+    const pageContent = response.text;
 
     expect(pageContent).toContain("Category of law");
     expect(pageContent).toContain("Family");
@@ -109,18 +111,18 @@ describe("POST /claim-start", () => {
     enteredLawCategory = "family";
     enteredDate = "31/03/2025";
 
-    validateEnteredDate.mockReturnValue(true)
+    validateEnteredDate.mockReturnValue(true);
 
     app.use((req, _res, next) => {
       mockSession = {
         data: {},
       };
-      
+
       req.session = mockSession;
 
       req.body = {
         category: enteredLawCategory,
-        date: enteredDate
+        date: enteredDate,
       };
 
       next();
@@ -158,75 +160,71 @@ describe("POST /claim-start", () => {
 
       expect(mockSession.data.lawCategory).toBeUndefined();
       expect(mockSession.data.startDate).toBeUndefined();
-
     });
 
-  it("when start date from form is missing", async () => {
-    enteredDate = null;
+    it("when start date from form is missing", async () => {
+      enteredDate = null;
 
-    const response = await request(app)
-      .post(claimStartUrl)
-      .expect("Content-Type", /html/)
-      .expect(200);
+      const response = await request(app)
+        .post(claimStartUrl)
+        .expect("Content-Type", /html/)
+        .expect(200);
 
-    expect(response.text).toContain("An error occurred");
+      expect(response.text).toContain("An error occurred");
 
-    expect(mockSession.data.lawCategory).toBeUndefined();
-    expect(mockSession.data.startDate).toBeUndefined();
-
-  });
-
-  it("when law category is not valid category", async () => {
-    enteredLawCategory = "medical-malpractice";
-
-    isValidLawCategory.mockReturnValue(false);
-
-    const response = await request(app)
-      .post(claimStartUrl)
-      .expect("Content-Type", /html/)
-      .expect(200);
-
-    expect(response.text).toContain("An error occurred");
-
-    expect(mockSession.data.lawCategory).toBeUndefined();
-    expect(mockSession.data.startDate).toBeUndefined();
-    expect(isValidLawCategory).toHaveBeenCalledWith("medical-malpractice");
-  });
-
-  it("when date is not valid and returns false", async () => {
-    isValidLawCategory.mockReturnValue(true);
-    validateEnteredDate.mockReturnValue(false);
-
-    const response = await request(app)
-      .post(claimStartUrl)
-      .expect("Content-Type", /html/)
-      .expect(200);
-
-    expect(response.text).toContain("An error occurred");
-
-    expect(mockSession.data.lawCategory).toBeUndefined();
-    expect(mockSession.data.startDate).toBeUndefined();
-    expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
-  });
-
-  it("when date is not valid and throws date error", async () => {
-    isValidLawCategory.mockReturnValue(true);
-    validateEnteredDate.mockImplementation(() => {
-      throw new DateInputError("Date error");
+      expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
     });
 
-    const response = await request(app)
-      .post(claimStartUrl)
-      .expect("Content-Type", /html/)
-      .expect(200);
+    it("when law category is not valid category", async () => {
+      enteredLawCategory = "medical-malpractice";
 
-    expect(response.text).toContain("An error occurred");
+      isValidLawCategory.mockReturnValue(false);
 
-    expect(mockSession.data.lawCategory).toBeUndefined();
-    expect(mockSession.data.startDate).toBeUndefined();
-    expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
+      const response = await request(app)
+        .post(claimStartUrl)
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+
+      expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
+      expect(isValidLawCategory).toHaveBeenCalledWith("medical-malpractice");
+    });
+
+    it("when date is not valid and returns false", async () => {
+      isValidLawCategory.mockReturnValue(true);
+      validateEnteredDate.mockReturnValue(false);
+
+      const response = await request(app)
+        .post(claimStartUrl)
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+
+      expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
+      expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
+    });
+
+    it("when date is not valid and throws date error", async () => {
+      isValidLawCategory.mockReturnValue(true);
+      validateEnteredDate.mockImplementation(() => {
+        throw new DateInputError("Date error");
+      });
+
+      const response = await request(app)
+        .post(claimStartUrl)
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+
+      expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
+      expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
+    });
   });
-
 });
-
-})

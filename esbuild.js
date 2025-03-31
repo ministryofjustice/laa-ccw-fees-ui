@@ -33,17 +33,19 @@ const copyGovukAssets = async () => {
  * Copies selected MOJ assets (e.g. header crest images) into a folder
  * that your SCSS can reference. Adjust the source and destination paths as needed.
  * @async
- * @returns {Promise<void>} Resolves when the assets are copied successfully. 
+ * @returns {Promise<void>} Resolves when the assets are copied successfully.
  */
 const copyMojAssets = async () => {
   try {
     await fs.copy(
-        path.resolve('./node_modules/@ministryofjustice/frontend/moj/assets/images'),
-        path.resolve('./public/assets/images')
+      path.resolve(
+        "./node_modules/@ministryofjustice/frontend/moj/assets/images",
+      ),
+      path.resolve("./public/assets/images"),
     );
-    console.log('✅ MOJ assets copied successfully.');
+    console.log("✅ MOJ assets copied successfully.");
   } catch (error) {
-    console.error('❌ Failed to copy MOJ assets:', error);
+    console.error("❌ Failed to copy MOJ assets:", error);
     process.exit(1);
   }
 };
@@ -84,11 +86,8 @@ const buildScss = async () => {
       plugins: [
         sassPlugin({
           resolveDir: path.resolve("src/scss"),
-          loadPaths: [
-            path.resolve('.'),
-            path.resolve('node_modules')
-          ],
-          publicPath: '/assets',
+          loadPaths: [path.resolve("."), path.resolve("node_modules")],
+          publicPath: "/assets",
           /**
            * Transforms SCSS content to update asset paths.
            * @param {string} source - Original SCSS source content.
@@ -199,7 +198,7 @@ const buildMojFrontend = async () => {
   await esbuild
     .build({
       entryPoints: [
-'./node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js',
+        "./node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js",
       ],
       bundle: false, // No need to bundle, just copy
       outfile: `public/js/moj-frontend.${buildNumber}.min.js`,
@@ -222,12 +221,17 @@ const build = async () => {
     // Copy assets
     await copyGovukAssets();
     await copyMojAssets();
-    
+
     // Build SCSS
     await buildScss();
 
     // Build JavaScript files in parallel
-    await Promise.all([buildAppJs(), buildCustomJs(), buildGovukFrontend(), buildMojFrontend()]);
+    await Promise.all([
+      buildAppJs(),
+      buildCustomJs(),
+      buildGovukFrontend(),
+      buildMojFrontend(),
+    ]);
 
     console.log("✅ Build completed successfully.");
   } catch (error) {
