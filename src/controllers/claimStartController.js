@@ -3,6 +3,7 @@ import {
   getLawCategories,
 } from "../service/lawCategoryService";
 import { getSessionData } from "../utils";
+import { validateEnteredDate, todayString } from "../utils/dateTimeUtils";
 
 /**
  * Load the page for the user entering a Law Category
@@ -16,6 +17,7 @@ export function showClaimStartPage(req, res) {
     res.render("main/claimStart", {
       csrfToken: req.csrfToken(),
       categories: getLawCategories(),
+      today: todayString()
     });
   } catch (ex) {
     console.error("Error loading page %s: %s", req.originalUrl, ex.message);
@@ -35,10 +37,11 @@ export function showClaimStartPage(req, res) {
 export function postClaimStartPage(req, res) {
   try {
     const category = req.body.category;
-
+    console.log("here")
     if (category == null) {
       throw new Error("Law Category not defined");
     }
+    console.log("here2")
 
     if (!isValidLawCategory(category)) {
       throw new Error("Law Category is not valid");
@@ -46,10 +49,12 @@ export function postClaimStartPage(req, res) {
 
     const date = req.body.date;
     if (date == null){
-      throw new Error("Date case was opened is not valid");
+      throw new Error("Date case was opened is not defined");
     }
 
-    //TODO probably needs to validate its not in the future??
+    if (!validateEnteredDate(date)) {
+      throw new Error("Date is not valid")
+    }
 
     req.session.data.startDate = date;
     req.session.data.lawCategory = category;

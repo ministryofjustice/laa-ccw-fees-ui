@@ -66,13 +66,13 @@ describe("POST /fee-entry", () => {
   let app;
   let mockSession = {};
   let formData;
-  const renderMock = jest.fn();
+  const apiMock = jest.fn();
   app = express();
 
   beforeEach(() => {
     formData = 123;
     mockSession = {};
-    renderMock.mockReset();
+    apiMock.mockReset();
 
     // Mock the middleware
     app.use((req, _res, next) => {
@@ -82,7 +82,7 @@ describe("POST /fee-entry", () => {
 
       // Make sure it exists
       req.axiosMiddleware = req.axiosMiddleware || {};
-      req.axiosMiddleware.post = renderMock;
+      req.axiosMiddleware.post = apiMock;
       req.session = mockSession;
 
       req.body = {
@@ -98,7 +98,7 @@ describe("POST /fee-entry", () => {
   });
 
   it("should redirect to result page if successful call service", async () => {
-    renderMock.mockReturnValue({
+    apiMock.mockReturnValue({
       status: 200,
       data: "236.00",
     });
@@ -111,12 +111,12 @@ describe("POST /fee-entry", () => {
     // Save value so result page can load it
     expect(mockSession.data.result).toEqual("236.00");
 
-    expect(renderMock).toHaveBeenCalledWith("/fees/123");
+    expect(apiMock).toHaveBeenCalledWith("/fees/123");
   });
 
   describe("should error", () => {
     it("when api call fails", async () => {
-      renderMock.mockImplementation(() => {
+      apiMock.mockImplementation(() => {
         throw new Error("API connection issue");
       });
 
@@ -129,7 +129,7 @@ describe("POST /fee-entry", () => {
 
       expect(mockSession.data.result).toBeUndefined();
 
-      expect(renderMock).toHaveBeenCalledWith("/fees/123");
+      expect(apiMock).toHaveBeenCalledWith("/fees/123");
     });
 
     it("when data from form is missing", async () => {
@@ -144,7 +144,7 @@ describe("POST /fee-entry", () => {
 
       expect(mockSession.data.result).toBeUndefined();
 
-      expect(renderMock).toHaveBeenCalledTimes(0);
+      expect(apiMock).toHaveBeenCalledTimes(0);
     });
 
     it("when data from form is not the right type", async () => {
@@ -159,7 +159,7 @@ describe("POST /fee-entry", () => {
 
       expect(mockSession.data.result).toBeUndefined();
 
-      expect(renderMock).toHaveBeenCalledTimes(0);
+      expect(apiMock).toHaveBeenCalledTimes(0);
     });
   });
 });

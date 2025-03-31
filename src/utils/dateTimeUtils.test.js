@@ -2,7 +2,7 @@ import { validateEnteredDate, todayString, DateInputError } from "./dateTimeUtil
 
 const MARCH = 2; //Months are zero-indexed
 
-describe("wasValidDateEntered", () => {
+describe("validateEnteredDate", () => {
 
     beforeAll(() => {
         jest.useFakeTimers();
@@ -68,26 +68,6 @@ describe("wasValidDateEntered", () => {
 
     })
 })
-
-// describe ("isDateAllowed", () => {
-
-
-//     it("should return true if date in past", () => {
-//         expect(isDateAllowed("30/03/2025")).toEqual(true)
-//     })
-
-//     it("should return true if date is today", () => {
-//         expect(isDateAllowed("31/03/2025")).toEqual(true)
-//     })
-
-//     it("should return false if date in future", () => {
-//         expect(isDateAllowed("01/04/2025")).toEqual(false)
-//     })
-
-//     it("should return false if date is invalid", () => {
-//         expect(isDateAllowed("31/04/2025")).toEqual(false)
-//     })
-// })
 
 describe("todayString", () => {
     beforeAll(() => {

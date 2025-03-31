@@ -7,11 +7,18 @@ import {
   getLawCategories,
 } from "../service/lawCategoryService";
 import { getUrl } from "../routes/urls";
+import { todayString, validateEnteredDate } from "../utils/dateTimeUtils";
 
-jest.mock("../service/lawCategoryService", () => ({
+jest.mock("../service/lawCategoryService", () => (
+{
   getLawCategories: jest.fn(),
   isValidLawCategory: jest.fn(),
 }));
+
+jest.mock("../utils/DateTimeUtils", () => ({
+  validateEnteredDate: jest.fn(),
+  todayString: jest.fn()
+}))
 
 const claimStartUrl = getUrl("claimStart");
 
@@ -32,8 +39,10 @@ describe("GET /claim-start", () => {
     },
   ]);
 
+  todayString.mockReturnValue("31/03/2025");
+
   beforeEach(() => {
-    // Mock the middleware
+
     app.use((req, _res, next) => {
       req.csrfToken = csrfMock;
       mockSession = {
@@ -98,13 +107,15 @@ describe("POST /claim-start", () => {
 
   beforeEach(() => {
     enteredLawCategory = "family";
-    enteredDate = "29/3/2025"
+    enteredDate = "31/03/2025";
 
-    // Mock the middleware
+    validateEnteredDate.mockReturnValue(true)
+
     app.use((req, _res, next) => {
       mockSession = {
         data: {},
       };
+      
       req.session = mockSession;
 
       req.body = {
@@ -129,7 +140,7 @@ describe("POST /claim-start", () => {
       .expect("Location", "/fee-entry");
 
     expect(mockSession.data.lawCategory).toEqual("family");
-    expect(mockSession.data.startDate).toEqual("29/3/2025");
+    expect(mockSession.data.startDate).toEqual("31/03/2025");
 
     expect(isValidLawCategory).toHaveBeenCalledWith("family");
   });
@@ -178,8 +189,44 @@ describe("POST /claim-start", () => {
     expect(response.text).toContain("An error occurred");
 
     expect(mockSession.data.lawCategory).toBeUndefined();
+    expect(mockSession.data.startDate).toBeUndefined();
     expect(isValidLawCategory).toHaveBeenCalledWith("medical-malpractice");
   });
+
+  it("when date is not valid and returns false", async () => {
+    isValidLawCategory.mockReturnValue(true);
+    validateEnteredDate.mockReturnValue(false);
+
+    const response = await request(app)
+      .post(claimStartUrl)
+      .expect("Content-Type", /html/)
+      .expect(200);
+
+    expect(response.text).toContain("An error occurred");
+
+    expect(mockSession.data.lawCategory).toBeUndefined();
+    expect(mockSession.data.startDate).toBeUndefined();
+    expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
+  });
+
+  it("when date is not valid and throws date error", async () => {
+    isValidLawCategory.mockReturnValue(true);
+    validateEnteredDate.mockImplementation(() => {
+      throw new DateInputError("Date error");
+    });
+
+    const response = await request(app)
+      .post(claimStartUrl)
+      .expect("Content-Type", /html/)
+      .expect(200);
+
+    expect(response.text).toContain("An error occurred");
+
+    expect(mockSession.data.lawCategory).toBeUndefined();
+    expect(mockSession.data.startDate).toBeUndefined();
+    expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
+  });
+
 });
 
 })
