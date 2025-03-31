@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "/v1/fees/([0-9]+)"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "body": "100.00"
+  }
+}
