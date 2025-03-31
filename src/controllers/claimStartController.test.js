@@ -18,7 +18,7 @@ jest.mock("../service/lawCategoryService", () => ({
   isValidLawCategory: jest.fn(),
 }));
 
-jest.mock("../utils/DateTimeUtils", () => ({
+jest.mock("../utils/dateTimeUtils", () => ({
   validateEnteredDate: jest.fn(),
   todayString: jest.fn(),
 }));
