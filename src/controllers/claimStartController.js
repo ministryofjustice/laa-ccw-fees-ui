@@ -1,3 +1,4 @@
+import { getUrl } from "../routes/urls";
 import {
   isValidLawCategory,
   getLawCategories,
@@ -58,7 +59,7 @@ export function postClaimStartPage(req, res) {
     req.session.data.startDate = date;
     req.session.data.lawCategory = category;
 
-    res.redirect("/fee-entry");
+    res.redirect(getUrl["feeEntry"]);
   } catch (ex) {
     console.error(
       "Error occurred during POST %s: %s",

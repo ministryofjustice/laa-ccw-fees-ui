@@ -1,230 +1,207 @@
-import request from "supertest";
-import express from "express";
-import { nunjucksSetup } from "../utils";
-import indexRouter from "../routes/index";
+import { postClaimStartPage, showClaimStartPage } from "./claimStartController";
 import {
-  isValidLawCategory,
-  getLawCategories,
+    getLawCategories,
+    isValidLawCategory,
 } from "../service/lawCategoryService";
-import { getUrl } from "../routes/urls";
 import {
-  todayString,
-  validateEnteredDate,
-  DateInputError,
+    todayString,
+    validateEnteredDate
 } from "../utils/dateTimeUtils";
+import { getSessionData } from "../utils";
+import { getUrl } from "../routes/urls";
 
-jest.mock("../service/lawCategoryService", () => ({
-  getLawCategories: jest.fn(),
-  isValidLawCategory: jest.fn(),
-}));
+jest.mock("../service/lawCategoryService");
 
-jest.mock("../utils/dateTimeUtils", () => ({
-  validateEnteredDate: jest.fn(),
-  todayString: jest.fn(),
-}));
+jest.mock("../utils/dateTimeUtils");
 
-const claimStartUrl = getUrl("claimStart");
+jest.mock("../utils/sessionHelper");
 
-describe("GET /claim-start", () => {
-  let app;
-  const csrfMock = jest.fn();
-  app = express();
-  let mockSession;
-
-  getLawCategories.mockReturnValue([
+const today = "31/03/2025"
+const lawCategories = [
     {
-      id: "family",
-      description: "Family",
+        id: "family",
+        description: "Family",
     },
     {
-      id: "immigration",
-      description: "Immigration",
+        id: "immigration",
+        description: "Immigration",
     },
-  ]);
+]
+const familyLaw = "family"
 
-  todayString.mockReturnValue("31/03/2025");
+describe("showClaimStartPage", () => {
 
-  beforeEach(() => {
-    app.use((req, _res, next) => {
-      req.csrfToken = csrfMock;
-      mockSession = {
-        data: {},
-      };
-      req.session = mockSession;
+    let req = {
+        csrfToken: jest.fn()
+    }
+    let res = {
+        render: jest.fn()
+    }
 
-      next();
-    });
-    app.use("/", indexRouter);
+    beforeEach(() => {
 
-    // Would be nice to mock the nunjucks rendering but not managed to figure that bit out
-    nunjucksSetup(app);
-  });
+        todayString.mockReturnValue(today);
+        getLawCategories.mockReturnValue(lawCategories);
+        getSessionData.mockReturnValue({});
 
-  it("should render claim start page", async () => {
-    csrfMock.mockReturnValue("mocked-csrf-token");
-    const response = await request(app)
-      .get(claimStartUrl)
-      .expect("Content-Type", /html/)
-      .expect(200);
+        req.csrfToken.mockReturnValue("mocked-csrf-token");
 
-    const pageContent = response.text;
+    })
 
-    expect(pageContent).toContain("Category of law");
-    expect(pageContent).toContain("Family");
-    expect(pageContent).toContain("Immigration");
-    expect(pageContent).toContain("Date case was opened");
-  });
+    it("should render claim start page", () => {
 
-  it("should render error page if fails to load page", async () => {
-    csrfMock.mockImplementation(() => {
-      throw new Error("token problems");
+        showClaimStartPage(req, res);
+
+        expect(res.render).toHaveBeenCalledWith("main/claimStart", {
+            "categories": lawCategories,
+            csrfToken: "mocked-csrf-token",
+            today: today
+        })
+
     });
 
-    const response = await request(app)
-      .get(claimStartUrl)
-      .expect("Content-Type", /html/)
-      .expect(200);
+    it("should render error page if fails to load page", async () => {
+        req.csrfToken.mockImplementation(() => {
+            throw new Error("token problems");
+        });
 
-    expect(response.text).toContain("An error occurred");
-  });
+        showClaimStartPage(req, res);
 
-  it("should render error page if no existing session data already (as skipped workflow)", async () => {
-    mockSession = {};
-
-    const response = await request(app)
-      .get(claimStartUrl)
-      .expect("Content-Type", /html/)
-      .expect(200);
-
-    expect(response.text).toContain("An error occurred");
-  });
-});
-
-describe("POST /claim-start", () => {
-  let app;
-  let mockSession = {};
-  let enteredLawCategory;
-  let enteredDate;
-  app = express();
-
-  beforeEach(() => {
-    enteredLawCategory = "family";
-    enteredDate = "31/03/2025";
-
-    validateEnteredDate.mockReturnValue(true);
-
-    app.use((req, _res, next) => {
-      mockSession = {
-        data: {},
-      };
-
-      req.session = mockSession;
-
-      req.body = {
-        category: enteredLawCategory,
-        date: enteredDate,
-      };
-
-      next();
-    });
-    app.use("/", indexRouter);
-
-    // Would be nice to mock the nunjucks rendering but not managed to figure that bit out
-    nunjucksSetup(app);
-  });
-
-  it("should redirect to result page if valid form data is supplied", async () => {
-    isValidLawCategory.mockReturnValue(true);
-
-    await request(app)
-      .post(claimStartUrl)
-      .expect(302)
-      .expect("Location", "/fee-entry");
-
-    expect(mockSession.data.lawCategory).toEqual("family");
-    expect(mockSession.data.startDate).toEqual("31/03/2025");
-
-    expect(isValidLawCategory).toHaveBeenCalledWith("family");
-  });
-
-  describe("should error", () => {
-    it("when law category from form is missing", async () => {
-      enteredLawCategory = null;
-
-      const response = await request(app)
-        .post(claimStartUrl)
-        .expect("Content-Type", /html/)
-        .expect(200);
-
-      expect(response.text).toContain("An error occurred");
-
-      expect(mockSession.data.lawCategory).toBeUndefined();
-      expect(mockSession.data.startDate).toBeUndefined();
+        expect(res.render).toHaveBeenCalledWith("main/error", {
+            "error": "An error occurred.",
+            "status": "An error occurred"
+        })
     });
 
-    it("when start date from form is missing", async () => {
-      enteredDate = null;
+    it("should render error page if no existing session data already (as skipped workflow)", async () => {
+        getSessionData.mockImplementation(() => { throw new Error("No session data found") })
 
-      const response = await request(app)
-        .post(claimStartUrl)
-        .expect("Content-Type", /html/)
-        .expect(200);
+        showClaimStartPage(req, res);
 
-      expect(response.text).toContain("An error occurred");
-
-      expect(mockSession.data.lawCategory).toBeUndefined();
-      expect(mockSession.data.startDate).toBeUndefined();
+        expect(res.render).toHaveBeenCalledWith("main/error", {
+            "error": "An error occurred.",
+            "status": "An error occurred"
+        })
     });
 
-    it("when law category is not valid category", async () => {
-      enteredLawCategory = "medical-malpractice";
+})
 
-      isValidLawCategory.mockReturnValue(false);
+describe("postClaimStartPage", () => {
 
-      const response = await request(app)
-        .post(claimStartUrl)
-        .expect("Content-Type", /html/)
-        .expect(200);
+    let body = {}
+    let sessionData = {}
 
-      expect(response.text).toContain("An error occurred");
+    let req = {
+        session: {
+            data: sessionData
+        },
+        body: body
+    }
+    let res = {
+        render: jest.fn(),
+        redirect: jest.fn()
+    }
 
-      expect(mockSession.data.lawCategory).toBeUndefined();
-      expect(mockSession.data.startDate).toBeUndefined();
-      expect(isValidLawCategory).toHaveBeenCalledWith("medical-malpractice");
+    beforeEach(() => {
+        isValidLawCategory.mockReturnValue(true);
+        validateEnteredDate.mockReturnValue(true);
+
+        body.category = familyLaw;
+        body.date = today;
+
+    })
+
+    afterEach(() => {
+        sessionData = {}
+    })
+
+    it("should redirect to result page if valid form data is supplied", () => {
+
+        postClaimStartPage(req, res);
+
+        expect(res.redirect).toHaveBeenCalledWith(getUrl["feeEntry"])
+        expect(sessionData.lawCategory).toEqual(familyLaw);
+        expect(sessionData.startDate).toEqual(today);  
+
     });
 
-    it("when date is not valid and returns false", async () => {
-      isValidLawCategory.mockReturnValue(true);
-      validateEnteredDate.mockReturnValue(false);
+    it("render error page when law category from form is missing", async () => {
+        body.category = null;
 
-      const response = await request(app)
-        .post(claimStartUrl)
-        .expect("Content-Type", /html/)
-        .expect(200);
+        postClaimStartPage(req, res);
 
-      expect(response.text).toContain("An error occurred");
+        expect(res.render).toHaveBeenCalledWith("main/error", {
+            "error": "An error occurred posting the answer.",
+            "status": "An error occurred"
+        })
+        expect(sessionData.lawCategory).toBeUndefined();
+        expect(sessionData.startDate).toBeUndefined();  
 
-      expect(mockSession.data.lawCategory).toBeUndefined();
-      expect(mockSession.data.startDate).toBeUndefined();
-      expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
     });
 
-    it("when date is not valid and throws date error", async () => {
-      isValidLawCategory.mockReturnValue(true);
+    it("render error page when start date from form is missing", async () => {
+        body.date = null;
+
+        postClaimStartPage(req, res);
+
+        expect(res.render).toHaveBeenCalledWith("main/error", {
+            "error": "An error occurred posting the answer.",
+            "status": "An error occurred"
+        })
+        expect(sessionData.lawCategory).toBeUndefined();
+        expect(sessionData.startDate).toBeUndefined();  
+
+    });
+
+    it("render error page when law category is invalid", async () => {
+        isValidLawCategory.mockReturnValue(false);
+
+        postClaimStartPage(req, res);
+
+        expect(res.render).toHaveBeenCalledWith("main/error", {
+            "error": "An error occurred posting the answer.",
+            "status": "An error occurred"
+        })
+
+        expect(sessionData.lawCategory).toBeUndefined();
+        expect(sessionData.startDate).toBeUndefined();  
+        expect(isValidLawCategory).toHaveBeenCalledWith(familyLaw);
+
+    });
+
+    it("render error page when date validation returns false", async () => {
+        validateEnteredDate.mockReturnValue(false);
+
+        postClaimStartPage(req, res);
+
+        expect(res.render).toHaveBeenCalledWith("main/error", {
+            "error": "An error occurred posting the answer.",
+            "status": "An error occurred"
+        })
+
+        expect(sessionData.lawCategory).toBeUndefined();
+        expect(sessionData.startDate).toBeUndefined();  
+        expect(validateEnteredDate).toHaveBeenCalledWith(today);
+
+    });
+
+    it("render error page when date validation throws error", async () => {
       validateEnteredDate.mockImplementation(() => {
         throw new DateInputError("Date error");
       });
 
-      const response = await request(app)
-        .post(claimStartUrl)
-        .expect("Content-Type", /html/)
-        .expect(200);
+        postClaimStartPage(req, res);
 
-      expect(response.text).toContain("An error occurred");
+        expect(res.render).toHaveBeenCalledWith("main/error", {
+            "error": "An error occurred posting the answer.",
+            "status": "An error occurred"
+        })
 
-      expect(mockSession.data.lawCategory).toBeUndefined();
-      expect(mockSession.data.startDate).toBeUndefined();
-      expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
+        expect(sessionData.lawCategory).toBeUndefined();
+        expect(sessionData.startDate).toBeUndefined();  
+        expect(validateEnteredDate).toHaveBeenCalledWith(today);
+
     });
-  });
-});
+
+})
+
