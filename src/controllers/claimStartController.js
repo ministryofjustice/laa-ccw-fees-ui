@@ -37,11 +37,10 @@ export function showClaimStartPage(req, res) {
 export function postClaimStartPage(req, res) {
   try {
     const category = req.body.category;
-    console.log("here");
+
     if (category == null) {
       throw new Error("Law Category not defined");
     }
-    console.log("here2");
 
     if (!isValidLawCategory(category)) {
       throw new Error("Law Category is not valid");
