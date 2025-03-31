@@ -7,10 +7,20 @@ import {
   getLawCategories,
 } from "../service/lawCategoryService";
 import { getUrl } from "../routes/urls";
+import {
+  todayString,
+  validateEnteredDate,
+  DateInputError,
+} from "../utils/dateTimeUtils";
 
 jest.mock("../service/lawCategoryService", () => ({
   getLawCategories: jest.fn(),
   isValidLawCategory: jest.fn(),
+}));
+
+jest.mock("../utils/dateTimeUtils", () => ({
+  validateEnteredDate: jest.fn(),
+  todayString: jest.fn(),
 }));
 
 const claimStartUrl = getUrl("claimStart");
@@ -32,8 +42,9 @@ describe("GET /claim-start", () => {
     },
   ]);
 
+  todayString.mockReturnValue("31/03/2025");
+
   beforeEach(() => {
-    // Mock the middleware
     app.use((req, _res, next) => {
       req.csrfToken = csrfMock;
       mockSession = {
@@ -56,9 +67,12 @@ describe("GET /claim-start", () => {
       .expect("Content-Type", /html/)
       .expect(200);
 
-    expect(response.text).toContain("Category of law");
-    expect(response.text).toContain("Family");
-    expect(response.text).toContain("Immigration");
+    const pageContent = response.text;
+
+    expect(pageContent).toContain("Category of law");
+    expect(pageContent).toContain("Family");
+    expect(pageContent).toContain("Immigration");
+    expect(pageContent).toContain("Date case was opened");
   });
 
   it("should render error page if fails to load page", async () => {
@@ -89,21 +103,26 @@ describe("GET /claim-start", () => {
 describe("POST /claim-start", () => {
   let app;
   let mockSession = {};
-  let formData;
+  let enteredLawCategory;
+  let enteredDate;
   app = express();
 
   beforeEach(() => {
-    formData = "family";
+    enteredLawCategory = "family";
+    enteredDate = "31/03/2025";
 
-    // Mock the middleware
+    validateEnteredDate.mockReturnValue(true);
+
     app.use((req, _res, next) => {
       mockSession = {
         data: {},
       };
+
       req.session = mockSession;
 
       req.body = {
-        category: formData,
+        category: enteredLawCategory,
+        date: enteredDate,
       };
 
       next();
@@ -122,15 +141,15 @@ describe("POST /claim-start", () => {
       .expect(302)
       .expect("Location", "/fee-entry");
 
-    // Save value so result page can load it
     expect(mockSession.data.lawCategory).toEqual("family");
+    expect(mockSession.data.startDate).toEqual("31/03/2025");
 
     expect(isValidLawCategory).toHaveBeenCalledWith("family");
   });
 
   describe("should error", () => {
-    it("when data from form is missing", async () => {
-      formData = null;
+    it("when law category from form is missing", async () => {
+      enteredLawCategory = null;
 
       const response = await request(app)
         .post(claimStartUrl)
@@ -140,22 +159,72 @@ describe("POST /claim-start", () => {
       expect(response.text).toContain("An error occurred");
 
       expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
     });
-  });
 
-  it("when data is not valid category", async () => {
-    formData = "medical-malpractice";
+    it("when start date from form is missing", async () => {
+      enteredDate = null;
 
-    isValidLawCategory.mockReturnValue(false);
+      const response = await request(app)
+        .post(claimStartUrl)
+        .expect("Content-Type", /html/)
+        .expect(200);
 
-    const response = await request(app)
-      .post(claimStartUrl)
-      .expect("Content-Type", /html/)
-      .expect(200);
+      expect(response.text).toContain("An error occurred");
 
-    expect(response.text).toContain("An error occurred");
+      expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
+    });
 
-    expect(mockSession.data.lawCategory).toBeUndefined();
-    expect(isValidLawCategory).toHaveBeenCalledWith("medical-malpractice");
+    it("when law category is not valid category", async () => {
+      enteredLawCategory = "medical-malpractice";
+
+      isValidLawCategory.mockReturnValue(false);
+
+      const response = await request(app)
+        .post(claimStartUrl)
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+
+      expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
+      expect(isValidLawCategory).toHaveBeenCalledWith("medical-malpractice");
+    });
+
+    it("when date is not valid and returns false", async () => {
+      isValidLawCategory.mockReturnValue(true);
+      validateEnteredDate.mockReturnValue(false);
+
+      const response = await request(app)
+        .post(claimStartUrl)
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+
+      expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
+      expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
+    });
+
+    it("when date is not valid and throws date error", async () => {
+      isValidLawCategory.mockReturnValue(true);
+      validateEnteredDate.mockImplementation(() => {
+        throw new DateInputError("Date error");
+      });
+
+      const response = await request(app)
+        .post(claimStartUrl)
+        .expect("Content-Type", /html/)
+        .expect(200);
+
+      expect(response.text).toContain("An error occurred");
+
+      expect(mockSession.data.lawCategory).toBeUndefined();
+      expect(mockSession.data.startDate).toBeUndefined();
+      expect(validateEnteredDate).toHaveBeenCalledWith(enteredDate);
+    });
   });
 });

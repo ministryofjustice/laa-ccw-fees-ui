@@ -17,9 +17,9 @@
 
 {% block header %}
   {{ govukHeader({
-    homepageUrl: "#",
+    homepageUrl: "/",
     serviceName: config.SERVICE_NAME,
-    serviceUrl: "#"
+    serviceUrl: "/"
   }) }}
 {% endblock %}
 
@@ -33,7 +33,14 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="govuk-heading-xl">Default page template</h1>
+  {# this is implementing the common gov.uk 2/3 layout #}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% block wrappedContent %}
+        <h1 class="govuk-heading-xl">Default page template</h1>
+      {% endblock %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block footer %}
@@ -61,8 +68,12 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
   <script type="module" nonce="{{ cspNonce }}" src="/js/{{getAsset('govuk-frontend','min.js')}}"></script>
+  <script nonce="{{ cspNonce }}" src="/js/{{ getAsset('moj-frontend','min.js') }}"></script>
   <script type="module" nonce="{{ cspNonce }}">
     import { initAll } from "/js/{{getAsset('govuk-frontend','min.js')}}"
     initAll()
+  </script>
+  <script nonce="{{ cspNonce }}">
+    window.MOJFrontend?.initAll();
   </script>
 {% endblock %}

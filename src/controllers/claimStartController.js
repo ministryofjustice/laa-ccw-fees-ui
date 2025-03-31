@@ -3,6 +3,7 @@ import {
   getLawCategories,
 } from "../service/lawCategoryService";
 import { getSessionData } from "../utils";
+import { validateEnteredDate, todayString } from "../utils/dateTimeUtils";
 
 /**
  * Load the page for the user entering a Law Category
@@ -16,6 +17,7 @@ export function showClaimStartPage(req, res) {
     res.render("main/claimStart", {
       csrfToken: req.csrfToken(),
       categories: getLawCategories(),
+      today: todayString(),
     });
   } catch (ex) {
     console.error("Error loading page %s: %s", req.originalUrl, ex.message);
@@ -44,6 +46,16 @@ export function postClaimStartPage(req, res) {
       throw new Error("Law Category is not valid");
     }
 
+    const date = req.body.date;
+    if (date == null) {
+      throw new Error("Date case was opened is not defined");
+    }
+
+    if (!validateEnteredDate(date)) {
+      throw new Error("Date is not valid");
+    }
+
+    req.session.data.startDate = date;
     req.session.data.lawCategory = category;
 
     res.redirect("/fee-entry");
