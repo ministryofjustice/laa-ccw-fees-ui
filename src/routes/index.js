@@ -1,9 +1,19 @@
 import express from "express";
-const router = express.Router();
+import {
+  postClaimStartPage,
+  showClaimStartPage,
+} from "../controllers/claimStartController";
+import { getSessionData } from "../utils";
+import {
+  postFeeEntryPage,
+  showFeeEntryPage,
+} from "../controllers/feeEntryController";
+import { getLawCategoryDescription } from "../service/lawCategoryService";
+import { getUrl } from "./urls";
 
-router.get("/", async (req, res) => {
-  //TODO start page should probably clear out any left over session data
+export const router = express.Router();
 
+router.get("/", (req, res) => {
   try {
     res.render("main/index", { csrfToken: req.csrfToken() });
   } catch (ex) {
@@ -16,40 +26,38 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  try {
-    const fee = req.body.fee;
-
-    if (fee == null || isNaN(fee)) {
-      throw new Error("Fee not defined");
-    }
-
-    const response = await req.axiosMiddleware.post("/fees/" + fee);
-    const number = response.data;
-
-    // Save this so it can be displayed on the result page
-    req.session.result = number;
-
-    res.redirect("/result");
-  } catch (ex) {
-    console.error("Error occurred during POST /: {}", ex.message);
-
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred posting the answer.",
-    });
-  }
+router.post("/", (req, res) => {
+  // Remove any old data. They have restarted
+  req.session.data = {};
+  res.redirect(getUrl("claimStart"));
 });
+
+router.get(getUrl("claimStart"), showClaimStartPage);
+
+router.post(getUrl("claimStart"), postClaimStartPage);
+
+router.get("/fee-entry", showFeeEntryPage);
+
+router.post("/fee-entry", postFeeEntryPage);
 
 router.get("/result", (req, res) => {
   try {
-    const result = req.session?.result;
+    const data = getSessionData(req);
+    const result = data?.result;
 
     if (result == null) {
       throw new Error("Result not defined");
     }
 
-    res.render("main/result", { number: result });
+    const lawCategory = data?.lawCategory;
+    if (lawCategory == null) {
+      throw new Error("Law category not defined");
+    }
+
+    res.render("main/result", {
+      number: result,
+      category: getLawCategoryDescription(lawCategory),
+    });
   } catch (ex) {
     console.error("Error occurred while loading /result: {}", ex.message);
 
