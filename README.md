@@ -42,7 +42,9 @@ npm run start
 ```
 
 #### Run the application locally using Docker compose
+
 To run the application and the mock Fees Calculator service, as local Docker containers.
+
 ```
 docker compose build
 docker compose up
