@@ -10,6 +10,7 @@ import {
 } from "../controllers/feeEntryController";
 import { getLawCategoryDescription } from "../service/lawCategoryService";
 import { getUrl } from "./urls";
+import { postLondonRatePage, showLondonRatePage } from "../controllers/londonRateController";
 
 export const router = express.Router();
 
@@ -33,12 +34,13 @@ router.post("/", (req, res) => {
 });
 
 router.get(getUrl("claimStart"), showClaimStartPage);
-
 router.post(getUrl("claimStart"), postClaimStartPage);
 
-router.get("/fee-entry", showFeeEntryPage);
+router.get(getUrl("feeEntry"), showFeeEntryPage);
+router.post(getUrl("feeEntry"), postFeeEntryPage);
 
-router.post("/fee-entry", postFeeEntryPage);
+router.get(getUrl("londonRate"), showLondonRatePage);
+router.post(getUrl("londonRate"), postLondonRatePage);
 
 router.get("/result", (req, res) => {
   try {

@@ -59,7 +59,7 @@ export function postClaimStartPage(req, res) {
     req.session.data.startDate = date;
     req.session.data.lawCategory = category;
 
-    res.redirect(getUrl("feeEntry"));
+    res.redirect(getUrl("londonRate"));
   } catch (ex) {
     console.error(
       "Error occurred during POST %s: %s",
