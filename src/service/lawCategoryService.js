@@ -1,4 +1,4 @@
-//TODO could be api call in future?
+//TODO will be api call in future
 
 const lawCategories = [
   {
