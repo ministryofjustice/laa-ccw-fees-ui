@@ -1,165 +1,142 @@
-import request from "supertest";
-import express from "express";
-import { nunjucksSetup } from "../utils";
-import indexRouter from "../routes/index";
+import { postFeeEntryPage, showFeeEntryPage } from "./feeEntryController";
 
-describe("GET /fee-entry", () => {
-  let app;
-  let mockSession = {};
-  const csrfMock = jest.fn();
-  app = express();
+import { getSessionData } from "../utils";
+import { getUrl } from "../routes/urls";
+jest.mock("../utils/sessionHelper");
+
+describe("showFeeEntryPage", () => {
+  let req = {
+    csrfToken: jest.fn(),
+  };
+  let res = {
+    render: jest.fn(),
+  };
 
   beforeEach(() => {
-    mockSession = {
-      data: {},
-    };
+    getSessionData.mockReturnValue({});
 
-    // Mock the middleware
-    app.use((req, _res, next) => {
-      req.csrfToken = csrfMock;
-      req.session = mockSession;
-
-      next();
-    });
-    app.use("/", indexRouter);
-
-    // Would be nice to mock the nunjucks rendering but not managed to figure that bit out
-    nunjucksSetup(app);
+    req.csrfToken.mockReturnValue("mocked-csrf-token");
   });
 
   it("should render fee entry page", async () => {
-    csrfMock.mockReturnValue("mocked-csrf-token");
-    const response = await request(app)
-      .get("/fee-entry")
-      .expect("Content-Type", /html/)
-      .expect(200);
+    showFeeEntryPage(req, res);
 
-    expect(response.text).toContain("Enter a number");
+    expect(res.render).toHaveBeenCalledWith("main/feeEntry", {
+      csrfToken: "mocked-csrf-token",
+    });
   });
 
   it("should render error page if fails to load page", async () => {
-    csrfMock.mockImplementation(() => {
+    req.csrfToken.mockImplementation(() => {
       throw new Error("token problems");
     });
 
-    const response = await request(app)
-      .get("/fee-entry")
-      .expect("Content-Type", /html/)
-      .expect(200);
+    showFeeEntryPage(req, res);
 
-    expect(response.text).toContain("An error occurred");
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred.",
+      status: "An error occurred",
+    });
   });
 
   it("should render error page if no session data", async () => {
-    mockSession = {};
+    getSessionData.mockImplementation(() => {
+      throw new Error("No session data found");
+    });
 
-    const response = await request(app)
-      .get("/fee-entry")
-      .expect("Content-Type", /html/)
-      .expect(200);
+    showFeeEntryPage(req, res);
 
-    expect(response.text).toContain("An error occurred");
+    expect(res.render).toHaveBeenCalledWith("main/error", {
+      error: "An error occurred.",
+      status: "An error occurred",
+    });
   });
 });
 
 describe("POST /fee-entry", () => {
-  let app;
-  let mockSession = {};
-  let formData;
-  const apiMock = jest.fn();
-  app = express();
+  let sessionData = {};
+
+  let req = {
+    session: {
+      data: sessionData,
+    },
+    body: {},
+    axiosMiddleware: {
+      post: jest.fn(),
+    },
+  };
+  let res = {
+    render: jest.fn(),
+    redirect: jest.fn(),
+  };
 
   beforeEach(() => {
-    formData = 123;
-    mockSession = {};
-    apiMock.mockReset();
+    req.body.fee = "1234.56";
+  });
 
-    // Mock the middleware
-    app.use((req, _res, next) => {
-      mockSession = {
-        data: {},
-      };
-
-      // Make sure it exists
-      req.axiosMiddleware = req.axiosMiddleware || {};
-      req.axiosMiddleware.post = apiMock;
-      req.session = mockSession;
-
-      req.body = {
-        fee: formData,
-      };
-
-      next();
-    });
-    app.use("/", indexRouter);
-
-    // Would be nice to mock the nunjucks rendering but not managed to figure that bit out
-    nunjucksSetup(app);
+  afterEach(() => {
+    sessionData = {};
+    req.body = {};
   });
 
   it("should redirect to result page if successful call service", async () => {
-    apiMock.mockReturnValue({
+    req.axiosMiddleware.post.mockResolvedValue({
       status: 200,
       data: "236.00",
     });
 
-    await request(app)
-      .post("/fee-entry")
-      .expect(302)
-      .expect("Location", "/result");
+    await postFeeEntryPage(req, res);
+
+    expect(res.redirect).toHaveBeenCalledWith(getUrl("result"));
 
     // Save value so result page can load it
-    expect(mockSession.data.result).toEqual("236.00");
-
-    expect(apiMock).toHaveBeenCalledWith("/fees/123");
+    expect(sessionData.result).toEqual("236.00");
+    expect(req.axiosMiddleware.post).toHaveBeenCalledWith("/fees/1234.56");
   });
 
   describe("should error", () => {
     it("when api call fails", async () => {
-      apiMock.mockImplementation(() => {
+      req.axiosMiddleware.post.mockImplementation(() => {
         throw new Error("API connection issue");
       });
 
-      const response = await request(app)
-        .post("/fee-entry")
-        .expect("Content-Type", /html/)
-        .expect(200);
+      await postFeeEntryPage(req, res);
 
-      expect(response.text).toContain("An error occurred");
+      expect(res.render).toHaveBeenCalledWith("main/error", {
+        error: "An error occurred posting the answer.",
+        status: "An error occurred",
+      });
 
-      expect(mockSession.data.result).toBeUndefined();
-
-      expect(apiMock).toHaveBeenCalledWith("/fees/123");
+      expect(sessionData.result).toBeUndefined();
+      expect(req.axiosMiddleware.post).toHaveBeenCalledWith("/fees/1234.56");
     });
 
     it("when data from form is missing", async () => {
-      formData = null;
+      req.body.fee = null;
 
-      const response = await request(app)
-        .post("/fee-entry")
-        .expect("Content-Type", /html/)
-        .expect(200);
+      await postFeeEntryPage(req, res);
 
-      expect(response.text).toContain("An error occurred");
+      expect(res.render).toHaveBeenCalledWith("main/error", {
+        error: "An error occurred posting the answer.",
+        status: "An error occurred",
+      });
 
-      expect(mockSession.data.result).toBeUndefined();
-
-      expect(apiMock).toHaveBeenCalledTimes(0);
+      expect(sessionData.result).toBeUndefined();
+      expect(req.axiosMiddleware.post).toHaveBeenCalledTimes(0);
     });
 
     it("when data from form is not the right type", async () => {
-      formData = "hello";
+      req.body.fee = "hello";
 
-      const response = await request(app)
-        .post("/fee-entry")
-        .expect("Content-Type", /html/)
-        .expect(200);
+      await postFeeEntryPage(req, res);
 
-      expect(response.text).toContain("An error occurred");
+      expect(res.render).toHaveBeenCalledWith("main/error", {
+        error: "An error occurred posting the answer.",
+        status: "An error occurred",
+      });
 
-      expect(mockSession.data.result).toBeUndefined();
-
-      expect(apiMock).toHaveBeenCalledTimes(0);
+      expect(sessionData.result).toBeUndefined();
+      expect(req.axiosMiddleware.post).toHaveBeenCalledTimes(0);
     });
   });
 });

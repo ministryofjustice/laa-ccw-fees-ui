@@ -1,3 +1,4 @@
+import { getUrl } from "../routes/urls";
 import { getSessionData } from "../utils";
 
 /**
@@ -26,19 +27,20 @@ export function showFeeEntryPage(req, res) {
  */
 export async function postFeeEntryPage(req, res) {
   try {
+    console.log("FEE " + req.body.fee);
     const fee = req.body.fee;
-
     if (fee == null || isNaN(fee)) {
       throw new Error("Fee not defined");
     }
 
     const response = await req.axiosMiddleware.post("/fees/" + fee);
+
     const number = response.data;
 
     // Save this so it can be displayed on the result page
     req.session.data.result = number;
 
-    res.redirect("/result");
+    res.redirect(getUrl("result"));
   } catch (ex) {
     console.error("Error occurred during POST /fee-entry: {}", ex.message);
 
