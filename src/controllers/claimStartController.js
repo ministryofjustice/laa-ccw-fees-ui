@@ -7,7 +7,7 @@ import { getSessionData } from "../utils";
 import { validateEnteredDate, todayString } from "../utils/dateTimeUtils";
 
 /**
- * Load the page for the user entering a Law Category
+ * Load the page for the user entering a Law Category & Start Date
  * @param {import('express').Request} req Express request object
  * @param {import('express').Response} res Express response object
  */
