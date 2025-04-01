@@ -3,12 +3,10 @@ import {
   postClaimStartPage,
   showClaimStartPage,
 } from "../controllers/claimStartController";
-import { getSessionData } from "../utils";
 import {
   postFeeEntryPage,
   showFeeEntryPage,
 } from "../controllers/feeEntryController";
-import { getLawCategoryDescription } from "../service/lawCategoryService";
 import { getUrl } from "./urls";
 import {
   postLondonRatePage,

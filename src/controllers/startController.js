@@ -18,6 +18,11 @@ export function showStartPage(req, res) {
       }
 }
 
+/**
+ * Initialise data and start the journey
+ * @param {import('express').Request} req Express request object
+ * @param {import('express').Response} res Express response object
+ */
 export function postStartPage(req, res) {
       // Remove any old data. They have restarted
       req.session.data = {};
