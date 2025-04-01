@@ -5,6 +5,7 @@ import {
 } from "../service/lawCategoryService";
 import { getSessionData } from "../utils";
 import { validateEnteredDate, todayString } from "../utils/dateTimeUtils";
+import { pageLoadError, pageSubmitError } from "./errorController";
 
 /**
  * Load the page for the user entering a Law Category & Start Date
@@ -21,12 +22,7 @@ export function showClaimStartPage(req, res) {
       today: todayString(),
     });
   } catch (ex) {
-    console.error("Error loading page %s: %s", req.originalUrl, ex.message);
-
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred.",
-    });
+    pageLoadError(req, res, ex);
   }
 }
 
@@ -61,15 +57,6 @@ export function postClaimStartPage(req, res) {
 
     res.redirect(getUrl("londonRate"));
   } catch (ex) {
-    console.error(
-      "Error occurred during POST %s: %s",
-      req.originalUrl,
-      ex.message,
-    );
-
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred posting the answer.",
-    });
+    pageSubmitError(req, res, ex);
   }
 }

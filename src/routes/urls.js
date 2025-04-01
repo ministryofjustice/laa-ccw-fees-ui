@@ -1,5 +1,6 @@
 // To make it change urls easier during this early stage of the project
 const urls = {
+  start: "/",
   claimStart: "claim-start",
   feeEntry: "fee-entry",
   result: "result",
