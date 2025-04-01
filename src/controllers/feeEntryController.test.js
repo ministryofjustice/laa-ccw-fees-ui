@@ -34,7 +34,7 @@ describe("showFeeEntryPage", () => {
     showFeeEntryPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred.",
+      error: "An error occurred loading the page.",
       status: "An error occurred",
     });
   });
@@ -47,7 +47,7 @@ describe("showFeeEntryPage", () => {
     showFeeEntryPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred.",
+      error: "An error occurred loading the page.",
       status: "An error occurred",
     });
   });
@@ -103,7 +103,7 @@ describe("POST /fee-entry", () => {
       await postFeeEntryPage(req, res);
 
       expect(res.render).toHaveBeenCalledWith("main/error", {
-        error: "An error occurred posting the answer.",
+        error: "An error occurred saving the answer.",
         status: "An error occurred",
       });
 
@@ -117,7 +117,7 @@ describe("POST /fee-entry", () => {
       await postFeeEntryPage(req, res);
 
       expect(res.render).toHaveBeenCalledWith("main/error", {
-        error: "An error occurred posting the answer.",
+        error: "An error occurred saving the answer.",
         status: "An error occurred",
       });
 
@@ -131,7 +131,7 @@ describe("POST /fee-entry", () => {
       await postFeeEntryPage(req, res);
 
       expect(res.render).toHaveBeenCalledWith("main/error", {
-        error: "An error occurred posting the answer.",
+        error: "An error occurred saving the answer.",
         status: "An error occurred",
       });
 

@@ -1,5 +1,6 @@
 import { getLawCategoryDescription } from '../service/lawCategoryService';
 import { getSessionData } from '../utils';
+import { pageLoadError } from './errorController';
 
 /**
  * Load the page to display the result
@@ -26,11 +27,6 @@ export function showResultPage(req, res) {
       category: getLawCategoryDescription(lawCategory),
     });
   } catch (ex) {
-    console.error("Error occurred while loading /result: {}", ex.message);
-
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred loading the page.",
-    });
+    pageLoadError(req, res, ex)
   }
 }

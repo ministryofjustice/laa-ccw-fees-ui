@@ -54,7 +54,7 @@ describe("showLondonRatePage", () => {
     showLondonRatePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred.",
+      error: "An error occurred loading the page.",
       status: "An error occurred",
     });
   });
@@ -67,7 +67,7 @@ describe("showLondonRatePage", () => {
     showLondonRatePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred.",
+      error: "An error occurred loading the page.",
       status: "An error occurred",
     });
   });
@@ -113,7 +113,7 @@ describe("postLondonRatePage", () => {
     postLondonRatePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred posting the answer.",
+      error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
     expect(sessionData.londonRate).toBeUndefined();
@@ -125,7 +125,7 @@ describe("postLondonRatePage", () => {
     postLondonRatePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred posting the answer.",
+      error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
 

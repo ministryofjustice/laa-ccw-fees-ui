@@ -4,6 +4,7 @@ import {
   isValidLondonRate,
 } from "../service/londonRateService";
 import { getSessionData } from "../utils";
+import { pageLoadError, pageSubmitError } from "./errorController";
 
 /**
  * Load the page for the user entering London / Non-London Rate
@@ -19,13 +20,7 @@ export function showLondonRatePage(req, res) {
       rates: getLondonRates(),
     });
   } catch (ex) {
-    //TODO ??
-    console.error("Error loading page %s: %s", req.originalUrl, ex.message);
-
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred.",
-    });
+    pageLoadError(req, res, ex)
   }
 }
 
@@ -50,15 +45,6 @@ export function postLondonRatePage(req, res) {
 
     res.redirect(getUrl("feeEntry"));
   } catch (ex) {
-    console.error(
-      "Error occurred during POST %s: %s",
-      req.originalUrl,
-      ex.message,
-    );
-
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred posting the answer.",
-    });
+    pageSubmitError(req, res, ex)
   }
 }

@@ -64,7 +64,7 @@ describe("showClaimStartPage", () => {
     showClaimStartPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred.",
+      error: "An error occurred loading the page.",
       status: "An error occurred",
     });
   });
@@ -77,7 +77,7 @@ describe("showClaimStartPage", () => {
     showClaimStartPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred.",
+      error: "An error occurred loading the page.",
       status: "An error occurred",
     });
   });
@@ -124,7 +124,7 @@ describe("postClaimStartPage", () => {
     postClaimStartPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred posting the answer.",
+      error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
     expect(sessionData.lawCategory).toBeUndefined();
@@ -137,7 +137,7 @@ describe("postClaimStartPage", () => {
     postClaimStartPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred posting the answer.",
+      error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
     expect(sessionData.lawCategory).toBeUndefined();
@@ -150,7 +150,7 @@ describe("postClaimStartPage", () => {
     postClaimStartPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred posting the answer.",
+      error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
 
@@ -165,7 +165,7 @@ describe("postClaimStartPage", () => {
     postClaimStartPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred posting the answer.",
+      error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
 
@@ -182,7 +182,7 @@ describe("postClaimStartPage", () => {
     postClaimStartPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred posting the answer.",
+      error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
 
