@@ -113,7 +113,7 @@ describe("postClaimStartPage", () => {
   it("should redirect to result page if valid form data is supplied", () => {
     postClaimStartPage(req, res);
 
-    expect(res.redirect).toHaveBeenCalledWith(getUrl["feeEntry"]);
+    expect(res.redirect).toHaveBeenCalledWith(getUrl("feeEntry"));
     expect(sessionData.lawCategory).toEqual(familyLaw);
     expect(sessionData.startDate).toEqual(today);
   });
