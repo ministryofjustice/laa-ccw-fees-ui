@@ -1,6 +1,9 @@
-import { getUrl } from '../routes/urls';
-import { getLondonRates, isValidLondonRate } from '../service/londonRateService';
-import { getSessionData } from '../utils';
+import { getUrl } from "../routes/urls";
+import {
+  getLondonRates,
+  isValidLondonRate,
+} from "../service/londonRateService";
+import { getSessionData } from "../utils";
 
 /**
  * Load the page for the user entering London / Non-London Rate
@@ -13,8 +16,8 @@ export function showLondonRatePage(req, res) {
 
     res.render("main/londonRate", {
       csrfToken: req.csrfToken(),
-      rates: getLondonRates()
-        });
+      rates: getLondonRates(),
+    });
   } catch (ex) {
     //TODO ??
     console.error("Error loading page %s: %s", req.originalUrl, ex.message);
@@ -24,7 +27,6 @@ export function showLondonRatePage(req, res) {
       error: "An error occurred.",
     });
   }
-
 }
 
 /**

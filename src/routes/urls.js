@@ -3,7 +3,7 @@ const urls = {
   claimStart: "claim-start",
   feeEntry: "fee-entry",
   result: "result",
-  londonRate: "london-rate"
+  londonRate: "london-rate",
 };
 
 /**

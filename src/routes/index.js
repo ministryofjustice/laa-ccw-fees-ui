@@ -10,7 +10,10 @@ import {
 } from "../controllers/feeEntryController";
 import { getLawCategoryDescription } from "../service/lawCategoryService";
 import { getUrl } from "./urls";
-import { postLondonRatePage, showLondonRatePage } from "../controllers/londonRateController";
+import {
+  postLondonRatePage,
+  showLondonRatePage,
+} from "../controllers/londonRateController";
 
 export const router = express.Router();
 

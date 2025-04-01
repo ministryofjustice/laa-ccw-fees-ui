@@ -1,6 +1,9 @@
 import { getSessionData } from "../utils";
 import { getUrl } from "../routes/urls";
-import { getLondonRates, isValidLondonRate } from "../service/londonRateService";
+import {
+  getLondonRates,
+  isValidLondonRate,
+} from "../service/londonRateService";
 import { postLondonRatePage, showLondonRatePage } from "./londonRateController";
 
 jest.mock("../service/londonRateService");
@@ -39,8 +42,8 @@ describe("showLondonRatePage", () => {
 
     expect(res.render).toHaveBeenCalledWith("main/londonRate", {
       rates: londonRates,
-      csrfToken: "mocked-csrf-token"
-        });
+      csrfToken: "mocked-csrf-token",
+    });
   });
 
   it("should render error page if fails to load page", async () => {
@@ -102,7 +105,6 @@ describe("postLondonRatePage", () => {
     expect(sessionData.londonRate).toEqual(london);
 
     expect(isValidLondonRate).toHaveBeenCalledWith(london);
-
   });
 
   it("render error page when London Rate from form is missing", async () => {
@@ -130,5 +132,4 @@ describe("postLondonRatePage", () => {
     expect(sessionData.londonRate).toBeUndefined();
     expect(isValidLondonRate).toHaveBeenCalledWith(london);
   });
-
 });
