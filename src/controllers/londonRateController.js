@@ -20,7 +20,7 @@ export function showLondonRatePage(req, res) {
       rates: getLondonRates(),
     });
   } catch (ex) {
-    pageLoadError(req, res, ex)
+    pageLoadError(req, res, ex);
   }
 }
 
@@ -45,6 +45,6 @@ export function postLondonRatePage(req, res) {
 
     res.redirect(getUrl("feeEntry"));
   } catch (ex) {
-    pageSubmitError(req, res, ex)
+    pageSubmitError(req, res, ex);
   }
 }

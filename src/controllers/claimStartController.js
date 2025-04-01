@@ -22,7 +22,7 @@ export function showClaimStartPage(req, res) {
       today: todayString(),
     });
   } catch (ex) {
-    pageLoadError(req, res, ex)
+    pageLoadError(req, res, ex);
   }
 }
 
@@ -57,6 +57,6 @@ export function postClaimStartPage(req, res) {
 
     res.redirect(getUrl("londonRate"));
   } catch (ex) {
-    pageSubmitError(req, res, ex)
+    pageSubmitError(req, res, ex);
   }
 }

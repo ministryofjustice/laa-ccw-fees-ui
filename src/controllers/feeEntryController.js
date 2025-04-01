@@ -12,7 +12,7 @@ export function showFeeEntryPage(req, res) {
     getSessionData(req);
     res.render("main/feeEntry", { csrfToken: req.csrfToken() });
   } catch (ex) {
-     pageLoadError(req, res, ex)
+    pageLoadError(req, res, ex);
   }
 }
 
@@ -38,6 +38,6 @@ export async function postFeeEntryPage(req, res) {
 
     res.redirect(getUrl("result"));
   } catch (ex) {
-        pageSubmitError(req, res, ex)
+    pageSubmitError(req, res, ex);
   }
 }

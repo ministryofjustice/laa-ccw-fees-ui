@@ -1,6 +1,6 @@
-import { getLawCategoryDescription } from '../service/lawCategoryService';
-import { getSessionData } from '../utils';
-import { pageLoadError } from './errorController';
+import { getLawCategoryDescription } from "../service/lawCategoryService";
+import { getSessionData } from "../utils";
+import { pageLoadError } from "./errorController";
 
 /**
  * Load the page to display the result
@@ -8,9 +8,9 @@ import { pageLoadError } from './errorController';
  * @param {import('express').Response} res Express response object
  */
 export function showResultPage(req, res) {
- try {
+  try {
     const data = getSessionData(req);
-    console.log(data)
+    console.log(data);
     const result = data?.result;
 
     if (result == null) {
@@ -27,6 +27,6 @@ export function showResultPage(req, res) {
       category: getLawCategoryDescription(lawCategory),
     });
   } catch (ex) {
-    pageLoadError(req, res, ex)
+    pageLoadError(req, res, ex);
   }
 }

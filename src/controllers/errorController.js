@@ -1,4 +1,3 @@
-
 /**
  * Log error and show error page from loading
  * @param {import('express').Request} req Express request object
@@ -6,12 +5,12 @@
  * @param {Error} ex Error thrown
  */
 export function pageLoadError(req, res, ex) {
-    console.error("Error loading page %s: %s", req.originalUrl, ex.message);
+  console.error("Error loading page %s: %s", req.originalUrl, ex.message);
 
-    res.render("main/error", {
-      status: "An error occurred",
-      error: "An error occurred loading the page.",
-    });
+  res.render("main/error", {
+    status: "An error occurred",
+    error: "An error occurred loading the page.",
+  });
 }
 
 /**
@@ -21,14 +20,14 @@ export function pageLoadError(req, res, ex) {
  * @param {Error} ex Error thrown
  */
 export function pageSubmitError(req, res, ex) {
-    console.error(
-        "Error occurred during POST %s: %s",
-        req.originalUrl,
-        ex.message,
-      );
-  
-      res.render("main/error", {
-        status: "An error occurred",
-        error: "An error occurred saving the answer.",
-      });
+  console.error(
+    "Error occurred during POST %s: %s",
+    req.originalUrl,
+    ex.message,
+  );
+
+  res.render("main/error", {
+    status: "An error occurred",
+    error: "An error occurred saving the answer.",
+  });
 }
