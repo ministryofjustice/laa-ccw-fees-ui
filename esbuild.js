@@ -204,7 +204,27 @@ const buildMojFrontend = async () => {
       outfile: `public/js/moj-frontend.${buildNumber}.min.js`,
     })
     .catch((error) => {
-      console.error("❌ GOV.UK frontend JS copy failed:", error);
+      console.error("❌ MOJ UK frontend JS copy failed:", error);
+      process.exit(1);
+    });
+};
+
+/**
+ * Builds Accessible Autocomplete files separately.
+ * @async
+ * @returns {Promise<void>} Resolves when `acceptable-autocomplete.min.js` is copied successfully.
+ */
+const buildAccessibleAutocomplete = async () => {
+  await esbuild
+    .build({
+      entryPoints: [
+        "./node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js",
+      ],
+      bundle: false, // No need to bundle, just copy
+      outfile: `public/js/accessible-autocomplete.${buildNumber}.min.js`,
+    })
+    .catch((error) => {
+      console.error("❌ accessible-autocomplete JS copy failed:", error);
       process.exit(1);
     });
 };
@@ -231,6 +251,7 @@ const build = async () => {
       buildCustomJs(),
       buildGovukFrontend(),
       buildMojFrontend(),
+      buildAccessibleAutocomplete(),
     ]);
 
     console.log("✅ Build completed successfully.");

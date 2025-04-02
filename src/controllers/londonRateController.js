@@ -43,7 +43,7 @@ export function postLondonRatePage(req, res) {
 
     req.session.data.londonRate = londonRate;
 
-    res.redirect(getUrl("feeEntry"));
+    res.redirect(getUrl("matterCode1"));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

@@ -1,28 +1,31 @@
 import { getSessionData } from "../utils";
 import { getUrl } from "../routes/urls";
 import {
-  getLondonRates,
-  isValidLondonRate,
-} from "../service/londonRateService";
-import { postLondonRatePage, showLondonRatePage } from "./londonRateController";
+  getMatterCode1s,
+  isValidMatterCode1,
+} from "../service/matterCode1Service";
+import {
+  postMatterCode1Page,
+  showMatterCode1Page,
+} from "./matterCode1Controller";
 
-jest.mock("../service/londonRateService");
+jest.mock("../service/matterCode1Service");
 jest.mock("../utils/sessionHelper");
 
-const londonRates = [
+const matterCode1s = [
   {
-    id: "LDN",
-    description: "London",
+    id: "MC1A",
+    description: "Matter code A",
   },
   {
-    id: "NLDN",
-    description: "Non-London",
+    id: "MC1B",
+    description: "Matter code B",
   },
 ];
 
-const london = "LDN";
+const chosenMatterCode = "MC1a";
 
-describe("showLondonRatePage", () => {
+describe("showMatterCode1Page", () => {
   let req = {
     csrfToken: jest.fn(),
   };
@@ -31,17 +34,17 @@ describe("showLondonRatePage", () => {
   };
 
   beforeEach(() => {
-    getLondonRates.mockReturnValue(londonRates);
+    getMatterCode1s.mockReturnValue(matterCode1s);
     getSessionData.mockReturnValue({});
 
     req.csrfToken.mockReturnValue("mocked-csrf-token");
   });
 
   it("should render claim start page", () => {
-    showLondonRatePage(req, res);
+    showMatterCode1Page(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/londonRate", {
-      rates: londonRates,
+    expect(res.render).toHaveBeenCalledWith("main/matterCode1", {
+      matterCodes: matterCode1s,
       csrfToken: "mocked-csrf-token",
     });
   });
@@ -51,7 +54,7 @@ describe("showLondonRatePage", () => {
       throw new Error("token problems");
     });
 
-    showLondonRatePage(req, res);
+    showMatterCode1Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred loading the page.",
@@ -64,7 +67,7 @@ describe("showLondonRatePage", () => {
       throw new Error("No session data found");
     });
 
-    showLondonRatePage(req, res);
+    showMatterCode1Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred loading the page.",
@@ -73,7 +76,7 @@ describe("showLondonRatePage", () => {
   });
 });
 
-describe("postLondonRatePage", () => {
+describe("postMatterCode1Page", () => {
   let body = {};
   let sessionData = {};
 
@@ -89,9 +92,9 @@ describe("postLondonRatePage", () => {
   };
 
   beforeEach(() => {
-    isValidLondonRate.mockReturnValue(true);
+    isValidMatterCode1.mockReturnValue(true);
 
-    body.londonRate = london;
+    body.matterCode1 = chosenMatterCode;
   });
 
   afterEach(() => {
@@ -99,37 +102,37 @@ describe("postLondonRatePage", () => {
   });
 
   it("should redirect to result page if valid form data is supplied", () => {
-    postLondonRatePage(req, res);
+    postMatterCode1Page(req, res);
 
-    expect(res.redirect).toHaveBeenCalledWith(getUrl("matterCode1"));
-    expect(sessionData.londonRate).toEqual(london);
+    expect(res.redirect).toHaveBeenCalledWith(getUrl("feeEntry"));
+    expect(sessionData.matterCode1).toEqual(chosenMatterCode);
 
-    expect(isValidLondonRate).toHaveBeenCalledWith(london);
+    expect(isValidMatterCode1).toHaveBeenCalledWith(chosenMatterCode);
   });
 
-  it("render error page when London Rate from form is missing", async () => {
-    body.londonRate = null;
+  it("render error page when Matter Code 1 from form is missing", async () => {
+    body.matterCode1 = null;
 
-    postLondonRatePage(req, res);
+    postMatterCode1Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
-    expect(sessionData.londonRate).toBeUndefined();
+    expect(sessionData.matterCode1).toBeUndefined();
   });
 
-  it("render error page when London Rate is invalid", async () => {
-    isValidLondonRate.mockReturnValue(false);
+  it("render error page when Matter Code 1 is invalid", async () => {
+    isValidMatterCode1.mockReturnValue(false);
 
-    postLondonRatePage(req, res);
+    postMatterCode1Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
 
-    expect(sessionData.londonRate).toBeUndefined();
-    expect(isValidLondonRate).toHaveBeenCalledWith(london);
+    expect(sessionData.matterCode1).toBeUndefined();
+    expect(isValidMatterCode1).toHaveBeenCalledWith(chosenMatterCode);
   });
 });
