@@ -101,7 +101,7 @@ describe("postLondonRatePage", () => {
   it("should redirect to result page if valid form data is supplied", () => {
     postLondonRatePage(req, res);
 
-    expect(res.redirect).toHaveBeenCalledWith(getUrl("feeEntry"));
+    expect(res.redirect).toHaveBeenCalledWith(getUrl("matterCode1"));
     expect(sessionData.londonRate).toEqual(london);
 
     expect(isValidLondonRate).toHaveBeenCalledWith(london);
