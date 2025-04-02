@@ -3,11 +3,13 @@
 const matterCode2s = [
   {
     id: "FPET",
-    description: "Client is the petitioner in the Divorce/Judical Separation/Nullity/Dissolution of Civil Partnership",
+    description:
+      "Client is the petitioner in the Divorce/Judical Separation/Nullity/Dissolution of Civil Partnership",
   },
   {
     id: "FRES",
-    description: "Client is the respondent in the Divorce/Judical Separation/Nullity/Dissolution of Civil Partnership",
+    description:
+      "Client is the respondent in the Divorce/Judical Separation/Nullity/Dissolution of Civil Partnership",
   },
 ];
 
