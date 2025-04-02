@@ -1,10 +1,13 @@
 import accessibleAutocomplete from "accessible-autocomplete";
 
+/**
+ * Tell the DOM to turn elements with class "autocomplete-select" to behave as such
+ */
 export function setupAutocomplete() {
     let selectElements = document.querySelectorAll('.autocomplete-select')
     let placeholder = ''
     
-    selectElements.forEach((selectElement, _index) => {
+    selectElements.forEach((selectElement) => {
       if (selectElement.length) {
         if (selectElement.getAttribute('autocomplete-placeholder')) {
             placeholder = selectElement.getAttribute('autocomplete-placeholder')
