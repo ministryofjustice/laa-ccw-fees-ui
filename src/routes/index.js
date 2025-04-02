@@ -7,7 +7,6 @@ import {
   postFeeEntryPage,
   showFeeEntryPage,
 } from "../controllers/feeEntryController";
-import { getUrl } from "./urls";
 import {
   postLondonRatePage,
   showLondonRatePage,
@@ -18,24 +17,29 @@ import {
   postMatterCode1Page,
   showMatterCode1Page,
 } from "../controllers/matterCode1Controller";
+import { URL_ClaimStart, URL_FeeEntry, URL_LondonRate, URL_MatterCode1, URL_MatterCode2, URL_Result, URL_Start } from "./navigator";
+import { postMatterCode2Page, showMatterCode2Page } from "../controllers/matterCode2Controller";
 
 export const router = express.Router();
 
-router.get(getUrl("start"), showStartPage);
-router.post(getUrl("start"), postStartPage);
+router.get(URL_Start, showStartPage);
+router.post(URL_Start, postStartPage);
 
-router.get(getUrl("claimStart"), showClaimStartPage);
-router.post(getUrl("claimStart"), postClaimStartPage);
+router.get(URL_ClaimStart, showClaimStartPage);
+router.post(URL_ClaimStart, postClaimStartPage);
 
-router.get(getUrl("feeEntry"), showFeeEntryPage);
-router.post(getUrl("feeEntry"), postFeeEntryPage);
+router.get(URL_FeeEntry, showFeeEntryPage);
+router.post(URL_FeeEntry, postFeeEntryPage);
 
-router.get(getUrl("londonRate"), showLondonRatePage);
-router.post(getUrl("londonRate"), postLondonRatePage);
+router.get(URL_LondonRate, showLondonRatePage);
+router.post(URL_LondonRate, postLondonRatePage);
 
-router.get(getUrl("matterCode1"), showMatterCode1Page);
-router.post(getUrl("matterCode1"), postMatterCode1Page);
+router.get(URL_MatterCode1, showMatterCode1Page);
+router.post(URL_MatterCode1, postMatterCode1Page);
 
-router.get(getUrl("result"), showResultPage);
+router.get(URL_MatterCode2, showMatterCode2Page);
+router.post(URL_MatterCode2, postMatterCode2Page);
+
+router.get(URL_Result, showResultPage);
 
 export default router;
