@@ -7,6 +7,12 @@ export const URL_MatterCode1 = "/matter-code-1";
 export const URL_MatterCode2 = "/matter-code-2";
 export const URL_NavigationError = "/error";
 
+/**
+ * Find out where we should navigate to next.
+ * @param {string} currentPage - what page is it on. Should be one of the above constants.
+ * @returns {string} - next page. Should be one of the above constants.
+ * @throws {NavigationError} - if can't figure out where to go next
+ */
 export function getNextPage(currentPage) {
   switch (currentPage) {
     case URL_Start:

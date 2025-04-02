@@ -9,7 +9,7 @@ import {
   DateInputError,
 } from "../utils/dateTimeUtils";
 import { getSessionData } from "../utils";
-import { getNextPage, URL_ClaimStart, URL_Start } from "../routes/navigator";
+import { getNextPage, URL_ClaimStart } from "../routes/navigator";
 
 jest.mock("../service/lawCategoryService");
 jest.mock("../utils/dateTimeUtils");
