@@ -29,6 +29,23 @@ const copyGovukAssets = async () => {
   }
 };
 
+const copyAA = async () => {
+  try {
+    await fs.copy(
+      path.resolve("./node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css"),
+      path.resolve("./public/css/accessible-autocomplete.min.css"),
+    );
+    await fs.copy(
+      path.resolve("./node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css.map"),
+      path.resolve("./public/css/accessible-autocomplete.min.css.map"),
+    )
+    console.log("✅ AAsadasdsad copied successfully.");
+  } catch (error) {
+    console.error("❌ Failed to copy assets:", error);
+    process.exit(1);
+  }
+};
+
 /**
  * Copies selected MOJ assets (e.g. header crest images) into a folder
  * that your SCSS can reference. Adjust the source and destination paths as needed.
@@ -49,6 +66,7 @@ const copyMojAssets = async () => {
     process.exit(1);
   }
 };
+
 
 /**
  * List of external dependencies that should not be bundled.
@@ -204,7 +222,22 @@ const buildMojFrontend = async () => {
       outfile: `public/js/moj-frontend.${buildNumber}.min.js`,
     })
     .catch((error) => {
-      console.error("❌ GOV.UK frontend JS copy failed:", error);
+      console.error("❌ MOJ UK frontend JS copy failed:", error);
+      process.exit(1);
+    });
+};
+
+const buildAA = async () => {
+  await esbuild
+    .build({
+      entryPoints: [
+'./node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js',
+      ],
+      bundle: false, // No need to bundle, just copy
+      outfile: `public/js/accessible-autocomplete.${buildNumber}.min.js`,
+    })
+    .catch((error) => {
+      console.error("❌ accessible-autocomplete JS copy failed:", error);
       process.exit(1);
     });
 };
@@ -221,7 +254,7 @@ const build = async () => {
     // Copy assets
     await copyGovukAssets();
     await copyMojAssets();
-
+    await copyAA();
     // Build SCSS
     await buildScss();
 
@@ -231,6 +264,7 @@ const build = async () => {
       buildCustomJs(),
       buildGovukFrontend(),
       buildMojFrontend(),
+      buildAA()
     ]);
 
     console.log("✅ Build completed successfully.");
