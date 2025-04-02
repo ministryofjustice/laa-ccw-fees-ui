@@ -15,10 +15,12 @@ export function showMatterCode2Page(req, res) {
   try {
     getSessionData(req);
 
-    res.render("main/matterCode2", {
-      csrfToken: req.csrfToken(),
-      matterCodes: getMatterCode2s(),
-    });
+       res.render("main/matterCode", {
+          csrfToken: req.csrfToken(),
+          matterCodes: getMatterCode2s(),
+          id: "matterCode2",
+          label: "Matter Code 2"
+        });
   } catch (ex) {
     pageLoadError(req, res, ex);
   }

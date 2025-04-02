@@ -15,9 +15,11 @@ export function showMatterCode1Page(req, res) {
   try {
     getSessionData(req);
 
-    res.render("main/matterCode1", {
+    res.render("main/matterCode", {
       csrfToken: req.csrfToken(),
       matterCodes: getMatterCode1s(),
+      id: "matterCode1",
+      label: "Matter Code 1"
     });
   } catch (ex) {
     pageLoadError(req, res, ex);

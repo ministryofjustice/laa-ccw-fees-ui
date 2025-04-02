@@ -43,9 +43,11 @@ describe("showMatterCode1Page", () => {
   it("should render claim start page", () => {
     showMatterCode1Page(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/matterCode1", {
+    expect(res.render).toHaveBeenCalledWith("main/matterCode", {
       matterCodes: matterCode1s,
       csrfToken: "mocked-csrf-token",
+        id: "matterCode1",
+        label: "Matter Code 1"
     });
   });
 
