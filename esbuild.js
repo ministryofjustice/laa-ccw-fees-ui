@@ -29,23 +29,6 @@ const copyGovukAssets = async () => {
   }
 };
 
-const copyAA = async () => {
-  try {
-    await fs.copy(
-      path.resolve("./node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css"),
-      path.resolve("./public/css/accessible-autocomplete.min.css"),
-    );
-    await fs.copy(
-      path.resolve("./node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css.map"),
-      path.resolve("./public/css/accessible-autocomplete.min.css.map"),
-    )
-    console.log("✅ AAsadasdsad copied successfully.");
-  } catch (error) {
-    console.error("❌ Failed to copy assets:", error);
-    process.exit(1);
-  }
-};
-
 /**
  * Copies selected MOJ assets (e.g. header crest images) into a folder
  * that your SCSS can reference. Adjust the source and destination paths as needed.
@@ -227,7 +210,12 @@ const buildMojFrontend = async () => {
     });
 };
 
-const buildAA = async () => {
+/**
+ * Builds Accessible Autocomplete files separately.
+ * @async
+ * @returns {Promise<void>} Resolves when `acceptable-autocomplete.min.js` is copied successfully.
+ */
+const buildAccessibleAutocomplete = async () => {
   await esbuild
     .build({
       entryPoints: [
@@ -254,7 +242,7 @@ const build = async () => {
     // Copy assets
     await copyGovukAssets();
     await copyMojAssets();
-    await copyAA();
+
     // Build SCSS
     await buildScss();
 
@@ -264,7 +252,7 @@ const build = async () => {
       buildCustomJs(),
       buildGovukFrontend(),
       buildMojFrontend(),
-      buildAA()
+      buildAccessibleAutocomplete()
     ]);
 
     console.log("✅ Build completed successfully.");
