@@ -26,6 +26,7 @@ import {
   URL_MatterCode2,
   URL_Result,
   URL_Start,
+  URL_VatIndicator,
 } from "./navigator";
 import {
   postMatterCode2Page,
@@ -35,6 +36,10 @@ import {
   showCaseStagePage,
   postCaseStagePage,
 } from "../controllers/caseStageController";
+import {
+  postVatIndicatorRate,
+  showVatIndicatorPage,
+} from "../controllers/vatIndicatorController";
 
 export const router = express.Router();
 
@@ -58,6 +63,9 @@ router.post(URL_MatterCode2, postMatterCode2Page);
 
 router.get(URL_CaseStage, showCaseStagePage);
 router.post(URL_CaseStage, postCaseStagePage);
+
+router.get(URL_VatIndicator, showVatIndicatorPage);
+router.post(URL_VatIndicator, postVatIndicatorRate);
 
 router.get(URL_Result, showResultPage);
 
