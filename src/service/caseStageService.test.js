@@ -1,5 +1,4 @@
-import {
-  isValidCaseStage} from "./caseStageService";
+import { isValidCaseStage } from "./caseStageService";
 
 describe("isValidCaseStage", () => {
   it("should return true if valid case stage", () => {
