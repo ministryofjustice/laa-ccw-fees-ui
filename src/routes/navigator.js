@@ -1,11 +1,11 @@
 export const URL_Start = "/";
-export const URL_ClaimStart = "claim-start";
-export const URL_FeeEntry = "fee-entry";
-export const URL_Result = "result";
-export const URL_LondonRate = "london-rate";
-export const URL_MatterCode1 = "matter-code-1";
-export const URL_MatterCode2 = "matter-code-2";
-export const URL_NavigationError = "error";
+export const URL_ClaimStart = "/claim-start";
+export const URL_FeeEntry = "/fee-entry";
+export const URL_Result = "/result";
+export const URL_LondonRate = "/london-rate";
+export const URL_MatterCode1 = "/matter-code-1";
+export const URL_MatterCode2 = "/matter-code-2";
+export const URL_NavigationError = "/error";
 
 export function getNextPage(currentPage) {
   switch (currentPage) {
