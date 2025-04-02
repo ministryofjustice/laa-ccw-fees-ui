@@ -1,4 +1,3 @@
-
 /**
  * @jest-environment jsdom
  */
@@ -24,7 +23,7 @@ describe("initAutocomplete", () => {
 
     const selectElement = document.querySelector(".autocomplete-select");
     expect(accessibleAutocomplete.enhanceSelectElement).toHaveBeenCalledWith(
-      expect.objectContaining({ selectElement })
+      expect.objectContaining({ selectElement }),
     );
   });
 
@@ -32,7 +31,7 @@ describe("initAutocomplete", () => {
     setupAutocomplete();
 
     expect(accessibleAutocomplete.enhanceSelectElement).toHaveBeenCalledWith(
-      expect.objectContaining({ placeholder: "placeholder text" })
+      expect.objectContaining({ placeholder: "placeholder text" }),
     );
   });
 

@@ -50,7 +50,6 @@ const copyMojAssets = async () => {
   }
 };
 
-
 /**
  * List of external dependencies that should not be bundled.
  * @constant {string[]}
@@ -219,7 +218,7 @@ const buildAccessibleAutocomplete = async () => {
   await esbuild
     .build({
       entryPoints: [
-'./node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js',
+        "./node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js",
       ],
       bundle: false, // No need to bundle, just copy
       outfile: `public/js/accessible-autocomplete.${buildNumber}.min.js`,
@@ -252,7 +251,7 @@ const build = async () => {
       buildCustomJs(),
       buildGovukFrontend(),
       buildMojFrontend(),
-      buildAccessibleAutocomplete()
+      buildAccessibleAutocomplete(),
     ]);
 
     console.log("✅ Build completed successfully.");

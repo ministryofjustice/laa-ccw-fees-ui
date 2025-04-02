@@ -4,7 +4,10 @@ import {
   getMatterCode1s,
   isValidMatterCode1,
 } from "../service/matterCode1Service";
-import { postMatterCode1Page, showMatterCode1Page } from "./matterCode1Controller";
+import {
+  postMatterCode1Page,
+  showMatterCode1Page,
+} from "./matterCode1Controller";
 
 jest.mock("../service/matterCode1Service");
 jest.mock("../utils/sessionHelper");

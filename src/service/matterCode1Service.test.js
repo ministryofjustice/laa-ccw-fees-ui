@@ -1,4 +1,4 @@
-import {  isValidMatterCode1} from "./matterCode1Service";
+import { isValidMatterCode1 } from "./matterCode1Service";
 
 describe("isValidMatterCode1", () => {
   it("should return true if valid matterCode1", () => {
@@ -9,4 +9,3 @@ describe("isValidMatterCode1", () => {
     expect(isValidMatterCode1("FBMA")).toEqual(false);
   });
 });
-

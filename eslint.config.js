@@ -27,7 +27,7 @@ export default [
       semi: "off", // Prettier is handling this
       "jsdoc/check-alignment": "error",
       "jsdoc/check-param-names": "error",
-      "jsdoc/check-tag-names": ["error", {"definedTags": ["jest-environment"]}],
+      "jsdoc/check-tag-names": ["error", { definedTags: ["jest-environment"] }],
       "jsdoc/check-types": "error",
       "jsdoc/implements-on-classes": "error",
       "jsdoc/newline-after-description": "off",
