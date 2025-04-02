@@ -1,6 +1,7 @@
 import {
   getNextPage,
   NavigationError,
+  URL_CaseStage,
   URL_ClaimStart,
   URL_FeeEntry,
   URL_LondonRate,
@@ -29,7 +30,11 @@ describe("getNextPage", () => {
     });
 
     it("Matter Code 2 page", () => {
-      expect(getNextPage(URL_MatterCode2)).toEqual(URL_FeeEntry);
+      expect(getNextPage(URL_MatterCode2)).toEqual(URL_CaseStage);
+    });
+
+    it("Case Stage page", () => {
+      expect(getNextPage(URL_CaseStage)).toEqual(URL_FeeEntry);
     });
 
     it("Fee Entry page", () => {
