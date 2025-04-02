@@ -1,4 +1,4 @@
-import { getUrl } from "../routes/urls";
+import { getNextPage, URL_MatterCode1 } from "../routes/navigator";
 import {
   getMatterCode1s,
   isValidMatterCode1,
@@ -19,7 +19,7 @@ export function showMatterCode1Page(req, res) {
       csrfToken: req.csrfToken(),
       matterCodes: getMatterCode1s(),
       id: "matterCode1",
-      label: "Matter Code 1"
+      label: "Matter Code 1",
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -45,7 +45,7 @@ export function postMatterCode1Page(req, res) {
 
     req.session.data.matterCode1 = matterCode1;
 
-    res.redirect(getUrl("feeEntry"));
+    res.redirect(getNextPage(URL_MatterCode1));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

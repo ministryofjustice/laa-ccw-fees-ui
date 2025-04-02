@@ -1,4 +1,4 @@
-import { getUrl } from "../routes/urls";
+import { getNextPage, URL_FeeEntry } from "../routes/navigator";
 import { getSessionData } from "../utils";
 import { pageLoadError, pageSubmitError } from "./errorController";
 
@@ -36,7 +36,7 @@ export async function postFeeEntryPage(req, res) {
     // Save this so it can be displayed on the result page
     req.session.data.result = number;
 
-    res.redirect(getUrl("result"));
+    res.redirect(getNextPage(URL_FeeEntry));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

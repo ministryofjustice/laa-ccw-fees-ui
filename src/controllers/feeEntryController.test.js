@@ -1,8 +1,9 @@
 import { postFeeEntryPage, showFeeEntryPage } from "./feeEntryController";
-
+import { getNextPage, URL_FeeEntry } from "../routes/navigator";
 import { getSessionData } from "../utils";
-import { getUrl } from "../routes/urls";
+
 jest.mock("../utils/sessionHelper");
+jest.mock("../routes/navigator.js");
 
 describe("showFeeEntryPage", () => {
   let req = {
@@ -85,13 +86,16 @@ describe("POST /fee-entry", () => {
       data: "236.00",
     });
 
+    getNextPage.mockReturnValue("nextPage");
+
     await postFeeEntryPage(req, res);
 
-    expect(res.redirect).toHaveBeenCalledWith(getUrl("result"));
+    expect(res.redirect).toHaveBeenCalledWith("nextPage");
 
     // Save value so result page can load it
     expect(sessionData.result).toEqual("236.00");
     expect(req.axiosMiddleware.post).toHaveBeenCalledWith("/fees/1234.56");
+    expect(getNextPage).toHaveBeenCalledWith(URL_FeeEntry);
   });
 
   describe("should error", () => {

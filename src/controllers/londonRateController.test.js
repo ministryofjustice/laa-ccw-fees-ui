@@ -1,13 +1,14 @@
 import { getSessionData } from "../utils";
-import { getUrl } from "../routes/urls";
 import {
   getLondonRates,
   isValidLondonRate,
 } from "../service/londonRateService";
 import { postLondonRatePage, showLondonRatePage } from "./londonRateController";
+import { getNextPage, URL_LondonRate } from "../routes/navigator";
 
 jest.mock("../service/londonRateService");
 jest.mock("../utils/sessionHelper");
+jest.mock("../routes/navigator.js");
 
 const londonRates = [
   {
@@ -99,12 +100,15 @@ describe("postLondonRatePage", () => {
   });
 
   it("should redirect to result page if valid form data is supplied", () => {
+    getNextPage.mockReturnValue("nextPage");
+
     postLondonRatePage(req, res);
 
-    expect(res.redirect).toHaveBeenCalledWith(getUrl("matterCode1"));
+    expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(sessionData.londonRate).toEqual(london);
 
     expect(isValidLondonRate).toHaveBeenCalledWith(london);
+    expect(getNextPage).toHaveBeenCalledWith(URL_LondonRate);
   });
 
   it("render error page when London Rate from form is missing", async () => {

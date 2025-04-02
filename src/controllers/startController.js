@@ -1,4 +1,4 @@
-import { getUrl } from "../routes/urls";
+import { getNextPage, URL_Start } from "../routes/navigator";
 
 /**
  * Load the start page
@@ -26,5 +26,5 @@ export function showStartPage(req, res) {
 export function postStartPage(req, res) {
   // Remove any old data. They have restarted
   req.session.data = {};
-  res.redirect(getUrl("claimStart"));
+  res.redirect(getNextPage(URL_Start));
 }

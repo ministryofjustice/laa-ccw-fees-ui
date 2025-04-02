@@ -1,5 +1,4 @@
 import { getSessionData } from "../utils";
-import { getUrl } from "../routes/urls";
 import {
   getMatterCode2s,
   isValidMatterCode2,
@@ -8,9 +7,11 @@ import {
   postMatterCode2Page,
   showMatterCode2Page,
 } from "./matterCode2Controller";
+import { getNextPage, URL_MatterCode2 } from "../routes/navigator";
 
 jest.mock("../service/matterCode2Service");
 jest.mock("../utils/sessionHelper");
+jest.mock("../routes/navigator.js");
 
 const matterCode2s = [
   {
@@ -47,8 +48,7 @@ describe("showMatterCode2Page", () => {
       matterCodes: matterCode2s,
       csrfToken: "mocked-csrf-token",
       id: "matterCode2",
-      label: "Matter Code 2"
-
+      label: "Matter Code 2",
     });
   });
 
@@ -105,12 +105,15 @@ describe("postMatterCode2Page", () => {
   });
 
   it("should redirect to result page if valid form data is supplied", () => {
+    getNextPage.mockReturnValue("nextPage");
+
     postMatterCode2Page(req, res);
 
-    expect(res.redirect).toHaveBeenCalledWith(getUrl("feeEntry"));
+    expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(sessionData.matterCode2).toEqual(chosenMatterCode);
 
     expect(isValidMatterCode2).toHaveBeenCalledWith(chosenMatterCode);
+    expect(getNextPage).toHaveBeenCalledWith(URL_MatterCode2);
   });
 
   it("render error page when Matter Code 2 from form is missing", async () => {
