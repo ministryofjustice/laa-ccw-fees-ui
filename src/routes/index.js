@@ -20,6 +20,7 @@ import {
 import {
   URL_CaseStage,
   URL_ClaimStart,
+  URL_ErrorPage,
   URL_FeeEntry,
   URL_LondonRate,
   URL_MatterCode1,
@@ -40,6 +41,7 @@ import {
   postVatIndicatorRate,
   showVatIndicatorPage,
 } from "../controllers/vatIndicatorController";
+import { showGenericErrorPage } from "../controllers/errorController";
 
 export const router = express.Router();
 
@@ -68,5 +70,7 @@ router.get(URL_VatIndicator, showVatIndicatorPage);
 router.post(URL_VatIndicator, postVatIndicatorRate);
 
 router.get(URL_Result, showResultPage);
+
+router.get(URL_ErrorPage, showGenericErrorPage);
 
 export default router;
