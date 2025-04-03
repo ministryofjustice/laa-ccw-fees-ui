@@ -6,7 +6,7 @@ jest.mock("../utils/sessionHelper");
 jest.mock("../service/feeCalculatorService");
 
 describe("showResultPage", () => {
-  let render = jest.fn()
+  let render = jest.fn();
   let req = {
     csrfToken: jest.fn(),
   };
@@ -15,71 +15,66 @@ describe("showResultPage", () => {
   };
 
   beforeEach(() => {
-
     req.csrfToken.mockReturnValue("mocked-csrf-token");
   });
 
   it("should render result page when no VAT", async () => {
     getSessionData.mockReturnValue({
-      vatIndicator: false
+      vatIndicator: false,
     });
 
     getCalculationResult.mockReturnValue({
-        amount: 120,
-        total: 144,
-        vat: 24,
-      })
+      amount: 120,
+      total: 144,
+      vat: 24,
+    });
 
-   await showResultPage(req, res);
+    await showResultPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/result", {
       total: "£120.00",
       isVatRegistered: false,
       vatAmount: "£24.00",
     });
-
   });
 
   it("should render result page when VAT", async () => {
     getSessionData.mockReturnValue({
-      vatIndicator: true
+      vatIndicator: true,
     });
 
     getCalculationResult.mockReturnValue({
-        amount: 120,
-        total: 144,
-        vat: 24,
-      })
+      amount: 120,
+      total: 144,
+      vat: 24,
+    });
 
-   await showResultPage(req, res);
+    await showResultPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/result", {
       total: "£144.00",
       isVatRegistered: true,
       vatAmount: "£24.00",
     });
-
   });
 
   it("should render result page with VAT if indicator undefined", async () => {
     getSessionData.mockReturnValue({});
 
     getCalculationResult.mockReturnValue({
-        amount: 120,
-        total: 144,
-        vat: 24,
-      })
+      amount: 120,
+      total: 144,
+      vat: 24,
+    });
 
-   await showResultPage(req, res);
+    await showResultPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/result", {
       total: "£144.00",
       isVatRegistered: true,
       vatAmount: "£24.00",
     });
-
   });
-
 
   it("should render error page if no existing session data already (as skipped workflow)", async () => {
     getSessionData.mockImplementation(() => {
@@ -96,7 +91,7 @@ describe("showResultPage", () => {
 
   it("should render error page if api call throws error", async () => {
     getSessionData.mockImplementation({});
-  
+
     getCalculationResult.mockImplementation(() => {
       throw new Error("API error");
     });

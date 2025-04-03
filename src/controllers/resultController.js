@@ -10,7 +10,6 @@ import { pageLoadError } from "./errorController";
  */
 export async function showResultPage(req, res) {
   try {
-
     const data = getSessionData(req);
     const calculatorResult = await getCalculationResult(
       data,
@@ -28,7 +27,6 @@ export async function showResultPage(req, res) {
       isVatRegistered: isVat,
       vatAmount: vatAmount,
     });
-
   } catch (ex) {
     pageLoadError(req, res, ex);
   }
