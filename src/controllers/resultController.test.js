@@ -1,36 +1,90 @@
-import { getLawCategoryDescription } from "../service/lawCategoryService";
+import { getCalculationResult } from "../service/feeCalculatorService";
 import { getSessionData } from "../utils";
 import { showResultPage } from "./resultController";
 
 jest.mock("../utils/sessionHelper");
-jest.mock("../service/lawCategoryService");
+jest.mock("../service/feeCalculatorService");
 
 describe("showResultPage", () => {
-  let req = {};
+  let render = jest.fn()
+  let req = {
+    csrfToken: jest.fn(),
+  };
   let res = {
-    render: jest.fn(),
+    render: render,
   };
 
-  let mockSession = {};
+  beforeEach(() => {
 
-  it("should render result page", async () => {
-    mockSession = { result: "246.00", lawCategory: "immigration" };
-    getSessionData.mockReturnValue(mockSession);
-    getLawCategoryDescription.mockReturnValue("Immigration");
+    req.csrfToken.mockReturnValue("mocked-csrf-token");
+  });
 
-    showResultPage(req, res);
+  it("should render result page when no VAT", async () => {
+    getSessionData.mockReturnValue({
+      vatIndicator: false
+    });
+
+    getCalculationResult.mockReturnValue({
+        amount: 120,
+        total: 144,
+        vat: 24,
+      })
+
+   await showResultPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/result", {
-      number: "246.00",
-      category: "Immigration",
+      total: "£120.00",
+      isVatRegistered: false,
+      vatAmount: "£24.00",
     });
+
   });
 
-  it("should error when result is missing", async () => {
-    mockSession = {
-      data: { lawCategory: "blah" },
-    };
-    getSessionData.mockReturnValue(mockSession);
+  it("should render result page when VAT", async () => {
+    getSessionData.mockReturnValue({
+      vatIndicator: true
+    });
+
+    getCalculationResult.mockReturnValue({
+        amount: 120,
+        total: 144,
+        vat: 24,
+      })
+
+   await showResultPage(req, res);
+
+    expect(res.render).toHaveBeenCalledWith("main/result", {
+      total: "£144.00",
+      isVatRegistered: true,
+      vatAmount: "£24.00",
+    });
+
+  });
+
+  it("should render result page with VAT if indicator undefined", async () => {
+    getSessionData.mockReturnValue({});
+
+    getCalculationResult.mockReturnValue({
+        amount: 120,
+        total: 144,
+        vat: 24,
+      })
+
+   await showResultPage(req, res);
+
+    expect(res.render).toHaveBeenCalledWith("main/result", {
+      total: "£144.00",
+      isVatRegistered: true,
+      vatAmount: "£24.00",
+    });
+
+  });
+
+
+  it("should render error page if no existing session data already (as skipped workflow)", async () => {
+    getSessionData.mockImplementation(() => {
+      throw new Error("No session data found");
+    });
 
     showResultPage(req, res);
 
@@ -40,37 +94,12 @@ describe("showResultPage", () => {
     });
   });
 
-  it("should error when law category is missing", async () => {
-    mockSession = {
-      data: { result: "1234.32" },
-    };
-    getSessionData.mockReturnValue(mockSession);
-
-    showResultPage(req, res);
-
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred loading the page.",
-      status: "An error occurred",
+  it("should render error page if api call throws error", async () => {
+    getSessionData.mockImplementation({});
+  
+    getCalculationResult.mockImplementation(() => {
+      throw new Error("API error");
     });
-  });
-
-  it("should error when session is missing", async () => {
-    mockSession = null;
-    getSessionData.mockReturnValue(mockSession);
-
-    showResultPage(req, res);
-
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred loading the page.",
-      status: "An error occurred",
-    });
-  });
-
-  it("should error when session data is missing", async () => {
-    mockSession = {
-      otherField: "blah",
-    };
-    getSessionData.mockReturnValue(mockSession);
 
     showResultPage(req, res);
 
