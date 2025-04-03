@@ -3,7 +3,7 @@ import {
   NavigationError,
   URL_CaseStage,
   URL_ClaimStart,
-  URL_FeeEntry,
+  URL_ErrorPage,
   URL_LondonRate,
   URL_MatterCode1,
   URL_MatterCode2,
@@ -39,17 +39,17 @@ describe("getNextPage", () => {
     });
 
     it("VAT Indicator page", () => {
-      expect(getNextPage(URL_VatIndicator)).toEqual(URL_FeeEntry);
-    });
-
-    it("Fee Entry page", () => {
-      expect(getNextPage(URL_FeeEntry)).toEqual(URL_Result);
+      expect(getNextPage(URL_VatIndicator)).toEqual(URL_Result);
     });
   });
 
   describe("it should throw an NavigationError", () => {
     it("when currently on the Result page", () => {
       expect(() => getNextPage(URL_Result)).toThrow(NavigationError);
+    });
+
+    it("when currently on the Error page", () => {
+      expect(() => getNextPage(URL_ErrorPage)).toThrow(NavigationError);
     });
 
     it("when page is not recognised", () => {
