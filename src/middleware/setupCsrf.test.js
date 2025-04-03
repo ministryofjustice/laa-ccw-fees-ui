@@ -29,6 +29,7 @@ describe("csrf-sync middleware", () => {
     it("should call next() if the CSRF token is valid", () => {
       // Configure csrf-sync to extract token from req.body._csrf
       const { csrfSynchronisedProtection } = csrfSync({
+        // eslint-disable-next-line
         getTokenFromRequest: (req) => req.body._csrf,
       });
       // Simulate a valid token:
@@ -42,6 +43,7 @@ describe("csrf-sync middleware", () => {
 
     it("should call next() with an error when the CSRF token is missing from the request body", () => {
       const { csrfSynchronisedProtection } = csrfSync({
+        // eslint-disable-next-line
         getTokenFromRequest: (req) => req.body._csrf,
       });
       // Simulate a session with a token, but the request body has no token.
@@ -57,6 +59,7 @@ describe("csrf-sync middleware", () => {
 
     it("should call next() with an error when the CSRF token is invalid", () => {
       const { csrfSynchronisedProtection } = csrfSync({
+        // eslint-disable-next-line
         getTokenFromRequest: (req) => req.body._csrf,
       });
       // Simulate a session with a token, but the request body has a different token.
@@ -75,9 +78,11 @@ describe("csrf-sync middleware", () => {
   describe("Middleware to expose CSRF token to views", () => {
     it("should set res.locals.csrfToken when req.csrfToken() is available", () => {
       // Simulate that the CSRF middleware has attached a csrfToken function
+      // eslint-disable-next-line
       req.csrfToken = () => "generated-token";
 
       // Middleware to expose the token:
+      // eslint-disable-next-line
       const exposeTokenMiddleware = (req, res, next) => {
         if (typeof req.csrfToken === "function") {
           res.locals.csrfToken = req.csrfToken();

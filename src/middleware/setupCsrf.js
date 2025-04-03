@@ -45,6 +45,13 @@ export const setupCsrf = (app) => {
   app.use(interceptCSRFError);
 };
 
+/**
+ * Intercept any CSRF errors
+ * @param {Error} err - Error we are intercepting.
+ * @param {import('express').Request} _req Express request object
+ * @param {import('express').Response} res Express response object
+ * @param {Function} next - The next middleware function.
+ */
 export function interceptCSRFError(err, _req, res, next) {
   // This is what CSRFSync sets when bad token errors
   if (err.code === "EBADCSRFTOKEN") {
