@@ -19,11 +19,11 @@ describe("getNextPage", () => {
     });
 
     it("Claim Start page", () => {
-      expect(getNextPage(URL_ClaimStart)).toEqual(URL_LondonRate);
+      expect(getNextPage(URL_ClaimStart)).toEqual(URL_MatterCode1);
     });
 
     it("London Rate page", () => {
-      expect(getNextPage(URL_LondonRate)).toEqual(URL_MatterCode1);
+      expect(getNextPage(URL_LondonRate)).toEqual(URL_VatIndicator);
     });
 
     it("Matter Code 1 page", () => {
@@ -35,7 +35,7 @@ describe("getNextPage", () => {
     });
 
     it("Case Stage page", () => {
-      expect(getNextPage(URL_CaseStage)).toEqual(URL_VatIndicator);
+      expect(getNextPage(URL_CaseStage)).toEqual(URL_LondonRate);
     });
 
     it("VAT Indicator page", () => {

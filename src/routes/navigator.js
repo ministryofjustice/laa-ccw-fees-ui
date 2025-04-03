@@ -19,15 +19,15 @@ export function getNextPage(currentPage) {
     case URL_Start:
       return URL_ClaimStart;
     case URL_ClaimStart:
-      return URL_LondonRate;
-    case URL_LondonRate:
       return URL_MatterCode1;
+    case URL_LondonRate:
+      return URL_VatIndicator;
     case URL_MatterCode1:
       return URL_MatterCode2;
     case URL_MatterCode2:
       return URL_CaseStage;
     case URL_CaseStage:
-      return URL_VatIndicator;
+      return URL_LondonRate;
     case URL_VatIndicator:
       return URL_Result;
     case URL_Result:
