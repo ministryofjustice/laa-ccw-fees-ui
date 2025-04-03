@@ -17,19 +17,19 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
         {{ govukSelect({
-            id: "matterCode1",
-            name: "matterCode1",
+            id: id,
+            name: id,
             label: {
-                text: "Matter code 1",
+                text: label,
                 classes: "govuk-label--xl"
             },
             hint: {
                 text: "Start typing either the matter type description or code",
-                id: "matterCode1-hint"
+                id: "matterCode-hint"
             },
             items: items,
             classes: "autocomplete-select",
-            describedby: "matterCode1-hint"
+            describedby: "matterCode-hint"
             }) }}
        
         {{ govukButton({

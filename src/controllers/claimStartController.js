@@ -1,4 +1,4 @@
-import { getUrl } from "../routes/urls";
+import { getNextPage, URL_ClaimStart } from "../routes/navigator";
 import {
   isValidLawCategory,
   getLawCategories,
@@ -55,7 +55,7 @@ export function postClaimStartPage(req, res) {
     req.session.data.startDate = date;
     req.session.data.lawCategory = category;
 
-    res.redirect(getUrl("londonRate"));
+    res.redirect(getNextPage(URL_ClaimStart));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

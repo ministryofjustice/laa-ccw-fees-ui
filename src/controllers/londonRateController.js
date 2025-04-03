@@ -1,4 +1,4 @@
-import { getUrl } from "../routes/urls";
+import { getNextPage, URL_LondonRate } from "../routes/navigator";
 import {
   getLondonRates,
   isValidLondonRate,
@@ -43,7 +43,7 @@ export function postLondonRatePage(req, res) {
 
     req.session.data.londonRate = londonRate;
 
-    res.redirect(getUrl("matterCode1"));
+    res.redirect(getNextPage(URL_LondonRate));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

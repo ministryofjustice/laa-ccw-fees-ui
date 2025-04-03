@@ -1,32 +1,32 @@
 import { getSessionData } from "../utils";
 import {
-  getMatterCode1s,
-  isValidMatterCode1,
-} from "../service/matterCode1Service";
+  getMatterCode2s,
+  isValidMatterCode2,
+} from "../service/matterCode2Service";
 import {
-  postMatterCode1Page,
-  showMatterCode1Page,
-} from "./matterCode1Controller";
-import { getNextPage, URL_MatterCode1 } from "../routes/navigator";
+  postMatterCode2Page,
+  showMatterCode2Page,
+} from "./matterCode2Controller";
+import { getNextPage, URL_MatterCode2 } from "../routes/navigator";
 
-jest.mock("../service/matterCode1Service");
+jest.mock("../service/matterCode2Service");
 jest.mock("../utils/sessionHelper");
 jest.mock("../routes/navigator.js");
 
-const matterCode1s = [
+const matterCode2s = [
   {
-    id: "MC1A",
+    id: "MC2A",
     description: "Matter code A",
   },
   {
-    id: "MC1B",
+    id: "MC2B",
     description: "Matter code B",
   },
 ];
 
-const chosenMatterCode = "MC1A";
+const chosenMatterCode = "MC2A";
 
-describe("showMatterCode1Page", () => {
+describe("showMatterCode2Page", () => {
   let req = {
     csrfToken: jest.fn(),
   };
@@ -35,20 +35,20 @@ describe("showMatterCode1Page", () => {
   };
 
   beforeEach(() => {
-    getMatterCode1s.mockReturnValue(matterCode1s);
+    getMatterCode2s.mockReturnValue(matterCode2s);
     getSessionData.mockReturnValue({});
 
     req.csrfToken.mockReturnValue("mocked-csrf-token");
   });
 
   it("should render claim start page", () => {
-    showMatterCode1Page(req, res);
+    showMatterCode2Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/matterCode", {
-      matterCodes: matterCode1s,
+      matterCodes: matterCode2s,
       csrfToken: "mocked-csrf-token",
-      id: "matterCode1",
-      label: "Matter Code 1",
+      id: "matterCode2",
+      label: "Matter Code 2",
     });
   });
 
@@ -57,7 +57,7 @@ describe("showMatterCode1Page", () => {
       throw new Error("token problems");
     });
 
-    showMatterCode1Page(req, res);
+    showMatterCode2Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred loading the page.",
@@ -70,7 +70,7 @@ describe("showMatterCode1Page", () => {
       throw new Error("No session data found");
     });
 
-    showMatterCode1Page(req, res);
+    showMatterCode2Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred loading the page.",
@@ -79,7 +79,7 @@ describe("showMatterCode1Page", () => {
   });
 });
 
-describe("postMatterCode1Page", () => {
+describe("postMatterCode2Page", () => {
   let body = {};
   let sessionData = {};
 
@@ -95,9 +95,9 @@ describe("postMatterCode1Page", () => {
   };
 
   beforeEach(() => {
-    isValidMatterCode1.mockReturnValue(true);
+    isValidMatterCode2.mockReturnValue(true);
 
-    body.matterCode1 = chosenMatterCode;
+    body.matterCode2 = chosenMatterCode;
   });
 
   afterEach(() => {
@@ -107,38 +107,38 @@ describe("postMatterCode1Page", () => {
   it("should redirect to result page if valid form data is supplied", () => {
     getNextPage.mockReturnValue("nextPage");
 
-    postMatterCode1Page(req, res);
+    postMatterCode2Page(req, res);
 
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
-    expect(sessionData.matterCode1).toEqual(chosenMatterCode);
+    expect(sessionData.matterCode2).toEqual(chosenMatterCode);
 
-    expect(isValidMatterCode1).toHaveBeenCalledWith(chosenMatterCode);
-    expect(getNextPage).toHaveBeenCalledWith(URL_MatterCode1);
+    expect(isValidMatterCode2).toHaveBeenCalledWith(chosenMatterCode);
+    expect(getNextPage).toHaveBeenCalledWith(URL_MatterCode2);
   });
 
-  it("render error page when Matter Code 1 from form is missing", async () => {
-    body.matterCode1 = null;
+  it("render error page when Matter Code 2 from form is missing", async () => {
+    body.matterCode2 = null;
 
-    postMatterCode1Page(req, res);
+    postMatterCode2Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
-    expect(sessionData.matterCode1).toBeUndefined();
+    expect(sessionData.matterCode2).toBeUndefined();
   });
 
-  it("render error page when Matter Code 1 is invalid", async () => {
-    isValidMatterCode1.mockReturnValue(false);
+  it("render error page when Matter Code 2 is invalid", async () => {
+    isValidMatterCode2.mockReturnValue(false);
 
-    postMatterCode1Page(req, res);
+    postMatterCode2Page(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
 
-    expect(sessionData.matterCode1).toBeUndefined();
-    expect(isValidMatterCode1).toHaveBeenCalledWith(chosenMatterCode);
+    expect(sessionData.matterCode2).toBeUndefined();
+    expect(isValidMatterCode2).toHaveBeenCalledWith(chosenMatterCode);
   });
 });

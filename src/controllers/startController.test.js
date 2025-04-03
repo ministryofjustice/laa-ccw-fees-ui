@@ -1,8 +1,9 @@
-import { getUrl } from "../routes/urls";
+import { getNextPage, URL_Start } from "../routes/navigator";
 import { postStartPage, showStartPage } from "./startController";
 
 jest.mock("../service/londonRateService");
 jest.mock("../utils/sessionHelper");
+jest.mock("../routes/navigator.js");
 
 describe("showStartPage", () => {
   let req = {
@@ -55,6 +56,8 @@ describe("postStartPage", () => {
   });
 
   it("should redirect to next page", () => {
+    getNextPage.mockReturnValue("nextPage");
+
     postStartPage(req, res);
 
     sessionData = {
@@ -62,7 +65,8 @@ describe("postStartPage", () => {
       type: "213",
     };
 
-    expect(res.redirect).toHaveBeenCalledWith(getUrl("claimStart"));
+    expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(req.session.data).toEqual({});
+    expect(getNextPage).toHaveBeenCalledWith(URL_Start);
   });
 });

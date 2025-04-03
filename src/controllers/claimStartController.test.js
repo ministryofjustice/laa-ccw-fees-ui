@@ -9,13 +9,12 @@ import {
   DateInputError,
 } from "../utils/dateTimeUtils";
 import { getSessionData } from "../utils";
-import { getUrl } from "../routes/urls";
+import { getNextPage, URL_ClaimStart } from "../routes/navigator";
 
 jest.mock("../service/lawCategoryService");
-
 jest.mock("../utils/dateTimeUtils");
-
 jest.mock("../utils/sessionHelper");
+jest.mock("../routes/navigator.js");
 
 const today = "31/03/2025";
 const lawCategories = [
@@ -111,11 +110,14 @@ describe("postClaimStartPage", () => {
   });
 
   it("should redirect to result page if valid form data is supplied", () => {
+    getNextPage.mockReturnValue("nextPage");
+
     postClaimStartPage(req, res);
 
-    expect(res.redirect).toHaveBeenCalledWith(getUrl("londonRate"));
+    expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(sessionData.lawCategory).toEqual(familyLaw);
     expect(sessionData.startDate).toEqual(today);
+    expect(getNextPage).toHaveBeenCalledWith(URL_ClaimStart);
   });
 
   it("render error page when law category from form is missing", async () => {
