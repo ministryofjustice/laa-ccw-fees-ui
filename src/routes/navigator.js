@@ -6,6 +6,7 @@ export const URL_LondonRate = "/london-rate";
 export const URL_MatterCode1 = "/matter-code-1";
 export const URL_MatterCode2 = "/matter-code-2";
 export const URL_NavigationError = "/error";
+export const URL_CaseStage = "/case-stage";
 
 /**
  * Find out where we should navigate to next.
@@ -24,6 +25,8 @@ export function getNextPage(currentPage) {
     case URL_MatterCode1:
       return URL_MatterCode2;
     case URL_MatterCode2:
+      return URL_CaseStage;
+    case URL_CaseStage:
       return URL_FeeEntry;
     case URL_FeeEntry:
       return URL_Result;

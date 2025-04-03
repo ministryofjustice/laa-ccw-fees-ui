@@ -18,6 +18,7 @@ import {
   showMatterCode1Page,
 } from "../controllers/matterCode1Controller";
 import {
+  URL_CaseStage,
   URL_ClaimStart,
   URL_FeeEntry,
   URL_LondonRate,
@@ -30,6 +31,10 @@ import {
   postMatterCode2Page,
   showMatterCode2Page,
 } from "../controllers/matterCode2Controller";
+import {
+  showCaseStagePage,
+  postCaseStagePage,
+} from "../controllers/caseStageController";
 
 export const router = express.Router();
 
@@ -50,6 +55,9 @@ router.post(URL_MatterCode1, postMatterCode1Page);
 
 router.get(URL_MatterCode2, showMatterCode2Page);
 router.post(URL_MatterCode2, postMatterCode2Page);
+
+router.get(URL_CaseStage, showCaseStagePage);
+router.post(URL_CaseStage, postCaseStagePage);
 
 router.get(URL_Result, showResultPage);
 
