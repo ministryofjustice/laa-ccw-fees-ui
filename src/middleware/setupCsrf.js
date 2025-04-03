@@ -1,4 +1,5 @@
 import { csrfSync } from "csrf-sync";
+import { URL_ErrorPage } from "../routes/navigator";
 
 /**
  * Sets up CSRF protection for an Express application.
@@ -39,4 +40,17 @@ export const setupCsrf = (app) => {
     }
     next();
   });
+
+  // Catch CSRF errors and redirect to error page
+  app.use(interceptCSRFError);
 };
+
+export function interceptCSRFError(err, _req, res, next) {
+  // This is what CSRFSync sets when bad token errors
+  if (err.code === "EBADCSRFTOKEN") {
+    console.error("CSRF token error");
+    res.status(403).redirect(URL_ErrorPage);
+  } else {
+    next(err); // Pass other errors to the default error handler
+  }
+}
