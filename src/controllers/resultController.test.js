@@ -6,9 +6,11 @@ jest.mock("../utils/sessionHelper");
 jest.mock("../service/feeCalculatorService");
 
 describe("showResultPage", () => {
+  let axiosMiddleware = jest.fn();
   let render = jest.fn();
   let req = {
     csrfToken: jest.fn(),
+    axiosMiddleware: axiosMiddleware,
   };
   let res = {
     render: render,
@@ -19,9 +21,10 @@ describe("showResultPage", () => {
   });
 
   it("should render result page when no VAT", async () => {
-    getSessionData.mockReturnValue({
+    const sessionData = {
       vatIndicator: false,
-    });
+    };
+    getSessionData.mockReturnValue(sessionData);
 
     getCalculationResult.mockReturnValue({
       amount: 120,
@@ -36,6 +39,11 @@ describe("showResultPage", () => {
       isVatRegistered: false,
       vatAmount: "£24.00",
     });
+
+    expect(getCalculationResult).toHaveBeenCalledWith(
+      sessionData,
+      axiosMiddleware,
+    );
   });
 
   it("should render result page when VAT", async () => {
@@ -90,7 +98,7 @@ describe("showResultPage", () => {
   });
 
   it("should render error page if api call throws error", async () => {
-    getSessionData.mockImplementation({});
+    getSessionData.mockReturnValue({});
 
     getCalculationResult.mockImplementation(() => {
       throw new Error("API error");
@@ -102,5 +110,7 @@ describe("showResultPage", () => {
       error: "An error occurred loading the page.",
       status: "An error occurred",
     });
+
+    expect(getCalculationResult).toHaveBeenCalledWith({}, axiosMiddleware);
   });
 });
