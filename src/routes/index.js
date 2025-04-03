@@ -4,10 +4,6 @@ import {
   showClaimStartPage,
 } from "../controllers/claimStartController";
 import {
-  postFeeEntryPage,
-  showFeeEntryPage,
-} from "../controllers/feeEntryController";
-import {
   postLondonRatePage,
   showLondonRatePage,
 } from "../controllers/londonRateController";
@@ -21,7 +17,6 @@ import {
   URL_CaseStage,
   URL_ClaimStart,
   URL_ErrorPage,
-  URL_FeeEntry,
   URL_LondonRate,
   URL_MatterCode1,
   URL_MatterCode2,
@@ -50,9 +45,6 @@ router.post(URL_Start, postStartPage);
 
 router.get(URL_ClaimStart, showClaimStartPage);
 router.post(URL_ClaimStart, postClaimStartPage);
-
-router.get(URL_FeeEntry, showFeeEntryPage);
-router.post(URL_FeeEntry, postFeeEntryPage);
 
 router.get(URL_LondonRate, showLondonRatePage);
 router.post(URL_LondonRate, postLondonRatePage);
