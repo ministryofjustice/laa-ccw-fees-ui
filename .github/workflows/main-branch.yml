@@ -35,7 +35,7 @@ jobs:
           echo "SERVICE_PHASE='Alpha'" >> .env
           echo "# Backend Service URL" >> .env
           echo "API_PROTOCOL = https" >> .env
-          echo "API_HOST = $BACKEND_URL" >> .env
+          echo "API_HOST = ${{ vars.BACKEND_URL}}" >> .env
           echo "API_VERSION = v1" >> .env
       - run: |
           less .env
