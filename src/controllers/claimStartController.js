@@ -55,6 +55,9 @@ export function postClaimStartPage(req, res) {
     req.session.data.startDate = date;
     req.session.data.lawCategory = category;
 
+    // Remove any previously saved law categories because changing law category changes the valid matter codes
+    req.session.data.validMatterCode1s = null;
+
     res.redirect(getNextPage(URL_ClaimStart));
   } catch (ex) {
     pageSubmitError(req, res, ex);

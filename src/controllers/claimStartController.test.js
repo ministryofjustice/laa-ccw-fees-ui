@@ -103,6 +103,8 @@ describe("postClaimStartPage", () => {
 
     body.category = familyLaw;
     body.date = today;
+
+    sessionData.validMatterCode1s = "some data here";
   });
 
   afterEach(() => {
@@ -118,6 +120,9 @@ describe("postClaimStartPage", () => {
     expect(sessionData.lawCategory).toEqual(familyLaw);
     expect(sessionData.startDate).toEqual(today);
     expect(getNextPage).toHaveBeenCalledWith(URL_ClaimStart);
+
+    //Should clean up any old data that depends on law category
+    expect(sessionData.validMatterCode1s).toEqual(null);
   });
 
   it("render error page when law category from form is missing", async () => {
