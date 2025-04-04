@@ -9,6 +9,7 @@ import {
   URL_MatterCode2,
   URL_Result,
   URL_Start,
+  URL_VatIndicator,
 } from "./navigator";
 
 describe("getNextPage", () => {
@@ -34,7 +35,11 @@ describe("getNextPage", () => {
     });
 
     it("Case Stage page", () => {
-      expect(getNextPage(URL_CaseStage)).toEqual(URL_FeeEntry);
+      expect(getNextPage(URL_CaseStage)).toEqual(URL_VatIndicator);
+    });
+
+    it("VAT Indicator page", () => {
+      expect(getNextPage(URL_VatIndicator)).toEqual(URL_FeeEntry);
     });
 
     it("Fee Entry page", () => {
