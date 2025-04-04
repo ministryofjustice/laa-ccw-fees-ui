@@ -37,10 +37,6 @@ jobs:
           echo "API_PROTOCOL = https" >> .env
           echo "API_HOST = ${{ vars.BACKEND_URL}}" >> .env
           echo "API_VERSION = v1" >> .env
-          echo "Current directory:"
-          pwd
-          echo "List files:"
-          ls -al
 
       - name: Upload .env as artifact
         uses: actions/upload-artifact@v4
@@ -62,29 +58,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          less .env
-          echo "Current directory:"
-          pwd
-          echo "List files:"
-          ls -al
-
       - name: Get stored .env file
         uses: actions/download-artifact@v4
         with:
           name: env-file
-      
-
-      - run: |
-          less .env
-          echo "Current directory:"
-          pwd
-          echo "List files:"
-          ls -al
-
-      - run: |
-          less .env
-
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
