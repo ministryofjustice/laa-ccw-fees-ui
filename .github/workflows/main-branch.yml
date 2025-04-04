@@ -44,7 +44,7 @@ jobs:
 
       - run: |
           less .env
-          echo -n ".env" | od -c
+          less "/home/runner/work/laa-ccw-fees-ui/laa-ccw-fees-ui/.env"
 
       # - name: Upload .env as artifact
       #   uses: actions/upload-artifact@v4
