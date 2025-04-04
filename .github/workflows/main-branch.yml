@@ -47,7 +47,7 @@ jobs:
           echo "Current directory:"
           pwd
           echo "List files:"
-          ls -al
+          ls -lart
 
       # - name: Upload .env as artifact
       #   uses: actions/upload-artifact@v4
