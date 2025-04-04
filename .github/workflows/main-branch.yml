@@ -37,6 +37,11 @@ jobs:
           echo "API_PROTOCOL = https" >> .env
           echo "API_HOST = ${{ vars.BACKEND_URL}}" >> .env
           echo "API_VERSION = v1" >> .env
+          echo "Current directory:"
+          pwd
+          echo "List files:"
+          ls -al
+
       - run: |
           less .env
       - name: Upload .env as artifact
@@ -44,6 +49,7 @@ jobs:
         with:
           name: env-file
           path: .env
+          if-no-files-found: error
       - run: npm run build
       - run: npm run test
 
