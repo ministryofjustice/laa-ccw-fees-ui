@@ -46,7 +46,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: env-file
-          path: /home/runner/work/laa-ccw-fees-ui/laa-ccw-fees-ui/.env
+          include-hidden-files: true
+          path: .env
           if-no-files-found: error
       - run: npm run build
       - run: npm run test
@@ -80,7 +81,7 @@ jobs:
           pwd
           echo "List files:"
           ls -al
-          
+
       - run: |
           less .env
 
