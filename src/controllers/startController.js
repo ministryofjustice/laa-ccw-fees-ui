@@ -7,7 +7,10 @@ import { getNextPage, URL_Start } from "../routes/navigator";
  */
 export function showStartPage(req, res) {
   try {
-    res.render("main/index", { csrfToken: req.csrfToken() });
+    res.render("main/index", {
+      csrfToken: req.csrfToken(),
+      skipBackLink: true,
+    });
   } catch (ex) {
     console.error("Error loading page /: {}", ex.message);
 

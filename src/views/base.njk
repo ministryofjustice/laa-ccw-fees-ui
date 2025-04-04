@@ -1,5 +1,6 @@
 {% extends "govuk/template.njk" %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% block pageTitle %}{{config.SERVICE_NAME}} – GOV.UK{% endblock %}
 
@@ -30,6 +31,16 @@
     },
     html: 'This is a new service. Help us improve it and <a class="govuk-link" href="#">give your feedback by email</a>.'
   }) }}
+
+  {% if not skipBackLink %}
+    {# id is controlling backlink behaviour - script catches this. would want to have different class if you wanted to set a different back url than browser default #}
+
+    {{ govukBackLink({
+      text: "Back",
+      href: "#",
+      attributes: { id: "backLinkDefault"}
+    }) }}
+  {% endif %}
 {% endblock %}
 
 {% block content %}

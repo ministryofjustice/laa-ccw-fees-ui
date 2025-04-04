@@ -2,7 +2,7 @@ import { isValidCaseStage } from "./caseStageService";
 
 describe("isValidCaseStage", () => {
   it("should return true if valid case stage", () => {
-    expect(isValidCaseStage("LVL1")).toEqual(true);
+    expect(isValidCaseStage("FPL01")).toEqual(true);
   });
 
   it("should return false if invalid case stage", () => {

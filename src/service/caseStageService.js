@@ -2,16 +2,16 @@
 
 const caseStages = [
   {
-    id: "LVL1",
-    description: "Level 1",
+    id: "FPL01",
+    description: "FPL01: Level 1",
   },
   {
-    id: "LVL2C",
-    description: "Level 2 Children",
+    id: "FPL02",
+    description: "FPL02: Level 1 + Level 2 children + Settlement fee children",
   },
   {
-    id: "LVL2F",
-    description: "Level 2 Finance",
+    id: "FPL03",
+    description: "FPL03: Level 1 + Level 2 finance + Settlement fee finance",
   },
 ];
 

@@ -3,7 +3,7 @@ import {
   NavigationError,
   URL_CaseStage,
   URL_ClaimStart,
-  URL_FeeEntry,
+  URL_ErrorPage,
   URL_LondonRate,
   URL_MatterCode1,
   URL_MatterCode2,
@@ -19,11 +19,11 @@ describe("getNextPage", () => {
     });
 
     it("Claim Start page", () => {
-      expect(getNextPage(URL_ClaimStart)).toEqual(URL_LondonRate);
+      expect(getNextPage(URL_ClaimStart)).toEqual(URL_MatterCode1);
     });
 
     it("London Rate page", () => {
-      expect(getNextPage(URL_LondonRate)).toEqual(URL_MatterCode1);
+      expect(getNextPage(URL_LondonRate)).toEqual(URL_VatIndicator);
     });
 
     it("Matter Code 1 page", () => {
@@ -35,21 +35,21 @@ describe("getNextPage", () => {
     });
 
     it("Case Stage page", () => {
-      expect(getNextPage(URL_CaseStage)).toEqual(URL_VatIndicator);
+      expect(getNextPage(URL_CaseStage)).toEqual(URL_LondonRate);
     });
 
     it("VAT Indicator page", () => {
-      expect(getNextPage(URL_VatIndicator)).toEqual(URL_FeeEntry);
-    });
-
-    it("Fee Entry page", () => {
-      expect(getNextPage(URL_FeeEntry)).toEqual(URL_Result);
+      expect(getNextPage(URL_VatIndicator)).toEqual(URL_Result);
     });
   });
 
   describe("it should throw an NavigationError", () => {
     it("when currently on the Result page", () => {
       expect(() => getNextPage(URL_Result)).toThrow(NavigationError);
+    });
+
+    it("when currently on the Error page", () => {
+      expect(() => getNextPage(URL_ErrorPage)).toThrow(NavigationError);
     });
 
     it("when page is not recognised", () => {

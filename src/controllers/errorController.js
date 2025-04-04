@@ -31,3 +31,15 @@ export function pageSubmitError(req, res, ex) {
     error: "An error occurred saving the answer.",
   });
 }
+
+/**
+ * Generic error page
+ * @param {import('express').Request} req Express request object
+ * @param {import('express').Response} res Express response object
+ */
+export function showGenericErrorPage(req, res) {
+  res.render("main/error", {
+    status: "An error occurred",
+    error: "An error occurred.",
+  });
+}
