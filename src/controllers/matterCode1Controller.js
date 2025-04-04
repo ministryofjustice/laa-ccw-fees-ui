@@ -11,13 +11,15 @@ import { pageLoadError, pageSubmitError } from "./errorController";
  * @param {import('express').Request} req Express request object
  * @param {import('express').Response} res Express response object
  */
-export function showMatterCode1Page(req, res) {
+export async function showMatterCode1Page(req, res) {
   try {
     getSessionData(req);
 
+    const matterCodes = await getMatterCode1s(req);
+
     res.render("main/matterCode", {
       csrfToken: req.csrfToken(),
-      matterCodes: getMatterCode1s(),
+      matterCodes: matterCodes,
       id: "matterCode1",
       label: "Matter Code 1",
     });
@@ -31,7 +33,7 @@ export function showMatterCode1Page(req, res) {
  * @param {import('express').Request} req Express request object
  * @param {import('express').Response} res Express response object
  */
-export function postMatterCode1Page(req, res) {
+export async function postMatterCode1Page(req, res) {
   try {
     const matterCode1 = req.body.matterCode1;
 
@@ -39,7 +41,9 @@ export function postMatterCode1Page(req, res) {
       throw new Error("Matter Code 1 not defined");
     }
 
-    if (!isValidMatterCode1(matterCode1)) {
+    const validMatterCode1s = await getMatterCode1s(req);
+
+    if (!isValidMatterCode1(validMatterCode1s, matterCode1)) {
       throw new Error("Matter Code 1 is not valid");
     }
 

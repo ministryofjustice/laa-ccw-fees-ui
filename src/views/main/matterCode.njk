@@ -8,8 +8,8 @@
 
     {% for matterCode in matterCodes %}
         {{ items.push({
-            value: matterCode.id,
-            text: matterCode.id + " -- " + matterCode.description
+            value: matterCode.matterCode,
+            text: matterCode.matterCode + " -- " + matterCode.description
         }) | reject() }}
     {% endfor %}
 
