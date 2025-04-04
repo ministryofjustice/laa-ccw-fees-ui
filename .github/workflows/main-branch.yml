@@ -6,6 +6,7 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    environment: development
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -13,6 +14,29 @@ jobs:
         with:
           node-version: "22.x"
       - run: npm ci
+      - name: Generate random string for Cookie Secret
+        id: generate_secret
+        run: |
+          COOKIE_SECRET=$(openssl rand -base64 32)
+          echo "COOKIE_SECRET=$COOKIE_SECRET" >> $GITHUB_ENV
+
+      - name: Create .env file
+        shell: bash
+        run: |
+          echo "# Cookie secret - unique, long string to encrypt the cookies" >> .env
+          echo "COOKIE_SECRET=$COOKIE_SECRET" >> .env
+          echo "" >> .env
+          echo "# Set rate limiting - how many requests can be made by an IP over a time period" >> .env
+          echo "RATE_LIMIT_MAX=100" >> .env
+          echo "RATE_WINDOW_MS=900000#15 * 60 * 1000 = 900000" >> .env
+          echo "" >> .env
+          echo "# Service details" >> .env
+          echo "SERVICE_NAME='CCW Fees Calculator'" >> .env
+          echo "SERVICE_PHASE='Alpha'" >> .env
+          echo "#Backend Service URL" >> .env
+          echo "API_PROTOCOL = https" >> .env
+          echo "API_HOST = $BACKEND_URL" >> .env
+          echo "API_VERSION = v1" >> .env
       - run: npm run build --if-present
       - run: npm run test
 
