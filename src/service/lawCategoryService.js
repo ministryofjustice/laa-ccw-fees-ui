@@ -2,11 +2,11 @@
 
 const lawCategories = [
   {
-    id: "family",
+    id: "FAM",
     description: "Family",
   },
   {
-    id: "immigration",
+    id: "IMM",
     description: "Immigration",
   },
 ];
