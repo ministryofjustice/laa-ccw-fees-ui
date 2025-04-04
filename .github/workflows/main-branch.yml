@@ -49,12 +49,12 @@ jobs:
           echo "List files:"
           ls -al
 
-      - name: Upload .env as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: env-file
-          path: .env
-          if-no-files-found: error
+      # - name: Upload .env as artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: env-file
+      #     path: .env
+      #     if-no-files-found: error
       - run: npm run build
       - run: npm run test
 
@@ -70,11 +70,15 @@ jobs:
 
       - run: |
           less .env
+          echo "Current directory:"
+          pwd
+          echo "List files:"
+          ls -al
 
-      - name: Get stored .env file
-        uses: actions/download-artifact@v4
-        with:
-          name: env-file
+      # - name: Get stored .env file
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: env-file
       
       - run: |
           less .env
