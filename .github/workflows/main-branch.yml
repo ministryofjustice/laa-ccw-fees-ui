@@ -33,11 +33,11 @@ jobs:
           echo "# Service details" >> .env
           echo "SERVICE_NAME='CCW Fees Calculator'" >> .env
           echo "SERVICE_PHASE='Alpha'" >> .env
-          echo "#Backend Service URL" >> .env
+          echo "# Backend Service URL" >> .env
           echo "API_PROTOCOL = https" >> .env
           echo "API_HOST = $BACKEND_URL" >> .env
           echo "API_VERSION = v1" >> .env
-      - run: npm run build --if-present
+      - run: npm run build
       - run: npm run test
 
   ecr:
