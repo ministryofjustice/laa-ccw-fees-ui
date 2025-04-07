@@ -2,7 +2,7 @@ name: Main Branch
 
 on:
   push:
-    branches: [main, BILL-91]
+    branches: [main]
 jobs:
   build-test:
     runs-on: ubuntu-latest
