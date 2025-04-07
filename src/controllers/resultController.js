@@ -38,6 +38,5 @@ export async function showResultPage(req, res) {
  * @returns {string} - formatted currency value
  */
 function formatToPounds(amount) {
-  console.log("FOMRATIGN: " + amount);
   return `£${Number(amount).toFixed(2)}`;
 }
