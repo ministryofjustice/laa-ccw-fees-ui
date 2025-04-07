@@ -34,9 +34,10 @@ export async function showResultPage(req, res) {
 
 /**
  * Return the number in a currency format
- * @param {number} amount - currency value to convert
+ * @param {string} amount - currency value to convert
  * @returns {string} - formatted currency value
  */
 function formatToPounds(amount) {
-  return `£${amount.toFixed(2)}`;
+  console.log("FOMRATIGN: " + amount);
+  return `£${Number(amount).toFixed(2)}`;
 }
