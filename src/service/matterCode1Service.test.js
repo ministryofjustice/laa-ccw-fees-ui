@@ -17,7 +17,7 @@ const matterCodesAPIResponse = {
   },
 };
 
-describe("getMatterCodes", () => {
+describe("getMatterCode1s", () => {
   let req = {
     axiosMiddleware: {
       get: jest.fn(),

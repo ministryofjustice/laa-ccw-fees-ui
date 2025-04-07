@@ -22,7 +22,6 @@ export async function getMatterCode1s(req) {
  * @returns {boolean} - true if matter code 1 is valid, false otherwise
  */
 export function isValidMatterCode1(validMatterCode1s, enteredMatterCode) {
-  console.log(validMatterCode1s);
   return validMatterCode1s.some(
     (matterCode) => matterCode.matterCode === enteredMatterCode,
   );
