@@ -10,6 +10,7 @@ import {
 } from "../utils/dateTimeUtils";
 import { getSessionData } from "../utils";
 import { getNextPage, URL_ClaimStart } from "../routes/navigator";
+import session from "express-session";
 
 jest.mock("../service/lawCategoryService");
 jest.mock("../utils/dateTimeUtils");
@@ -104,6 +105,8 @@ describe("postClaimStartPage", () => {
     body.category = familyLaw;
     body.date = today;
 
+    req.session.data = sessionData;
+
     sessionData.validMatterCode1s = "some data here";
   });
 
@@ -121,9 +124,25 @@ describe("postClaimStartPage", () => {
     expect(sessionData.startDate).toEqual(today);
     expect(getNextPage).toHaveBeenCalledWith(URL_ClaimStart);
 
+  });
+
+  it("should clean up data that depends on law category if law category changed", () => {
+    sessionData.lawCategory = "IMM"
+    postClaimStartPage(req, res);
+    
     //Should clean up any old data that depends on law category
     expect(sessionData.validMatterCode1s).toEqual(null);
-  });
+
+  })
+
+  it("should keep data that depends on law category if law category not changed", () => {
+    sessionData.lawCategory = familyLaw;
+    postClaimStartPage(req, res);
+    
+    //Should clean up any old data that depends on law category
+    expect(sessionData.validMatterCode1s).toEqual("some data here");
+
+  })
 
   it("render error page when law category from form is missing", async () => {
     body.category = null;

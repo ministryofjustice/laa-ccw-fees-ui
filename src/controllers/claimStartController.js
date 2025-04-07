@@ -43,6 +43,8 @@ export function postClaimStartPage(req, res) {
       throw new Error("Law Category is not valid");
     }
 
+    let hasCategoryChanged = req.session.data?.lawCategory != category;
+
     const date = req.body.date;
     if (date == null) {
       throw new Error("Date case was opened is not defined");
@@ -55,8 +57,11 @@ export function postClaimStartPage(req, res) {
     req.session.data.startDate = date;
     req.session.data.lawCategory = category;
 
-    // Remove any previously saved law categories because changing law category changes the valid matter codes
-    req.session.data.validMatterCode1s = null;
+    if (hasCategoryChanged) {
+      console.log("cat changed")
+      // Remove any previously saved law categories because changing law category changes the valid matter codes
+      req.session.data.validMatterCode1s = null;
+    }
 
     res.redirect(getNextPage(URL_ClaimStart));
   } catch (ex) {
