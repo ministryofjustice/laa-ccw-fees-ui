@@ -14,9 +14,6 @@ jobs:
         with:
           node-version: "22.x"
       - run: npm ci
-      - run: |
-                echo ${{ vars.BACKEND_URL }}
-
 
       - run: npm run build
       - run: npm run test
@@ -52,6 +49,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: ecr
+    environment: development
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read # This is required for actions/checkout
