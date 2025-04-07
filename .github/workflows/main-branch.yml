@@ -75,7 +75,6 @@ jobs:
 
       - name: Substitute secrets
         run: |
-          echo ${{ vars.BACKEND_URL }}
           cat deployments/templates/deployment.yml | envsubst > deployments/deployment.yml
           cat deployments/templates/ingress.yml | envsubst > deployments/ingress.yml
           cat deployments/templates/service.yml | envsubst > deployments/service.yml
