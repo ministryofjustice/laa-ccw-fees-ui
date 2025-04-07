@@ -19,6 +19,11 @@ import {
   URL_MatterCode2,
 } from "../routes/navigator";
 
+/**
+ * Clean up the session data for later pages
+ * @param {import('express').Request} req Express request object
+ * @param {string} page - page we are on and so determines what data needs cleaning
+ */
 export function cleanData(req, page) {
   //If we have changed data that other values depend on, we need to mop up that old data
   // E.g. matterCode2 depends on matterCode1 so changing matterCode1 invalidates any matterCode2 data
