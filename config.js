@@ -7,8 +7,8 @@ const config = {
   DEPARTMENT_URL: process.env.DEPARTMENT_URL,
   RATE_LIMIT_MAX: process.env.RATE_LIMIT_MAX || 100,
   RATE_WINDOW_MS: parseInt(process.env.RATE_WINDOW_MS, 10) || 15 * 60 * 1000,
-  SERVICE_NAME: process.env.SERVICE_NAME,
-  SERVICE_PHASE: process.env.SERVICE_PHASE,
+  SERVICE_NAME: process.env.SERVICE_NAME || "CCW Fees Calculator",
+  SERVICE_PHASE: process.env.SERVICE_PHASE || "Alpha",
   API: {
     PROTOCOL: process.env.API_PROTOCOL,
     HOST: process.env.API_HOST,
