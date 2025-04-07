@@ -31,6 +31,8 @@ spec:
             - name: API_PROTOCOL
               value: https
             - name: API_HOST
-              value: laa-ccw-fees-service-dev.apps.live.cloud-platform.service.justice.gov.uk
+              value: ${API_HOST}
             - name: API_VERSION
               value: v1
+            - name: COOKIE_SECRET
+              value: ${COOKIE_SECRET}
