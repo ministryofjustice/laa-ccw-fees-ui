@@ -1,4 +1,4 @@
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import {
   getLondonRates,
   isValidLondonRate,
@@ -7,7 +7,7 @@ import { postLondonRatePage, showLondonRatePage } from "./londonRateController";
 import { getNextPage, URL_LondonRate } from "../routes/navigator";
 
 jest.mock("../service/londonRateService");
-jest.mock("../utils/sessionHelper");
+jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
 
 const londonRates = [

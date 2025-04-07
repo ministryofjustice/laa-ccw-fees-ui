@@ -1,8 +1,8 @@
 import { getCalculationResult } from "../service/feeCalculatorService";
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { showResultPage } from "./resultController";
 
-jest.mock("../utils/sessionHelper");
+jest.mock("../service/sessionDataService");
 jest.mock("../service/feeCalculatorService");
 
 describe("showResultPage", () => {

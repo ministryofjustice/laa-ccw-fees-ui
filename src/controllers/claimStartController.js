@@ -4,7 +4,7 @@ import {
   getLawCategories,
 } from "../service/lawCategoryService";
 import { cleanData } from "../service/sessionDataService";
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { validateEnteredDate, todayString } from "../utils/dateTimeUtils";
 import { pageLoadError, pageSubmitError } from "./errorController";
 

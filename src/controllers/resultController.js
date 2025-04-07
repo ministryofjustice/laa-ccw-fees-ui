@@ -1,4 +1,4 @@
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { getCalculationResult } from "../service/feeCalculatorService";
 import { pageLoadError } from "./errorController";
 

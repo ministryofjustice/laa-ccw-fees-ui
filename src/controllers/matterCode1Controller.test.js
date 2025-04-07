@@ -1,4 +1,4 @@
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import {
   getMatterCode1s,
   isValidMatterCode1,
@@ -11,9 +11,8 @@ import { getNextPage, URL_MatterCode1 } from "../routes/navigator";
 import { cleanData } from "../service/sessionDataService";
 
 jest.mock("../service/matterCode1Service");
-jest.mock("../utils/sessionHelper");
-jest.mock("../routes/navigator.js");
 jest.mock("../service/sessionDataService");
+jest.mock("../routes/navigator.js");
 
 const matterCode1s = [
   {

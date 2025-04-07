@@ -3,7 +3,7 @@ import {
   URL_MatterCode1,
   URL_MatterCode2,
 } from "../routes/navigator";
-import { cleanData } from "./sessionDataService";
+import { cleanData, getSessionData } from "./sessionDataService";
 
 describe("cleanData", () => {
   let req = {
@@ -76,5 +76,45 @@ describe("cleanData", () => {
     expect(req.session.data.londonRate).toEqual(null);
     expect(req.session.data.vatIndicator).toEqual(null);
     expect(req.session.data.startDate).toEqual("h");
+  });
+});
+
+describe("getSessionData", () => {
+  it("should return the session data object if defined but empty", () => {
+    const req = {
+      session: {
+        data: {},
+      },
+    };
+
+    expect(getSessionData(req)).toEqual({});
+  });
+
+  it("should return the session data object if defined and populated", () => {
+    const data = {
+      lawCategory: "family",
+    };
+
+    const req = {
+      session: {
+        data: data,
+      },
+    };
+
+    expect(getSessionData(req)).toEqual(data);
+  });
+
+  it("should throw an error if session data missing", () => {
+    const req = {
+      session: {},
+    };
+
+    expect(() => getSessionData(req)).toThrow(Error);
+  });
+
+  it("should throw an error if session is missing", () => {
+    const req = {};
+
+    expect(() => getSessionData(req)).toThrow(Error);
   });
 });

@@ -8,14 +8,12 @@ import {
   validateEnteredDate,
   DateInputError,
 } from "../utils/dateTimeUtils";
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { getNextPage, URL_ClaimStart } from "../routes/navigator";
-import session from "express-session";
 import { cleanData } from "../service/sessionDataService";
 
 jest.mock("../service/lawCategoryService");
 jest.mock("../utils/dateTimeUtils");
-jest.mock("../utils/sessionHelper");
 jest.mock("../routes/navigator.js");
 jest.mock("../service/sessionDataService");
 

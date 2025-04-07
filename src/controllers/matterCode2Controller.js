@@ -3,7 +3,7 @@ import {
   getMatterCode2s,
   isValidMatterCode2,
 } from "../service/matterCode2Service";
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { cleanData } from "../service/sessionDataService";
 

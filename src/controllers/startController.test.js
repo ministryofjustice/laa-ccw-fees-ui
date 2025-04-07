@@ -2,7 +2,7 @@ import { getNextPage, URL_Start } from "../routes/navigator";
 import { postStartPage, showStartPage } from "./startController";
 
 jest.mock("../service/londonRateService");
-jest.mock("../utils/sessionHelper");
+jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
 
 describe("showStartPage", () => {
