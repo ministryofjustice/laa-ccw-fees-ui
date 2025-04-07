@@ -1,10 +1,19 @@
 {% extends "base.njk" %}
 
 {% block wrappedContent %}
-    <h1 class="govuk-heading-xl">Result</h1>
 
-    <div class="govuk-heading-m">
-        You should have £{{ number }} for category {{ category }}
-    </div>
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% set vatText = "" %}
+{% if isVatRegistered %}
+    {% set vatText = "You are VAT registered and " + vatAmount + " is VAT." %}
+{% else %}
+    {% set vatText = "You are not VAT registered" %}
+{% endif %}
+
+{{ govukPanel({
+  titleText: "Your total is " + total,
+  html: vatText
+}) }}
 
 {% endblock %}

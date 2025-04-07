@@ -22,6 +22,7 @@ describe("showStartPage", () => {
 
     expect(res.render).toHaveBeenCalledWith("main/index", {
       csrfToken: "mocked-csrf-token",
+      skipBackLink: true,
     });
   });
 

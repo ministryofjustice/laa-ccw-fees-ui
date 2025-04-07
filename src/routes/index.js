@@ -4,10 +4,6 @@ import {
   showClaimStartPage,
 } from "../controllers/claimStartController";
 import {
-  postFeeEntryPage,
-  showFeeEntryPage,
-} from "../controllers/feeEntryController";
-import {
   postLondonRatePage,
   showLondonRatePage,
 } from "../controllers/londonRateController";
@@ -20,7 +16,7 @@ import {
 import {
   URL_CaseStage,
   URL_ClaimStart,
-  URL_FeeEntry,
+  URL_ErrorPage,
   URL_LondonRate,
   URL_MatterCode1,
   URL_MatterCode2,
@@ -40,6 +36,7 @@ import {
   postVatIndicatorRate,
   showVatIndicatorPage,
 } from "../controllers/vatIndicatorController";
+import { showGenericErrorPage } from "../controllers/errorController";
 
 export const router = express.Router();
 
@@ -48,9 +45,6 @@ router.post(URL_Start, postStartPage);
 
 router.get(URL_ClaimStart, showClaimStartPage);
 router.post(URL_ClaimStart, postClaimStartPage);
-
-router.get(URL_FeeEntry, showFeeEntryPage);
-router.post(URL_FeeEntry, postFeeEntryPage);
 
 router.get(URL_LondonRate, showLondonRatePage);
 router.post(URL_LondonRate, postLondonRatePage);
@@ -68,5 +62,7 @@ router.get(URL_VatIndicator, showVatIndicatorPage);
 router.post(URL_VatIndicator, postVatIndicatorRate);
 
 router.get(URL_Result, showResultPage);
+
+router.get(URL_ErrorPage, showGenericErrorPage);
 
 export default router;
