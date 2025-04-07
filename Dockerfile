@@ -38,7 +38,6 @@ COPY --from=build --chown=appuser:appgroup /app/package*.json ./
 COPY --from=build --chown=appuser:appgroup /app/src/views ./src/views
 COPY --from=build --chown=appuser:appgroup /app/public ./public
 COPY --from=build --chown=appuser:appgroup /app/node_modules ./node_modules
-COPY --from=build --chown=appuser:appgroup /app/.env ./.env
 
 EXPOSE 3000
 ENV NODE_ENV='production'
