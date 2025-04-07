@@ -3,9 +3,8 @@ import {
   getMatterCode2s,
   isValidMatterCode2,
 } from "../service/matterCode2Service";
-import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
-import { cleanData } from "../service/sessionDataService";
+import { cleanData, getSessionData } from "../service/sessionDataService";
 
 /**
  * Load the page for the user to enter Matter Code 2

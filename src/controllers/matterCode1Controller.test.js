@@ -1,4 +1,3 @@
-import { getSessionData } from "../service/sessionDataService";
 import {
   getMatterCode1s,
   isValidMatterCode1,
@@ -8,7 +7,7 @@ import {
   showMatterCode1Page,
 } from "./matterCode1Controller";
 import { getNextPage, URL_MatterCode1 } from "../routes/navigator";
-import { cleanData } from "../service/sessionDataService";
+import { cleanData, getSessionData } from "../service/sessionDataService";
 
 jest.mock("../service/matterCode1Service");
 jest.mock("../service/sessionDataService");
