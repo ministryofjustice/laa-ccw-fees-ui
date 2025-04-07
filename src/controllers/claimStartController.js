@@ -3,6 +3,7 @@ import {
   isValidLawCategory,
   getLawCategories,
 } from "../service/lawCategoryService";
+import { cleanData } from "../service/sessionDataService";
 import { getSessionData } from "../utils";
 import { validateEnteredDate, todayString } from "../utils/dateTimeUtils";
 import { pageLoadError, pageSubmitError } from "./errorController";
@@ -43,8 +44,6 @@ export function postClaimStartPage(req, res) {
       throw new Error("Law Category is not valid");
     }
 
-    let hasCategoryChanged = req.session.data?.lawCategory != category;
-
     const date = req.body.date;
     if (date == null) {
       throw new Error("Date case was opened is not defined");
@@ -54,14 +53,13 @@ export function postClaimStartPage(req, res) {
       throw new Error("Date is not valid");
     }
 
+    const hasCategoryChanged = req.session.data?.lawCategory != category;
+    if (hasCategoryChanged) {
+      cleanData(req, URL_ClaimStart);
+    }
+
     req.session.data.startDate = date;
     req.session.data.lawCategory = category;
-
-    if (hasCategoryChanged) {
-      console.log("cat changed")
-      // Remove any previously saved law categories because changing law category changes the valid matter codes
-      req.session.data.validMatterCode1s = null;
-    }
 
     res.redirect(getNextPage(URL_ClaimStart));
   } catch (ex) {

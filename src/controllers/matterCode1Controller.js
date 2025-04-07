@@ -5,6 +5,7 @@ import {
 } from "../service/matterCode1Service";
 import { getSessionData } from "../utils";
 import { pageLoadError, pageSubmitError } from "./errorController";
+import { cleanData } from "../service/sessionDataService";
 
 /**
  * Load the page for the user to enter Matter Code 1
@@ -45,6 +46,11 @@ export async function postMatterCode1Page(req, res) {
 
     if (!isValidMatterCode1(validMatterCode1s, matterCode1)) {
       throw new Error("Matter Code 1 is not valid");
+    }
+
+    const hasMatterCodeChanged = req.session.data?.matterCode1 != matterCode1;
+    if (hasMatterCodeChanged) {
+      cleanData(req, URL_MatterCode1);
     }
 
     req.session.data.matterCode1 = matterCode1;

@@ -11,11 +11,13 @@ import {
 import { getSessionData } from "../utils";
 import { getNextPage, URL_ClaimStart } from "../routes/navigator";
 import session from "express-session";
+import { cleanData } from "../service/sessionDataService";
 
 jest.mock("../service/lawCategoryService");
 jest.mock("../utils/dateTimeUtils");
 jest.mock("../utils/sessionHelper");
 jest.mock("../routes/navigator.js");
+jest.mock("../service/sessionDataService");
 
 const today = "31/03/2025";
 const lawCategories = [
@@ -84,15 +86,7 @@ describe("showClaimStartPage", () => {
 });
 
 describe("postClaimStartPage", () => {
-  let body = {};
-  let sessionData = {};
-
-  let req = {
-    session: {
-      data: sessionData,
-    },
-    body: body,
-  };
+  let req = {};
   let res = {
     render: jest.fn(),
     redirect: jest.fn(),
@@ -102,16 +96,17 @@ describe("postClaimStartPage", () => {
     isValidLawCategory.mockReturnValue(true);
     validateEnteredDate.mockReturnValue(true);
 
-    body.category = familyLaw;
-    body.date = today;
+    req = {
+      session: {
+        data: {},
+      },
+      body: {},
+    };
 
-    req.session.data = sessionData;
+    req.body.category = familyLaw;
+    req.body.date = today;
 
-    sessionData.validMatterCode1s = "some data here";
-  });
-
-  afterEach(() => {
-    sessionData = {};
+    req.session.data.validMatterCode1s = "some data here";
   });
 
   it("should redirect to result page if valid form data is supplied", () => {
@@ -120,32 +115,27 @@ describe("postClaimStartPage", () => {
     postClaimStartPage(req, res);
 
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
-    expect(sessionData.lawCategory).toEqual(familyLaw);
-    expect(sessionData.startDate).toEqual(today);
+    expect(req.session.data.lawCategory).toEqual(familyLaw);
+    expect(req.session.data.startDate).toEqual(today);
     expect(getNextPage).toHaveBeenCalledWith(URL_ClaimStart);
-
   });
 
   it("should clean up data that depends on law category if law category changed", () => {
-    sessionData.lawCategory = "IMM"
+    req.session.data.lawCategory = "IMM";
     postClaimStartPage(req, res);
-    
-    //Should clean up any old data that depends on law category
-    expect(sessionData.validMatterCode1s).toEqual(null);
 
-  })
+    expect(cleanData).toHaveBeenCalledWith(req, URL_ClaimStart);
+  });
 
   it("should keep data that depends on law category if law category not changed", () => {
-    sessionData.lawCategory = familyLaw;
+    req.session.data.lawCategory = familyLaw;
     postClaimStartPage(req, res);
-    
-    //Should clean up any old data that depends on law category
-    expect(sessionData.validMatterCode1s).toEqual("some data here");
 
-  })
+    expect(cleanData).toHaveBeenCalledTimes(0);
+  });
 
   it("render error page when law category from form is missing", async () => {
-    body.category = null;
+    req.body.category = null;
 
     postClaimStartPage(req, res);
 
@@ -153,12 +143,12 @@ describe("postClaimStartPage", () => {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
-    expect(sessionData.lawCategory).toBeUndefined();
-    expect(sessionData.startDate).toBeUndefined();
+    expect(req.session.data.lawCategory).toBeUndefined();
+    expect(req.session.data.startDate).toBeUndefined();
   });
 
   it("render error page when start date from form is missing", async () => {
-    body.date = null;
+    req.body.date = null;
 
     postClaimStartPage(req, res);
 
@@ -166,8 +156,8 @@ describe("postClaimStartPage", () => {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
-    expect(sessionData.lawCategory).toBeUndefined();
-    expect(sessionData.startDate).toBeUndefined();
+    expect(req.session.data.lawCategory).toBeUndefined();
+    expect(req.session.data.startDate).toBeUndefined();
   });
 
   it("render error page when law category is invalid", async () => {
@@ -180,8 +170,8 @@ describe("postClaimStartPage", () => {
       status: "An error occurred",
     });
 
-    expect(sessionData.lawCategory).toBeUndefined();
-    expect(sessionData.startDate).toBeUndefined();
+    expect(req.session.data.lawCategory).toBeUndefined();
+    expect(req.session.data.startDate).toBeUndefined();
     expect(isValidLawCategory).toHaveBeenCalledWith(familyLaw);
   });
 
@@ -195,8 +185,8 @@ describe("postClaimStartPage", () => {
       status: "An error occurred",
     });
 
-    expect(sessionData.lawCategory).toBeUndefined();
-    expect(sessionData.startDate).toBeUndefined();
+    expect(req.session.data.lawCategory).toBeUndefined();
+    expect(req.session.data.startDate).toBeUndefined();
     expect(validateEnteredDate).toHaveBeenCalledWith(today);
   });
 
@@ -212,8 +202,8 @@ describe("postClaimStartPage", () => {
       status: "An error occurred",
     });
 
-    expect(sessionData.lawCategory).toBeUndefined();
-    expect(sessionData.startDate).toBeUndefined();
+    expect(req.session.data.lawCategory).toBeUndefined();
+    expect(req.session.data.startDate).toBeUndefined();
     expect(validateEnteredDate).toHaveBeenCalledWith(today);
   });
 });

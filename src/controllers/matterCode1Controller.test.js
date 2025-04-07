@@ -8,10 +8,12 @@ import {
   showMatterCode1Page,
 } from "./matterCode1Controller";
 import { getNextPage, URL_MatterCode1 } from "../routes/navigator";
+import { cleanData } from "../service/sessionDataService";
 
 jest.mock("../service/matterCode1Service");
 jest.mock("../utils/sessionHelper");
 jest.mock("../routes/navigator.js");
+jest.mock("../service/sessionDataService");
 
 const matterCode1s = [
   {
@@ -97,15 +99,7 @@ describe("showMatterCode1Page", () => {
 });
 
 describe("postMatterCode1Page", () => {
-  let body = {};
-  let sessionData = {};
-
-  let req = {
-    session: {
-      data: sessionData,
-    },
-    body: body,
-  };
+  let req = {};
   let res = {
     render: jest.fn(),
     redirect: jest.fn(),
@@ -115,11 +109,14 @@ describe("postMatterCode1Page", () => {
     getMatterCode1s.mockResolvedValue(matterCode1s);
     isValidMatterCode1.mockReturnValue(true);
 
-    body.matterCode1 = chosenMatterCode;
-  });
+    req = {
+      session: {
+        data: {},
+      },
+      body: {},
+    };
 
-  afterEach(() => {
-    sessionData = {};
+    req.body.matterCode1 = chosenMatterCode;
   });
 
   it("should redirect to result page if valid form data is supplied", async () => {
@@ -128,7 +125,7 @@ describe("postMatterCode1Page", () => {
     await postMatterCode1Page(req, res);
 
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
-    expect(sessionData.matterCode1).toEqual(chosenMatterCode);
+    expect(req.session.data.matterCode1).toEqual(chosenMatterCode);
 
     expect(isValidMatterCode1).toHaveBeenCalledWith(
       matterCode1s,
@@ -138,8 +135,22 @@ describe("postMatterCode1Page", () => {
     expect(getMatterCode1s).toHaveBeenCalledWith(req);
   });
 
+  it("should clean up data that depends on matter code 1 if value changed", async () => {
+    req.session.data.matterCode1 = "IMM";
+    await postMatterCode1Page(req, res);
+
+    expect(cleanData).toHaveBeenCalledWith(req, URL_MatterCode1);
+  });
+
+  it("should keep data that depends on matter code 1 if value not changed", async () => {
+    req.session.data.matterCode1 = chosenMatterCode;
+    await postMatterCode1Page(req, res);
+
+    expect(cleanData).toHaveBeenCalledTimes(0);
+  });
+
   it("render error page when Matter Code 1 from form is missing", async () => {
-    body.matterCode1 = null;
+    req.body.matterCode1 = null;
 
     await postMatterCode1Page(req, res);
 
@@ -147,7 +158,7 @@ describe("postMatterCode1Page", () => {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
-    expect(sessionData.matterCode1).toBeUndefined();
+    expect(req.session.data.matterCode1).toBeUndefined();
   });
 
   it("render error page when Matter Code 1 is invalid", async () => {
@@ -160,7 +171,7 @@ describe("postMatterCode1Page", () => {
       status: "An error occurred",
     });
 
-    expect(sessionData.matterCode1).toBeUndefined();
+    expect(req.session.data.matterCode1).toBeUndefined();
     expect(getMatterCode1s).toHaveBeenCalledWith(req);
     expect(isValidMatterCode1).toHaveBeenCalledWith(
       matterCode1s,
