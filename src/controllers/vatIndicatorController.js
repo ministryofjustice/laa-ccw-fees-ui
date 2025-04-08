@@ -1,5 +1,5 @@
 import { getNextPage, URL_VatIndicator } from "../routes/navigator";
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 
 /**

@@ -1,6 +1,6 @@
 import { getNextPage, URL_CaseStage } from "../routes/navigator";
 import { isValidCaseStage, getCaseStages } from "../service/caseStageService";
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 
 /**

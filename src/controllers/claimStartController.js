@@ -3,7 +3,7 @@ import {
   isValidLawCategory,
   getLawCategories,
 } from "../service/lawCategoryService";
-import { getSessionData } from "../utils";
+import { cleanData, getSessionData } from "../service/sessionDataService";
 import { validateEnteredDate, todayString } from "../utils/dateTimeUtils";
 import { pageLoadError, pageSubmitError } from "./errorController";
 
@@ -50,6 +50,11 @@ export function postClaimStartPage(req, res) {
 
     if (!validateEnteredDate(date)) {
       throw new Error("Date is not valid");
+    }
+
+    const hasCategoryChanged = req.session.data?.lawCategory != category;
+    if (hasCategoryChanged) {
+      cleanData(req, URL_ClaimStart);
     }
 
     req.session.data.startDate = date;

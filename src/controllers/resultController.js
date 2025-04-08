@@ -1,4 +1,4 @@
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { getCalculationResult } from "../service/feeCalculatorService";
 import { pageLoadError } from "./errorController";
 
@@ -34,9 +34,9 @@ export async function showResultPage(req, res) {
 
 /**
  * Return the number in a currency format
- * @param {number} amount - currency value to convert
+ * @param {string} amount - currency value to convert
  * @returns {string} - formatted currency value
  */
 function formatToPounds(amount) {
-  return `£${amount.toFixed(2)}`;
+  return `£${Number(amount).toFixed(2)}`;
 }

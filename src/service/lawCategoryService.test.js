@@ -5,7 +5,7 @@ import {
 
 describe("isValidLawCategory", () => {
   it("should return true if valid category", () => {
-    expect(isValidLawCategory("family")).toEqual(true);
+    expect(isValidLawCategory("FAM")).toEqual(true);
   });
 
   it("should return false if invalid category", () => {
@@ -15,7 +15,7 @@ describe("isValidLawCategory", () => {
 
 describe("getLawCategoryDescription", () => {
   it("should return description if valid category", () => {
-    expect(getLawCategoryDescription("family")).toEqual("Family");
+    expect(getLawCategoryDescription("FAM")).toEqual("Family");
   });
 
   it("should return null if invalid category", () => {

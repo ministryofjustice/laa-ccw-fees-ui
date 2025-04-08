@@ -1,10 +1,10 @@
 import { postCaseStagePage, showCaseStagePage } from "./caseStageController";
 import { getCaseStages, isValidCaseStage } from "../service/caseStageService";
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { getNextPage, URL_CaseStage } from "../routes/navigator";
 
 jest.mock("../service/caseStageService");
-jest.mock("../utils/sessionHelper");
+jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
 
 const caseStages = [

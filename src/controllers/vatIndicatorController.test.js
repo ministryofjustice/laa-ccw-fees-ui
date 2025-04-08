@@ -1,11 +1,11 @@
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import {
   postVatIndicatorRate,
   showVatIndicatorPage,
 } from "./vatIndicatorController";
 import { getNextPage, URL_VatIndicator } from "../routes/navigator";
 
-jest.mock("../utils/sessionHelper");
+jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
 
 describe("showVatIndicatorPage", () => {

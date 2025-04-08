@@ -3,7 +3,7 @@ import {
   getLondonRates,
   isValidLondonRate,
 } from "../service/londonRateService";
-import { getSessionData } from "../utils";
+import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 
 /**
