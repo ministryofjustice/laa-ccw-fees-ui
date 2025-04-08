@@ -41,7 +41,7 @@ describe("getCaseStages", () => {
     expect(returnedCaseStages).toEqual(expectedCaseStages);
     expect(req.session.data.validCaseStages).toEqual(expectedCaseStages);
 
-    expect(req.axiosMiddleware.get).toHaveBeenCalledWith("/case-stages/", {
+    expect(req.axiosMiddleware.get).toHaveBeenCalledWith("/case-stages", {
       data: {
         matterCode1: "FAMA",
         matterCode2: "FPET",
@@ -69,7 +69,7 @@ describe("getCaseStages", () => {
 
     await expect(() => getCaseStages(req)).rejects.toThrow(Error);
 
-    expect(req.axiosMiddleware.get).toHaveBeenCalledWith("/case-stages/", {
+    expect(req.axiosMiddleware.get).toHaveBeenCalledWith("/case-stages", {
       data: {
         matterCode1: "FAMA",
         matterCode2: "FPET",

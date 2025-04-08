@@ -41,7 +41,7 @@ async function getCaseStagesFromService(axios, matterCode1, matterCode2) {
     matterCode2: matterCode2,
   };
 
-  const response = await axios.get("/case-stages/", {
+  const response = await axios.get("/case-stages", {
     data: requestBody,
   });
 
