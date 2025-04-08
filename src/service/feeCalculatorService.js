@@ -1,3 +1,5 @@
+import { familyLaw, immigrationLaw } from './lawCategoryService';
+
 /**
  * Ask API for calculation detials
  * @async
@@ -9,16 +11,32 @@
 export async function getCalculationResult(sessionData, axios) {
   const matterCode1 = sessionData.matterCode1;
   const matterCode2 = sessionData.matterCode2;
-  const locationCode = sessionData.londonRate;
-  const caseStage = sessionData.caseStage;
+  let locationCode = sessionData.londonRate;
+  let caseStage = sessionData.caseStage;
+  const lawCategory = sessionData.lawCategory;
 
-  if (
-    matterCode1 == null ||
-    matterCode2 == null ||
-    locationCode == null ||
-    caseStage == null
-  ) {
-    throw new Error("Data is missing");
+  switch (lawCategory){
+    case familyLaw:
+      if (
+        matterCode1 == null ||
+        matterCode2 == null || 
+        locationCode == null ||
+        caseStage == null  
+      ) {
+        throw new Error("Data is missing");
+      }
+      break;
+    case immigrationLaw:
+      if (
+        matterCode1 == null ||
+        matterCode2 == null
+      ) {
+        throw new Error("Data is missing");
+      }
+
+      locationCode = "NA"
+      caseStage = "_IMM01" //TODO get this automatically from backend
+    
   }
 
   const requestBody = {
