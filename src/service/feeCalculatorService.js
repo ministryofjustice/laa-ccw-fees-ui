@@ -33,6 +33,9 @@ export async function getCalculationResult(sessionData, axios) {
 
       locationCode = "NA";
       caseStage = "_IMM01"; //TODO get this automatically from backend
+      break;
+    default:
+      throw new Error("Unsupported law category");
   }
 
   const requestBody = {

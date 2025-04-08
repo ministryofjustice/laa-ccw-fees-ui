@@ -13,6 +13,7 @@ export const URL_VatIndicator = "/vat-indicator";
 /**
  * Find out where we should navigate to next.
  * @param {string} currentPage - what page is it on. Should be one of the above constants.
+ * @param {object} sessionData - current session data
  * @returns {string} - next page. Should be one of the above constants.
  * @throws {NavigationError} - if can't figure out where to go next
  */
