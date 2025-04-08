@@ -1,4 +1,5 @@
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
+import { notApplicable } from "./londonRateService";
 
 /**
  * Ask API for calculation detials

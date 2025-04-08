@@ -1,5 +1,6 @@
 import { getCalculationResult } from "./feeCalculatorService";
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
+import { notApplicable } from "./londonRateService";
 
 describe("getCalculationResult", () => {
   const axios = {
