@@ -9,6 +9,7 @@ export const URL_MatterCode2 = "/matter-code-2";
 export const URL_ErrorPage = "/error";
 export const URL_CaseStage = "/case-stage";
 export const URL_VatIndicator = "/vat-indicator";
+export const URL_AdditionalCosts = "/additional-costs";
 
 /**
  * Find out where we should navigate to next.
@@ -31,10 +32,12 @@ export function getNextPage(currentPage, sessionData) {
       if (sessionData.lawCategory === familyLaw) {
         return URL_CaseStage;
       } else {
-        return URL_VatIndicator;
+        return URL_AdditionalCosts;
       }
     case URL_CaseStage:
       return URL_LondonRate;
+    case URL_AdditionalCosts:
+      return URL_VatIndicator;
     case URL_VatIndicator:
       return URL_Result;
     case URL_Result:

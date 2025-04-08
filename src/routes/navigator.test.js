@@ -2,6 +2,7 @@ import { familyLaw } from "../service/lawCategoryService";
 import {
   getNextPage,
   NavigationError,
+  URL_AdditionalCosts,
   URL_CaseStage,
   URL_ClaimStart,
   URL_ErrorPage,
@@ -40,8 +41,8 @@ describe("getNextPage", () => {
         ).toEqual(URL_CaseStage);
       });
 
-      it("should go to VAT indicator if immigration law", () => {
-        expect(getNextPage(URL_MatterCode2, {})).toEqual(URL_VatIndicator);
+      it("should go to Additional costs if immigration law", () => {
+        expect(getNextPage(URL_MatterCode2, {})).toEqual(URL_AdditionalCosts);
       });
     });
 
@@ -51,6 +52,10 @@ describe("getNextPage", () => {
 
     it("VAT Indicator page", () => {
       expect(getNextPage(URL_VatIndicator, {})).toEqual(URL_Result);
+    });
+
+    it("Additional Costs page", () => {
+      expect(getNextPage(URL_AdditionalCosts, {})).toEqual(URL_VatIndicator);
     });
   });
 
