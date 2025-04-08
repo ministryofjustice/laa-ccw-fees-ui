@@ -1,3 +1,4 @@
+import { familyLaw } from "../service/lawCategoryService";
 import {
   getNextPage,
   NavigationError,
@@ -15,45 +16,55 @@ import {
 describe("getNextPage", () => {
   describe("it should return the next page when currently on the", () => {
     it("Start page", () => {
-      expect(getNextPage(URL_Start)).toEqual(URL_ClaimStart);
+      expect(getNextPage(URL_Start, {})).toEqual(URL_ClaimStart);
     });
 
     it("Claim Start page", () => {
-      expect(getNextPage(URL_ClaimStart)).toEqual(URL_MatterCode1);
+      expect(getNextPage(URL_ClaimStart, {})).toEqual(URL_MatterCode1);
     });
 
     it("London Rate page", () => {
-      expect(getNextPage(URL_LondonRate)).toEqual(URL_VatIndicator);
+      expect(getNextPage(URL_LondonRate, {})).toEqual(URL_VatIndicator);
     });
 
     it("Matter Code 1 page", () => {
-      expect(getNextPage(URL_MatterCode1)).toEqual(URL_MatterCode2);
+      expect(getNextPage(URL_MatterCode1, {})).toEqual(URL_MatterCode2);
     });
 
-    it("Matter Code 2 page", () => {
-      expect(getNextPage(URL_MatterCode2)).toEqual(URL_CaseStage);
+    describe("Matter Code 2 page", () => {
+      it("should go to Case Stage question if family law", () => {
+        expect(
+          getNextPage(URL_MatterCode2, {
+            lawCategory: familyLaw,
+          }),
+        ).toEqual(URL_CaseStage);
+      });
+
+      it("should go to VAT indicator if immigration law", () => {
+        expect(getNextPage(URL_MatterCode2, {})).toEqual(URL_VatIndicator);
+      });
     });
 
     it("Case Stage page", () => {
-      expect(getNextPage(URL_CaseStage)).toEqual(URL_LondonRate);
+      expect(getNextPage(URL_CaseStage, {})).toEqual(URL_LondonRate);
     });
 
     it("VAT Indicator page", () => {
-      expect(getNextPage(URL_VatIndicator)).toEqual(URL_Result);
+      expect(getNextPage(URL_VatIndicator, {})).toEqual(URL_Result);
     });
   });
 
   describe("it should throw an NavigationError", () => {
     it("when currently on the Result page", () => {
-      expect(() => getNextPage(URL_Result)).toThrow(NavigationError);
+      expect(() => getNextPage(URL_Result, {})).toThrow(NavigationError);
     });
 
     it("when currently on the Error page", () => {
-      expect(() => getNextPage(URL_ErrorPage)).toThrow(NavigationError);
+      expect(() => getNextPage(URL_ErrorPage, {})).toThrow(NavigationError);
     });
 
     it("when page is not recognised", () => {
-      expect(() => getNextPage("unknownPage")).toThrow(NavigationError);
+      expect(() => getNextPage("unknownPage", {})).toThrow(NavigationError);
     });
   });
 });
