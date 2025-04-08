@@ -139,27 +139,25 @@ describe("getAdditionalFees", () => {
 });
 
 describe("isValidUnitEntered", () => {
-
   it.each([
-      ['0', true],
-      ['1', true],
-      ['2', true],
-      ['3', true],
-      ['4', true],
-      ['5', true],
-      ['6', true],
-      ['7', true],
-      ['8', true],
-      ['9', true],
-      ['10', false],
-      ['-1', false],
-      ['4.3', false],
-      ['0.000000003', false],
-      ['abd', false],
-      ['', false],
-      [' ', false]
-    ])("when %s is entered should return %s", (value, expected) => {
-      expect(isValidUnitEntered(value)).toEqual(expected)
-    })
-
-})
+    ["0", true],
+    ["1", true],
+    ["2", true],
+    ["3", true],
+    ["4", true],
+    ["5", true],
+    ["6", true],
+    ["7", true],
+    ["8", true],
+    ["9", true],
+    ["10", false],
+    ["-1", false],
+    ["4.3", false],
+    ["0.000000003", false],
+    ["abd", false],
+    ["", false],
+    [" ", false],
+  ])("when %s is entered should return %s", (value, expected) => {
+    expect(isValidUnitEntered(value)).toEqual(expected);
+  });
+});

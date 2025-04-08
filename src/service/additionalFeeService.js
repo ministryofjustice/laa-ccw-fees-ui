@@ -57,22 +57,27 @@ async function getAdditionalFeesFromService(
   return response.data.fees;
 }
 
-export function isValidUnitEntered(value){
-  if (value.trim() == ''){
-    return false;
-  }
-  
-  const valueAsInt = Number(value)
-
-  if (!Number.isInteger(valueAsInt)){
-    return false;
-  }
-
-  if (valueAsInt < 0){
+/**
+ * Check Optional_Unit field has valid value (int between 0 to 9)
+ * @param {string} value - user entered value
+ * @returns {boolean} - true if valid, false otherwise
+ */
+export function isValidUnitEntered(value) {
+  if (value.trim() == "") {
     return false;
   }
 
-  if (valueAsInt > 9){
+  const valueAsInt = Number(value);
+
+  if (!Number.isInteger(valueAsInt)) {
+    return false;
+  }
+
+  if (valueAsInt < 0) {
+    return false;
+  }
+
+  if (valueAsInt > 9) {
     return false;
   }
 
