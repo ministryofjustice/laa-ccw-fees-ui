@@ -8,8 +8,8 @@
 
     {% for caseStage in caseStages %}
         {{ items.push({
-            value: caseStage.id,
-            text: caseStage.description
+            value: caseStage.caseStage,
+            text: caseStage.caseStage + " - " + caseStage.description
         }) | reject() }}
     {% endfor %}
 
