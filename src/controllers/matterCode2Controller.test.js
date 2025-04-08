@@ -128,7 +128,7 @@ describe("postMatterCode2Page", () => {
       matterCode2s,
       chosenMatterCode,
     );
-    expect(getNextPage).toHaveBeenCalledWith(URL_MatterCode2);
+    expect(getNextPage).toHaveBeenCalledWith(URL_MatterCode2, req.session.data);
   });
 
   it("should clean up data that depends on matter code 2 if value changed", async () => {

@@ -108,7 +108,7 @@ describe("postLondonRatePage", () => {
     expect(sessionData.londonRate).toEqual(london);
 
     expect(isValidLondonRate).toHaveBeenCalledWith(london);
-    expect(getNextPage).toHaveBeenCalledWith(URL_LondonRate);
+    expect(getNextPage).toHaveBeenCalledWith(URL_LondonRate, req.session.data);
   });
 
   it("render error page when London Rate from form is missing", async () => {

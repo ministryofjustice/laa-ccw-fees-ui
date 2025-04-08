@@ -60,7 +60,7 @@ export function postClaimStartPage(req, res) {
     req.session.data.startDate = date;
     req.session.data.lawCategory = category;
 
-    res.redirect(getNextPage(URL_ClaimStart));
+    res.redirect(getNextPage(URL_ClaimStart, req.session.data));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

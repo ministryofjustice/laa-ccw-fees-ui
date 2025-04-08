@@ -68,6 +68,6 @@ describe("postStartPage", () => {
 
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(req.session.data).toEqual({});
-    expect(getNextPage).toHaveBeenCalledWith(URL_Start);
+    expect(getNextPage).toHaveBeenCalledWith(URL_Start, req.session.data);
   });
 });

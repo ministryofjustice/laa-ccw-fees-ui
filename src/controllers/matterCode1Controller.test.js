@@ -129,7 +129,7 @@ describe("postMatterCode1Page", () => {
       matterCode1s,
       chosenMatterCode,
     );
-    expect(getNextPage).toHaveBeenCalledWith(URL_MatterCode1);
+    expect(getNextPage).toHaveBeenCalledWith(URL_MatterCode1, req.session.data);
     expect(getMatterCode1s).toHaveBeenCalledWith(req);
   });
 
