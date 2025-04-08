@@ -121,6 +121,7 @@ describe("getCaseStageForImmigration", () => {
     const returnedCaseStage = await getCaseStageForImmigration(req);
     expect(returnedCaseStage).toEqual("_IMM01");
     expect(req.session.data.validCaseStages).toEqual(expectedCaseStages);
+    expect(req.session.data.caseStage).toEqual("_IMM01");
 
     expect(req.axiosMiddleware.get).toHaveBeenCalledWith("/case-stages", {
       data: {
@@ -139,6 +140,7 @@ describe("getCaseStageForImmigration", () => {
 
     const returnedCaseStage = await getCaseStageForImmigration(req);
     expect(returnedCaseStage).toEqual("_IMM01");
+    expect(req.session.data.caseStage).toEqual("_IMM01");
     expect(req.session.data.validCaseStages).toEqual(expectedCaseStages);
     expect(req.axiosMiddleware.get).toHaveBeenCalledTimes(0);
   });
