@@ -9,11 +9,11 @@ jest.mock("../routes/navigator.js");
 
 const caseStages = [
   {
-    id: "LVL1",
+    caseStage: "LVL1",
     description: "Level 1",
   },
   {
-    id: "LVL2",
+    caseStage: "LVL2",
     description: "Level 2",
   },
 ];
@@ -34,13 +34,15 @@ describe("showCaseStagePage", () => {
     req.csrfToken.mockReturnValue("mocked-csrf-token");
   });
 
-  it("should render case stage page", () => {
-    showCaseStagePage(req, res);
+  it("should render case stage page", async () => {
+    await showCaseStagePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/caseStage", {
       caseStages: caseStages,
       csrfToken: "mocked-csrf-token",
     });
+    expect(getCaseStages).toHaveBeenCalledWith(req)
+
   });
 
   it("should render error page if fails to load page", async () => {
@@ -48,12 +50,13 @@ describe("showCaseStagePage", () => {
       throw new Error("token problems");
     });
 
-    showCaseStagePage(req, res);
+    await showCaseStagePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred loading the page.",
       status: "An error occurred",
     });
+
   });
 
   it("should render error page if no existing session data already (as skipped workflow)", async () => {
@@ -61,73 +64,105 @@ describe("showCaseStagePage", () => {
       throw new Error("No session data found");
     });
 
-    showCaseStagePage(req, res);
+    await showCaseStagePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred loading the page.",
       status: "An error occurred",
     });
   });
+
+    it("should render error page if getCaseStages call throws error", async () => {
+      getCaseStages.mockImplementation(() => {
+        throw new Error("API error");
+      });
+  
+      await showCaseStagePage(req, res);
+  
+      expect(res.render).toHaveBeenCalledWith("main/error", {
+        error: "An error occurred loading the page.",
+        status: "An error occurred",
+      });
+  
+      expect(getCaseStages).toHaveBeenCalledWith(req);
+    });
 });
 
 describe("postCaseStagePage", () => {
-  let body = {};
-  let sessionData = {};
 
-  let req = {
-    session: {
-      data: sessionData,
-    },
-    body: body,
-  };
+  let req = {}
   let res = {
     render: jest.fn(),
     redirect: jest.fn(),
   };
 
   beforeEach(() => {
+    getCaseStages.mockResolvedValue(caseStages)
     isValidCaseStage.mockReturnValue(true);
 
-    body.caseStage = level1;
+    req = {
+      session: {
+        data: {},
+      },
+      body: {
+        caseStage: level1
+      },
+    };
   });
 
-  afterEach(() => {
-    sessionData = {};
-  });
-
-  it("should redirect to result page if valid form data is supplied", () => {
+  it("should redirect to result page if valid form data is supplied", async () => {
     getNextPage.mockReturnValue("nextPage");
 
-    postCaseStagePage(req, res);
+    await postCaseStagePage(req, res);
 
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
-    expect(sessionData.caseStage).toEqual(level1);
+    expect(req.session.data.caseStage).toEqual(level1);
     expect(getNextPage).toHaveBeenCalledWith(URL_CaseStage);
+    expect(isValidCaseStage).toHaveBeenCalledWith(caseStages, level1)
+    expect(getCaseStages).toHaveBeenCalledWith(req);
   });
 
   it("render error page when case stage from form is missing", async () => {
-    body.caseStage = null;
+    req.body.caseStage = null;
 
-    postCaseStagePage(req, res);
+    await postCaseStagePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
-    expect(sessionData.caseStage).toBeUndefined();
+    expect(req.session.data.caseStage).toBeUndefined();
+    
   });
 
   it("render error page when case stage is invalid", async () => {
     isValidCaseStage.mockReturnValue(false);
 
-    postCaseStagePage(req, res);
+    await postCaseStagePage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/error", {
       error: "An error occurred saving the answer.",
       status: "An error occurred",
     });
 
-    expect(sessionData.caseStage).toBeUndefined();
-    expect(isValidCaseStage).toHaveBeenCalledWith(level1);
+    expect(req.session.data.caseStage).toBeUndefined();
+    expect(isValidCaseStage).toHaveBeenCalledWith(caseStages, level1);
+    expect(getCaseStages).toHaveBeenCalledWith(req);
+
   });
+
+    it("should render error page if getCaseStages call throws error", async () => {
+      getCaseStages.mockImplementation(() => {
+        throw new Error("API error");
+      });
+  
+      await postCaseStagePage(req, res);
+  
+      expect(res.render).toHaveBeenCalledWith("main/error", {
+        error: "An error occurred saving the answer.",
+        status: "An error occurred",
+      });
+  
+      expect(getCaseStages).toHaveBeenCalledWith(req);
+    });
 });
