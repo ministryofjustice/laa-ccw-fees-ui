@@ -9,6 +9,8 @@ const londonRates = [
   },
 ];
 
+export const notApplicable = "NA";
+
 /**
  * Gets the valid London rate values
  * @returns {Array[]} - the valid London rate values

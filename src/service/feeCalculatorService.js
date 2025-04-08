@@ -31,7 +31,7 @@ export async function getCalculationResult(sessionData, axios) {
         throw new Error("Data is missing");
       }
 
-      locationCode = "NA";
+      locationCode = notApplicable;
       caseStage = "_IMM01"; //TODO get this automatically from backend
       break;
     default:

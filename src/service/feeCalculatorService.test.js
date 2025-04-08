@@ -163,7 +163,7 @@ describe("getCalculationResult", () => {
       const expectedRequestBody = {
         matterCode1: "FAML",
         matterCode2: "FPET",
-        locationCode: "NA",
+        locationCode: notApplicable,
         caseStage: "_IMM01",
       };
 
@@ -171,7 +171,7 @@ describe("getCalculationResult", () => {
         data: {
           matterCode1: "FAML",
           matterCode2: "FPET",
-          locationCode: "NA",
+          locationCode: notApplicable,
           caseStage: "_IMM01",
           amount: 120,
           total: 144,
@@ -234,7 +234,7 @@ describe("getCalculationResult", () => {
       const expectedRequestBody = {
         matterCode1: "FAML",
         matterCode2: "FPET",
-        locationCode: "NA",
+        locationCode: notApplicable,
         caseStage: "_IMM01",
       };
 
