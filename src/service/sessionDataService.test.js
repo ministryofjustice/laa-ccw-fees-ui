@@ -64,7 +64,6 @@ describe("cleanData", () => {
     expect(req.session.data.vatIndicator).toEqual(null);
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual(null);
-
   });
 
   it("should clean data when given MatterCode2 page", () => {
@@ -89,10 +88,16 @@ describe("cleanData", () => {
     expect(req.session.data.vatIndicator).toEqual(null);
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual(null);
-
   });
-  
-  it.each([URL_Start, URL_Result, URL_LondonRate, URL_ErrorPage, URL_CaseStage, URL_VatIndicator])("should not clean data if any other page", (urlToTest) => {
+
+  it.each([
+    URL_Start,
+    URL_Result,
+    URL_LondonRate,
+    URL_ErrorPage,
+    URL_CaseStage,
+    URL_VatIndicator,
+  ])("should not clean data if any other page", (urlToTest) => {
     req.session.data.validMatterCode1s = "a";
     req.session.data.validMatterCode2s = "b";
     req.session.data.matterCode1 = "c";
@@ -114,7 +119,6 @@ describe("cleanData", () => {
     expect(req.session.data.vatIndicator).toEqual("g");
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual("i");
-
   });
 });
 

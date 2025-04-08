@@ -12,7 +12,7 @@ export async function showCaseStagePage(req, res) {
   try {
     getSessionData(req);
 
-    const caseStages = await getCaseStages(req)
+    const caseStages = await getCaseStages(req);
 
     res.render("main/caseStage", {
       csrfToken: req.csrfToken(),
