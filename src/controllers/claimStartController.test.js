@@ -114,7 +114,7 @@ describe("postClaimStartPage", () => {
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(req.session.data.lawCategory).toEqual(familyLaw);
     expect(req.session.data.startDate).toEqual(today);
-    expect(getNextPage).toHaveBeenCalledWith(URL_ClaimStart);
+    expect(getNextPage).toHaveBeenCalledWith(URL_ClaimStart, req.session.data);
   });
 
   it("should clean up data that depends on law category if law category changed", () => {

@@ -1,12 +1,14 @@
 //TODO will be api call in future
 
+export const familyLaw = "FAM";
+export const immigrationLaw = "IMM";
 const lawCategories = [
   {
-    id: "FAM",
+    id: familyLaw,
     description: "Family",
   },
   {
-    id: "IMM",
+    id: immigrationLaw,
     description: "Immigration",
   },
 ];

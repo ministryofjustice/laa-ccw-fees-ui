@@ -81,7 +81,10 @@ describe("postVatIndicatorPage", () => {
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(sessionData.vatIndicator).toEqual(true);
 
-    expect(getNextPage).toHaveBeenCalledWith(URL_VatIndicator);
+    expect(getNextPage).toHaveBeenCalledWith(
+      URL_VatIndicator,
+      req.session.data,
+    );
   });
 
   it("should redirect to result page if value is no", () => {
@@ -93,7 +96,10 @@ describe("postVatIndicatorPage", () => {
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(sessionData.vatIndicator).toEqual(false);
 
-    expect(getNextPage).toHaveBeenCalledWith(URL_VatIndicator);
+    expect(getNextPage).toHaveBeenCalledWith(
+      URL_VatIndicator,
+      req.session.data,
+    );
   });
 
   it("render error page when VAT Indicator from form is missing", async () => {

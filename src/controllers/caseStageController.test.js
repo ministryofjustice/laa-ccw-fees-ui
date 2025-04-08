@@ -114,7 +114,7 @@ describe("postCaseStagePage", () => {
 
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(req.session.data.caseStage).toEqual(level1);
-    expect(getNextPage).toHaveBeenCalledWith(URL_CaseStage);
+    expect(getNextPage).toHaveBeenCalledWith(URL_CaseStage, req.session.data);
     expect(isValidCaseStage).toHaveBeenCalledWith(caseStages, level1);
     expect(getCaseStages).toHaveBeenCalledWith(req);
   });

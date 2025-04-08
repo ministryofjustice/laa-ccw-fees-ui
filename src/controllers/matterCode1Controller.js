@@ -54,7 +54,7 @@ export async function postMatterCode1Page(req, res) {
 
     req.session.data.matterCode1 = matterCode1;
 
-    res.redirect(getNextPage(URL_MatterCode1));
+    res.redirect(getNextPage(URL_MatterCode1, req.session.data));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

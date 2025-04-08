@@ -38,7 +38,7 @@ export function postVatIndicatorRate(req, res) {
 
     req.session.data.vatIndicator = vatIndicator === "yes" ? true : false;
 
-    res.redirect(getNextPage(URL_VatIndicator));
+    res.redirect(getNextPage(URL_VatIndicator, req.session.data));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

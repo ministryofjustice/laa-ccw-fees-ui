@@ -44,7 +44,7 @@ export async function postCaseStagePage(req, res) {
 
     req.session.data.caseStage = caseStage;
 
-    res.redirect(getNextPage(URL_CaseStage));
+    res.redirect(getNextPage(URL_CaseStage, req.session.data));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

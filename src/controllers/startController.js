@@ -29,5 +29,5 @@ export function showStartPage(req, res) {
 export function postStartPage(req, res) {
   // Remove any old data. They have restarted
   req.session.data = {};
-  res.redirect(getNextPage(URL_Start));
+  res.redirect(getNextPage(URL_Start, req.session.data));
 }

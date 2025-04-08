@@ -1,3 +1,5 @@
+import { familyLaw } from "../service/lawCategoryService";
+
 export const URL_Start = "/";
 export const URL_ClaimStart = "/claim-start";
 export const URL_Result = "/result";
@@ -11,10 +13,11 @@ export const URL_VatIndicator = "/vat-indicator";
 /**
  * Find out where we should navigate to next.
  * @param {string} currentPage - what page is it on. Should be one of the above constants.
+ * @param {object} sessionData - current session data
  * @returns {string} - next page. Should be one of the above constants.
  * @throws {NavigationError} - if can't figure out where to go next
  */
-export function getNextPage(currentPage) {
+export function getNextPage(currentPage, sessionData) {
   switch (currentPage) {
     case URL_Start:
       return URL_ClaimStart;
@@ -25,7 +28,11 @@ export function getNextPage(currentPage) {
     case URL_MatterCode1:
       return URL_MatterCode2;
     case URL_MatterCode2:
-      return URL_CaseStage;
+      if (sessionData.lawCategory === familyLaw) {
+        return URL_CaseStage;
+      } else {
+        return URL_VatIndicator;
+      }
     case URL_CaseStage:
       return URL_LondonRate;
     case URL_VatIndicator:
