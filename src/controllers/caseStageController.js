@@ -8,13 +8,15 @@ import { pageLoadError, pageSubmitError } from "./errorController";
  * @param {import('express').Request} req Express request object
  * @param {import('express').Response} res Express response object
  */
-export function showCaseStagePage(req, res) {
+export async function showCaseStagePage(req, res) {
   try {
     getSessionData(req);
 
+    const caseStages = await getCaseStages(req);
+
     res.render("main/caseStage", {
       csrfToken: req.csrfToken(),
-      caseStages: getCaseStages(),
+      caseStages: caseStages,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -26,7 +28,7 @@ export function showCaseStagePage(req, res) {
  * @param {import('express').Request} req Express request object
  * @param {import('express').Response} res Express response object
  */
-export function postCaseStagePage(req, res) {
+export async function postCaseStagePage(req, res) {
   try {
     const caseStage = req.body.caseStage;
 
@@ -34,7 +36,9 @@ export function postCaseStagePage(req, res) {
       throw new Error("Case Stage not defined");
     }
 
-    if (!isValidCaseStage(caseStage)) {
+    const validCaseStages = await getCaseStages(req);
+
+    if (!isValidCaseStage(validCaseStages, caseStage)) {
       throw new Error("Case Stage is not valid");
     }
 

@@ -38,6 +38,7 @@ describe("getMatterCode1s", () => {
 
     const returnedMatterCodes = await getMatterCode1s(req);
     expect(returnedMatterCodes).toEqual(expectedMatterCodeList);
+    expect(req.session.data.validMatterCode1s).toEqual(expectedMatterCodeList);
 
     expect(req.axiosMiddleware.get).toHaveBeenCalledWith("/matter-codes/FAM");
   });
@@ -50,6 +51,7 @@ describe("getMatterCode1s", () => {
 
     const returnedMatterCodes = await getMatterCode1s(req);
     expect(returnedMatterCodes).toEqual(expectedMatterCodeList);
+    expect(req.session.data.validMatterCode1s).toEqual(expectedMatterCodeList);
 
     expect(req.axiosMiddleware.get).toHaveBeenCalledTimes(0);
   });

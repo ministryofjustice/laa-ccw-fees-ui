@@ -1,33 +1,49 @@
-//TODO will be api call in future
-
-const caseStages = [
-  {
-    id: "FPL01",
-    description: "FPL01: Level 1",
-  },
-  {
-    id: "FPL02",
-    description: "FPL02: Level 1 + Level 2 children + Settlement fee children",
-  },
-  {
-    id: "FPL03",
-    description: "FPL03: Level 1 + Level 2 finance + Settlement fee finance",
-  },
-];
-
 /**
- * Gets the valid case stages
- * @returns {Array[]} - the valid case stages
+ * Gets the case stages
+ * @param {import('express').Request} req Express request object
+ * @returns {Promise<Array[]>} - the valid case stage
+ * @async
  */
-export function getCaseStages() {
-  return caseStages;
+export async function getCaseStages(req) {
+  if (req.session.data.validCaseStages == null) {
+    req.session.data.validCaseStages = await getCaseStagesFromService(
+      req.axiosMiddleware,
+      req.session.data.matterCode1,
+      req.session.data.matterCode2,
+    );
+  }
+
+  return req.session.data.validCaseStages;
 }
 
 /**
  * Check an entered case stage is valid
- * @param {string} enteredCaseStage - case stage user selected
+ * @param {Array[Object]} validCaseStages - list of valid caseStages returned by the getCaseStages routine
+ * @param {string} enterCaseStage - case stage user selected
  * @returns {boolean} - true if case stage is valid, false otherwise
  */
-export function isValidCaseStage(enteredCaseStage) {
-  return caseStages.some((caseStage) => caseStage.id === enteredCaseStage);
+export function isValidCaseStage(validCaseStages, enterCaseStage) {
+  return validCaseStages.some(
+    (caseStage) => caseStage.caseStage === enterCaseStage,
+  );
+}
+/**
+ * Get the case stages from the backend service
+ * @param {import('middleware-axios').AxiosInstanceWrapper} axios - axios middleware instance
+ * @param {string} matterCode1 - matter code 1 to get stages for
+ * @param {string} matterCode2 - matter code 2 to get stages for
+ * @returns {Promise<Array<object>>} - response from api
+ * @async
+ */
+async function getCaseStagesFromService(axios, matterCode1, matterCode2) {
+  const requestBody = {
+    matterCode1: matterCode1,
+    matterCode2: matterCode2,
+  };
+
+  const response = await axios.get("/case-stages", {
+    data: requestBody,
+  });
+
+  return response.data.caseStages;
 }
