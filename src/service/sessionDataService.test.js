@@ -18,7 +18,7 @@ describe("cleanData", () => {
     },
   };
 
-  it("should clean data when given ClaimStart page", () => {
+  beforeEach(() => {
     req.session.data.validMatterCode1s = "a";
     req.session.data.validMatterCode2s = "b";
     req.session.data.matterCode1 = "c";
@@ -28,7 +28,9 @@ describe("cleanData", () => {
     req.session.data.vatIndicator = "g";
     req.session.data.startDate = "h";
     req.session.data.validCaseStages = "i";
+  });
 
+  it("should clean data when given ClaimStart page", () => {
     cleanData(req, URL_ClaimStart);
 
     expect(req.session.data.validMatterCode1s).toEqual(null);
@@ -43,16 +45,6 @@ describe("cleanData", () => {
   });
 
   it("should clean data when given MatterCode1 page", () => {
-    req.session.data.validMatterCode1s = "a";
-    req.session.data.validMatterCode2s = "b";
-    req.session.data.matterCode1 = "c";
-    req.session.data.matterCode2 = "d";
-    req.session.data.caseStage = "e";
-    req.session.data.londonRate = "f";
-    req.session.data.vatIndicator = "g";
-    req.session.data.startDate = "h";
-    req.session.data.validCaseStages = "i";
-
     cleanData(req, URL_MatterCode1);
 
     expect(req.session.data.validMatterCode1s).toEqual("a");
@@ -67,16 +59,6 @@ describe("cleanData", () => {
   });
 
   it("should clean data when given MatterCode2 page", () => {
-    req.session.data.validMatterCode1s = "a";
-    req.session.data.validMatterCode2s = "b";
-    req.session.data.matterCode1 = "c";
-    req.session.data.matterCode2 = "d";
-    req.session.data.caseStage = "e";
-    req.session.data.londonRate = "f";
-    req.session.data.vatIndicator = "g";
-    req.session.data.startDate = "h";
-    req.session.data.validCaseStages = "i";
-
     cleanData(req, URL_MatterCode2);
 
     expect(req.session.data.validMatterCode1s).toEqual("a");
@@ -98,16 +80,6 @@ describe("cleanData", () => {
     URL_CaseStage,
     URL_VatIndicator,
   ])("should not clean data if any other page", (urlToTest) => {
-    req.session.data.validMatterCode1s = "a";
-    req.session.data.validMatterCode2s = "b";
-    req.session.data.matterCode1 = "c";
-    req.session.data.matterCode2 = "d";
-    req.session.data.caseStage = "e";
-    req.session.data.londonRate = "f";
-    req.session.data.vatIndicator = "g";
-    req.session.data.startDate = "h";
-    req.session.data.validCaseStages = "i";
-
     cleanData(req, urlToTest);
 
     expect(req.session.data.validMatterCode1s).toEqual("a");
