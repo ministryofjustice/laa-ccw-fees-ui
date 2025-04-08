@@ -1,5 +1,10 @@
 import { notApplicable } from "./londonRateService";
 
+export const feeType_Automatic = "A";
+export const feeType_OptionalBool = "O";
+export const feeType_OptionalUnit = "OU";
+export const feeType_OptionalFee = "OF";
+
 /**
  * Gets the additional fees (bolt ons)
  * @param {import('express').Request} req Express request object
@@ -50,4 +55,26 @@ async function getAdditionalFeesFromService(
   });
 
   return response.data.fees;
+}
+
+export function isValidUnitEntered(value){
+  if (value.trim() == ''){
+    return false;
+  }
+  
+  const valueAsInt = Number(value)
+
+  if (!Number.isInteger(valueAsInt)){
+    return false;
+  }
+
+  if (valueAsInt < 0){
+    return false;
+  }
+
+  if (valueAsInt > 9){
+    return false;
+  }
+
+  return true;
 }
