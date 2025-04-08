@@ -1,0 +1,31 @@
+{% extends "base.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+
+{% block wrappedContent %}
+
+    <h1 class="govuk-heading-xl">Additional costs and fees</h1>
+    <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        
+        {% for field in fieldsToShow %}
+            {{ govukInput({
+                label: {
+                    text: field.description,
+                    classes: "govuk-label--s"
+                },
+                classes: "govuk-input--width-3",
+                id: field.levelCode,
+                name: field.levelCode,
+                inputmode: "numeric"
+            }) }}
+        {% endfor %}
+
+        {{ govukButton({
+            text: "Continue",
+            preventDoubleClick: true,
+            type: "submit"
+        }) }}
+    </form>
+
+{% endblock %}
