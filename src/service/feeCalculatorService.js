@@ -13,7 +13,7 @@ export async function getCalculationResult(sessionData, axios) {
   const matterCode1 = sessionData.matterCode1;
   const matterCode2 = sessionData.matterCode2;
   let locationCode = sessionData.londonRate;
-  let caseStage = sessionData.caseStage;
+  const caseStage = sessionData.caseStage;
   const lawCategory = sessionData.lawCategory;
 
   switch (lawCategory) {
@@ -28,12 +28,11 @@ export async function getCalculationResult(sessionData, axios) {
       }
       break;
     case immigrationLaw:
-      if (matterCode1 == null || matterCode2 == null) {
+      if (matterCode1 == null || matterCode2 == null || caseStage == null) {
         throw new Error("Data is missing");
       }
 
       locationCode = notApplicable;
-      caseStage = "_IMM01"; //TODO get this automatically from backend
       break;
     default:
       throw new Error("Unsupported law category");

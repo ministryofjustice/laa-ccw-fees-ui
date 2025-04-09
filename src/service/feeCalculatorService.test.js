@@ -159,6 +159,7 @@ describe("getCalculationResult", () => {
         vatIndicator: false,
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
+        caseStage: "_IMM01"
       };
 
       const expectedRequestBody = {
@@ -199,6 +200,7 @@ describe("getCalculationResult", () => {
         vatIndicator: false,
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
+        caseStage: "_IMM01"
       };
 
       await expect(() =>
@@ -211,6 +213,23 @@ describe("getCalculationResult", () => {
     it("should throw error if no matterCode2 in session data", async () => {
       const sessionData = {
         matterCode1: "FAML",
+        vatIndicator: false,
+        startDate: "03/04/2025",
+        lawCategory: immigrationLaw,
+        caseStage: "_IMM01"
+      };
+
+      await expect(() =>
+        getCalculationResult(sessionData, axios),
+      ).rejects.toThrow(Error);
+
+      expect(axios.get).toHaveBeenCalledTimes(0);
+    });
+
+    it("should throw error if no caseStage in session data", async () => {
+      const sessionData = {
+        matterCode1: "FAML",
+        matterCode2: "FPET",
         vatIndicator: false,
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
@@ -230,6 +249,7 @@ describe("getCalculationResult", () => {
         vatIndicator: false,
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
+        caseStage: "_IMM01"
       };
 
       const expectedRequestBody = {
