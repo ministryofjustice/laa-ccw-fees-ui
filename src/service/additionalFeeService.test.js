@@ -1,7 +1,5 @@
 import {
-  feeType_Automatic,
-  feeType_OptionalFee,
-  feeType_OptionalUnit,
+  feeTypes,
   getAdditionalFees,
   getDisplayableFees,
   isValidFeeEntered,
@@ -16,12 +14,12 @@ const caseStage = "_IMMD2";
 const expectedAdditionalFees = [
   {
     levelCode: "_IMSTD",
-    type: feeType_Automatic,
+    type: feeTypes.automatic,
     description: "Stuff",
   },
   {
     levelCode: "_IMSTE",
-    type: feeType_OptionalUnit,
+    type: feeTypes.optionalUnit,
     description: "Misc",
   },
 ];
@@ -194,22 +192,22 @@ describe("getDisplayableFees", () => {
     const additionalFees = [
       {
         levelCode: "_IMSTC",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         description: "Misc",
       },
       {
         levelCode: "_IMSTD",
-        type: feeType_Automatic,
+        type: feeTypes.automatic,
         description: "Stuff",
       },
       {
         levelCode: "_IMSTX",
-        type: feeType_OptionalFee,
+        type: feeTypes.optionalFee,
         description: "idk"
       },
       {
         levelCode: "_IMSTE",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         description: "Misc",
       },
     ];
@@ -217,17 +215,17 @@ describe("getDisplayableFees", () => {
     expect(getDisplayableFees(additionalFees)).toEqual([
       {
         levelCode: "_IMSTC",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         description: "Misc",
       },
       {
         levelCode: "_IMSTX",
-        type: feeType_OptionalFee,
+        type: feeTypes.optionalFee,
         description: "idk"
       },
       {
         levelCode: "_IMSTE",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         description: "Misc",
       },
     ]);

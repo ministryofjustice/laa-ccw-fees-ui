@@ -1,7 +1,5 @@
 import {
-  feeType_Automatic,
-  feeType_OptionalFee,
-  feeType_OptionalUnit,
+  feeTypes,
 } from "./additionalFeeService";
 import { getCalculationResult } from "./feeCalculatorService";
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
@@ -10,19 +8,19 @@ import { notApplicable } from "./londonRateService";
 const additionalFees = [
   {
     levelCode: "LVL1",
-    type: feeType_OptionalUnit,
+    type: feeTypes.optionalUnit,
   },
   {
     levelCode: "LVL2",
-    type: feeType_Automatic,
+    type: feeTypes.automatic,
   },
   {
     levelCode: "LVL3",
-    type: feeType_OptionalUnit,
+    type: feeTypes.optionalUnit,
   },
   {
     levelCode: "LVL4",
-    type: feeType_OptionalFee
+    type: feeTypes.optionalFee
   }
 ];
 
@@ -235,17 +233,17 @@ describe("getCalculationResult", () => {
         additionalCosts: [
           {
             levelCode: "LVL1",
-            type: feeType_OptionalUnit,
+            type: feeTypes.optionalUnit,
             value: "3",
           },
           {
             levelCode: "LVL3",
-            type: feeType_OptionalUnit,
+            type: feeTypes.optionalUnit,
             value: "1",
           },
           {
             levelCode: "LVL4",
-            type: feeType_OptionalFee,
+            type: feeTypes.optionalFee,
             value: "2.34"
           }
         ],
@@ -379,7 +377,7 @@ describe("getCalculationResult", () => {
     const suppliedLessThanExpected = [
       {
         levelCode: "LVL1",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         value: "3",
       },
     ];
@@ -387,12 +385,12 @@ describe("getCalculationResult", () => {
     const suppliedOneThatIsUnexpected = [
       {
         levelCode: "LVL1",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         value: "3",
       },
       {
         levelCode: "LVL8",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         value: "3",
       },
     ];

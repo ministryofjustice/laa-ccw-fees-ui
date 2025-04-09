@@ -1,5 +1,5 @@
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
-import { feeType_OptionalFee, getDisplayableFees } from "./additionalFeeService";
+import { feeTypes, getDisplayableFees } from "./additionalFeeService";
 import { notApplicable } from "./londonRateService";
 
 /**
@@ -117,7 +117,7 @@ function createImmigrationRequest(sessionData) {
         );
       }
 
-      if (fee.type === feeType_OptionalFee){
+      if (fee.type === feeTypes.optionalFee){
         responseLevelCodes.push({
           levelCode: fee.levelCode,
           fee: enteredFee.value

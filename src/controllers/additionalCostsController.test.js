@@ -3,10 +3,7 @@ import {
   showAdditionalCostsPage,
 } from "./additionalCostsController";
 import {
-  feeType_Automatic,
-  feeType_OptionalBool,
-  feeType_OptionalFee,
-  feeType_OptionalUnit,
+  feeTypes,
   getAdditionalFees,
   getDisplayableFees,
   isValidFeeEntered,
@@ -26,32 +23,32 @@ const additionalFees = [
   {
     levelCode: "LVL1",
     description: "Level 1",
-    type: feeType_OptionalUnit,
+    type: feeTypes.optionalUnit,
   },
   {
     levelCode: "LVL2",
     description: "Level 2",
-    type: feeType_Automatic,
+    type: feeTypes.automatic,
   },
   {
     levelCode: "LVL3",
     description: "Level 3",
-    type: feeType_OptionalBool,
+    type: feeTypes.optionalBool,
   },
   {
     levelCode: "LVL4",
     description: "Level 4",
-    type: feeType_OptionalFee,
+    type: feeTypes.optionalFee,
   },
   {
     levelCode: "LVL5",
     description: "Level 5",
-    type: feeType_OptionalUnit,
+    type: feeTypes.optionalUnit,
   },
   {
     levelCode: "LVL6",
     description: "Level 6",
-    type: feeType_Automatic,
+    type: feeTypes.automatic,
   },
 ];
 
@@ -59,17 +56,17 @@ const additionalFeesFiltered = [
   {
     levelCode: "LVL1",
     description: "Level 1",
-    type: feeType_OptionalUnit,
+    type: feeTypes.optionalUnit,
   },
   {
     levelCode: "LVL4",
     description: "Level 4",
-    type: feeType_OptionalFee,
+    type: feeTypes.optionalFee,
   },
   {
     levelCode: "LVL5",
     description: "Level 5",
-    type: feeType_OptionalUnit,
+    type: feeTypes.optionalUnit,
   },
 ];
 
@@ -104,20 +101,21 @@ describe("showAdditionalCostsPage", () => {
         {
           levelCode: "LVL1",
           description: "Level 1",
-          type: feeType_OptionalUnit,
+          type: feeTypes.optionalUnit,
         },
         {
           levelCode: "LVL4",
           description: "Level 4",
-          type: feeType_OptionalFee,
+          type: feeTypes.optionalFee,
         },
         {
           levelCode: "LVL5",
           description: "Level 5",
-          type: feeType_OptionalUnit,
+          type: feeTypes.optionalUnit,
         },
       ],
       csrfToken: "mocked-csrf-token",
+      feeTypes: feeTypes
     });
     expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
     expect(getAdditionalFees).toHaveBeenCalledWith(req);
@@ -214,7 +212,7 @@ describe("showAdditionalCostsPage", () => {
       {
         levelCode: "LVL2",
         description: "Level 2",
-        type: feeType_Automatic,
+        type: feeTypes.automatic,
       },
     ]);
     getDisplayableFees.mockReturnValue([]);

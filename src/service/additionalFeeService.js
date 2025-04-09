@@ -1,9 +1,11 @@
 import { notApplicable } from "./londonRateService";
 
-export const feeType_Automatic = "A";
-export const feeType_OptionalBool = "O";
-export const feeType_OptionalUnit = "OU";
-export const feeType_OptionalFee = "OF";
+export const feeTypes = {
+  automatic: "A",
+  optionalBool: "O",
+  optionalUnit: "OU",
+  optionalFee: "OF"
+}
 
 /**
  * Gets the additional fees (bolt ons)
@@ -95,5 +97,5 @@ export function isValidFeeEntered(value) {
  * @returns {Array<object>} - fields to show
  */
 export function getDisplayableFees(additionalFees) {
-  return additionalFees.filter((fee) => fee.type === feeType_OptionalUnit || fee.type === feeType_OptionalFee);
+  return additionalFees.filter((fee) => fee.type === feeTypes.optionalUnit || fee.type === feeTypes.optionalFee);
 }
