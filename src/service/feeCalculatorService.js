@@ -1,5 +1,5 @@
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
-import { getOptionalUnitFees } from "./additionalFeeService";
+import { getDisplayableFees } from "./additionalFeeService";
 import { notApplicable } from "./londonRateService";
 
 /**
@@ -96,7 +96,7 @@ function createImmigrationRequest(sessionData) {
       throw new Error("Additional cost data is missing");
     }
 
-    const optionalUnitFees = getOptionalUnitFees(validAdditionalFees);
+    const optionalUnitFees = getDisplayableFees(validAdditionalFees);
 
     if (optionalUnitFees.length != additionalCosts.length) {
       // We expected them to fill in x additional fees but they only answered y

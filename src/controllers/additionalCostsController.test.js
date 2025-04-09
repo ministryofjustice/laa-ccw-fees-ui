@@ -8,7 +8,7 @@ import {
   feeType_OptionalFee,
   feeType_OptionalUnit,
   getAdditionalFees,
-  getOptionalUnitFees,
+  getDisplayableFees,
   isValidUnitEntered,
 } from "../service/additionalFeeService";
 import { getSessionData } from "../service/sessionDataService";
@@ -83,7 +83,7 @@ describe("showAdditionalCostsPage", () => {
     getAdditionalFees.mockReturnValue(additionalFees);
     getCaseStageForImmigration.mockReturnValue("_IMM01");
     getSessionData.mockReturnValue({});
-    getOptionalUnitFees.mockReturnValue(additionalFeesFiltered);
+    getDisplayableFees.mockReturnValue(additionalFeesFiltered);
 
     req.session.data.lawCategory = immigrationLaw;
 
@@ -185,7 +185,7 @@ describe("showAdditionalCostsPage", () => {
     getNextPage.mockReturnValue("nextPage");
 
     getAdditionalFees.mockReturnValue([]);
-    getOptionalUnitFees.mockReturnValue([]);
+    getDisplayableFees.mockReturnValue([]);
 
     await showAdditionalCostsPage(req, res);
 
@@ -206,7 +206,7 @@ describe("showAdditionalCostsPage", () => {
         type: feeType_Automatic,
       },
     ]);
-    getOptionalUnitFees.mockReturnValue([]);
+    getDisplayableFees.mockReturnValue([]);
 
     await showAdditionalCostsPage(req, res);
 
@@ -227,7 +227,7 @@ describe("postAdditionalCostsPage", () => {
 
   beforeEach(() => {
     getAdditionalFees.mockResolvedValue(additionalFees);
-    getOptionalUnitFees.mockReturnValue(additionalFeesFiltered);
+    getDisplayableFees.mockReturnValue(additionalFeesFiltered);
 
     isValidUnitEntered.mockReturnValue(true);
 

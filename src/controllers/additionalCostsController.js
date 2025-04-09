@@ -1,7 +1,7 @@
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import {
   getAdditionalFees,
-  getOptionalUnitFees,
+  getDisplayableFees,
   isValidUnitEntered,
 } from "../service/additionalFeeService";
 import { immigrationLaw } from "../service/lawCategoryService";
@@ -26,7 +26,7 @@ export async function showAdditionalCostsPage(req, res) {
     await getCaseStageForImmigration(req);
     const additionalFees = await getAdditionalFees(req);
 
-    const fields = getOptionalUnitFees(additionalFees);
+    const fields = getDisplayableFees(additionalFees);
 
     if (fields.length == 0) {
       //Nothing to ask them
@@ -50,7 +50,7 @@ export async function showAdditionalCostsPage(req, res) {
 export async function postAdditionalCostsPage(req, res) {
   try {
     const additionalFees = await getAdditionalFees(req);
-    const fields = getOptionalUnitFees(additionalFees);
+    const fields = getDisplayableFees(additionalFees);
     let enteredAdditionalCosts = [];
 
     for (const field of fields) {
