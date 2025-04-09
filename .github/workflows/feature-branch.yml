@@ -41,12 +41,12 @@ jobs:
       - name: Test
         uses: ./.github/actions/test
 
-  lint:
+  lint-and-format:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Format
+      - name: Lint and format
         uses: ./.github/actions/lint

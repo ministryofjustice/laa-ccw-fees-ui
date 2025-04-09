@@ -48,8 +48,8 @@ const config = {
       branches: 90,
       functions: 90,
       lines: 90,
-      statements: 90
-    }
+      statements: 90,
+    },
   },
 
   // A path to a custom dependency extractor
