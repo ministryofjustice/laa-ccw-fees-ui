@@ -85,10 +85,10 @@ export function isValidUnitEntered(value) {
 }
 
 /**
- * Filter out the OptionalUnit fields
+ * Filter so only fees that need to be displayed to user are shown
  * @param {Array<object>} additionalFees - additional fees to filter
- * @returns {Array<object>} - fields with OptionalUnit
+ * @returns {Array<object>} - fields to show
  */
-export function getOptionalUnitFees(additionalFees) {
-  return additionalFees.filter((fee) => fee.type === feeType_OptionalUnit);
+export function getDisplayableFees(additionalFees) {
+  return additionalFees.filter((fee) => fee.type === feeType_OptionalUnit || fee.type === feeType_OptionalFee);
 }

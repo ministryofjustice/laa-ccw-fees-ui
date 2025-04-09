@@ -1,8 +1,9 @@
 import {
   feeType_Automatic,
+  feeType_OptionalFee,
   feeType_OptionalUnit,
   getAdditionalFees,
-  getOptionalUnitFees,
+  getDisplayableFees,
   isValidUnitEntered,
 } from "./additionalFeeService";
 import { notApplicable } from "./londonRateService";
@@ -168,7 +169,7 @@ describe("isValidUnitEntered", () => {
   });
 });
 
-describe("getOptionalUnitFees", () => {
+describe("getDisplayableFees", () => {
   it("should return only items with type as OptionalUnit", () => {
     const additionalFees = [
       {
@@ -182,17 +183,27 @@ describe("getOptionalUnitFees", () => {
         description: "Stuff",
       },
       {
+        levelCode: "_IMSTX",
+        type: feeType_OptionalFee,
+        description: "idk"
+      },
+      {
         levelCode: "_IMSTE",
         type: feeType_OptionalUnit,
         description: "Misc",
       },
     ];
 
-    expect(getOptionalUnitFees(additionalFees)).toEqual([
+    expect(getDisplayableFees(additionalFees)).toEqual([
       {
         levelCode: "_IMSTC",
         type: feeType_OptionalUnit,
         description: "Misc",
+      },
+      {
+        levelCode: "_IMSTX",
+        type: feeType_OptionalFee,
+        description: "idk"
       },
       {
         levelCode: "_IMSTE",
