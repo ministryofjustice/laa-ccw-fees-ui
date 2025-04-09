@@ -1,7 +1,9 @@
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import {
+  feeType_OptionalFee,
   getAdditionalFees,
   getDisplayableFees,
+  isValidFeeEntered,
   isValidUnitEntered,
 } from "../service/additionalFeeService";
 import { immigrationLaw } from "../service/lawCategoryService";
@@ -54,17 +56,30 @@ export async function postAdditionalCostsPage(req, res) {
     let enteredAdditionalCosts = [];
 
     for (const field of fields) {
-      const value = req.body[field.levelCode];
+      let value = req.body[field.levelCode];
 
       if (value == null) {
         throw new Error(field.levelCode + " not defined");
       }
 
+      if (field.type === feeType_OptionalFee){
+         if(value.trim() == ""){
+          // Allowed to skip this field if you have no fee
+          value = "0"
+         } else {
+          if (!isValidFeeEntered(value)){
+            throw new Error(
+              field.levelCode + " must be a currency value or empty",
+            );
+          }
+         }
+      } else {
       if (!isValidUnitEntered(value)) {
         throw new Error(
           field.levelCode + " must be an integer between 0 and 9",
         );
       }
+    }
 
       enteredAdditionalCosts.push({
         levelCode: field.levelCode,
