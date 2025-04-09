@@ -1,5 +1,5 @@
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
-import { getDisplayableFees } from "./additionalFeeService";
+import { feeType_OptionalFee, getDisplayableFees } from "./additionalFeeService";
 import { notApplicable } from "./londonRateService";
 
 /**
@@ -96,16 +96,16 @@ function createImmigrationRequest(sessionData) {
       throw new Error("Additional cost data is missing");
     }
 
-    const optionalUnitFees = getDisplayableFees(validAdditionalFees);
+    const displayableFees = getDisplayableFees(validAdditionalFees);
 
-    if (optionalUnitFees.length != additionalCosts.length) {
+    if (displayableFees.length != additionalCosts.length) {
       // We expected them to fill in x additional fees but they only answered y
       throw new Error(
         "Expected ${optionalUnitFees.length} additional fees but got ${additionalCosts.length}",
       );
     }
 
-    for (const fee of optionalUnitFees) {
+    for (const fee of displayableFees) {
       const enteredFee = additionalCosts.find(
         (cost) => cost.levelCode === fee.levelCode,
       );
@@ -117,10 +117,17 @@ function createImmigrationRequest(sessionData) {
         );
       }
 
+      if (fee.type === feeType_OptionalFee){
+        responseLevelCodes.push({
+          levelCode: fee.levelCode,
+          fee: enteredFee.value
+        })
+      } else {
       responseLevelCodes.push({
         levelCode: fee.levelCode,
         units: enteredFee.value,
       });
+    }
     }
   }
 

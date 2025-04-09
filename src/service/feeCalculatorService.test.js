@@ -1,5 +1,6 @@
 import {
   feeType_Automatic,
+  feeType_OptionalFee,
   feeType_OptionalUnit,
 } from "./additionalFeeService";
 import { getCalculationResult } from "./feeCalculatorService";
@@ -19,6 +20,10 @@ const additionalFees = [
     levelCode: "LVL3",
     type: feeType_OptionalUnit,
   },
+  {
+    levelCode: "LVL4",
+    type: feeType_OptionalFee
+  }
 ];
 
 describe("getCalculationResult", () => {
@@ -238,6 +243,11 @@ describe("getCalculationResult", () => {
             type: feeType_OptionalUnit,
             value: "1",
           },
+          {
+            levelCode: "LVL4",
+            type: feeType_OptionalFee,
+            value: "2.34"
+          }
         ],
       };
 
@@ -255,6 +265,10 @@ describe("getCalculationResult", () => {
             levelCode: "LVL3",
             units: "1",
           },
+          {
+            levelCode: "LVL4",
+            fee: "2.34"
+          }
         ],
       };
 
