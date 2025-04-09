@@ -4,8 +4,8 @@ export const feeTypes = {
   automatic: "A",
   optionalBool: "O",
   optionalUnit: "OU",
-  optionalFee: "OF"
-}
+  optionalFee: "OF",
+};
 
 /**
  * Gets the additional fees (bolt ons)
@@ -86,6 +86,11 @@ export function isValidUnitEntered(value) {
   return true;
 }
 
+/**
+ * Check Optional_Fee field has valid value (currency)
+ * @param {string} value - user entered value
+ * @returns {boolean} - true if valid, false otherwise
+ */
 export function isValidFeeEntered(value) {
   const regex = /^\d+(\.\d{1,2})?$/;
   return regex.test(value);
@@ -97,5 +102,8 @@ export function isValidFeeEntered(value) {
  * @returns {Array<object>} - fields to show
  */
 export function getDisplayableFees(additionalFees) {
-  return additionalFees.filter((fee) => fee.type === feeTypes.optionalUnit || fee.type === feeTypes.optionalFee);
+  return additionalFees.filter(
+    (fee) =>
+      fee.type === feeTypes.optionalUnit || fee.type === feeTypes.optionalFee,
+  );
 }

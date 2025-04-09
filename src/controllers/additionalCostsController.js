@@ -38,7 +38,7 @@ export async function showAdditionalCostsPage(req, res) {
     res.render("main/additionalCosts", {
       csrfToken: req.csrfToken(),
       fieldsToShow: fields,
-      feeTypes: feeTypes
+      feeTypes: feeTypes,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -63,24 +63,24 @@ export async function postAdditionalCostsPage(req, res) {
         throw new Error(field.levelCode + " not defined");
       }
 
-      if (field.type === feeTypes.optionalFee){
-         if(value.trim() == ""){
+      if (field.type === feeTypes.optionalFee) {
+        if (value.trim() == "") {
           // Allowed to skip this field if you have no fee
-          value = "0"
-         } else {
-          if (!isValidFeeEntered(value)){
+          value = "0";
+        } else {
+          if (!isValidFeeEntered(value)) {
             throw new Error(
               field.levelCode + " must be a currency value or empty",
             );
           }
-         }
+        }
       } else {
-      if (!isValidUnitEntered(value)) {
-        throw new Error(
-          field.levelCode + " must be an integer between 0 and 9",
-        );
+        if (!isValidUnitEntered(value)) {
+          throw new Error(
+            field.levelCode + " must be an integer between 0 and 9",
+          );
+        }
       }
-    }
 
       enteredAdditionalCosts.push({
         levelCode: field.levelCode,

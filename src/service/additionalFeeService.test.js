@@ -180,12 +180,11 @@ describe("isValidFeeEntered", () => {
     ["-123.43", false],
     ["abdc", false],
     ["£43.12", false],
-    ["123.456", false]
+    ["123.456", false],
   ])("when %s is entered should return %s", (value, expected) => {
     expect(isValidFeeEntered(value)).toEqual(expected);
   });
 });
-
 
 describe("getDisplayableFees", () => {
   it("should return only items with type as OptionalUnit", () => {
@@ -203,7 +202,7 @@ describe("getDisplayableFees", () => {
       {
         levelCode: "_IMSTX",
         type: feeTypes.optionalFee,
-        description: "idk"
+        description: "idk",
       },
       {
         levelCode: "_IMSTE",
@@ -221,7 +220,7 @@ describe("getDisplayableFees", () => {
       {
         levelCode: "_IMSTX",
         type: feeTypes.optionalFee,
-        description: "idk"
+        description: "idk",
       },
       {
         levelCode: "_IMSTE",

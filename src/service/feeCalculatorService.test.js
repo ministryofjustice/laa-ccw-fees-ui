@@ -1,6 +1,4 @@
-import {
-  feeTypes,
-} from "./additionalFeeService";
+import { feeTypes } from "./additionalFeeService";
 import { getCalculationResult } from "./feeCalculatorService";
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
 import { notApplicable } from "./londonRateService";
@@ -20,8 +18,8 @@ const additionalFees = [
   },
   {
     levelCode: "LVL4",
-    type: feeTypes.optionalFee
-  }
+    type: feeTypes.optionalFee,
+  },
 ];
 
 describe("getCalculationResult", () => {
@@ -244,8 +242,8 @@ describe("getCalculationResult", () => {
           {
             levelCode: "LVL4",
             type: feeTypes.optionalFee,
-            value: "2.34"
-          }
+            value: "2.34",
+          },
         ],
       };
 
@@ -265,8 +263,8 @@ describe("getCalculationResult", () => {
           },
           {
             levelCode: "LVL4",
-            fee: "2.34"
-          }
+            fee: "2.34",
+          },
         ],
       };
 

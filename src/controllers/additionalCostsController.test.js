@@ -115,7 +115,7 @@ describe("showAdditionalCostsPage", () => {
         },
       ],
       csrfToken: "mocked-csrf-token",
-      feeTypes: feeTypes
+      feeTypes: feeTypes,
     });
     expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
     expect(getAdditionalFees).toHaveBeenCalledWith(req);
@@ -237,7 +237,7 @@ describe("postAdditionalCostsPage", () => {
   beforeEach(() => {
     getAdditionalFees.mockResolvedValue(additionalFees);
     getDisplayableFees.mockReturnValue(additionalFeesFiltered);
-    
+
     isValidUnitEntered.mockReturnValue(true);
     isValidFeeEntered.mockReturnValue(true);
 
@@ -270,7 +270,7 @@ describe("postAdditionalCostsPage", () => {
     );
     expect(isValidUnitEntered).toHaveBeenNthCalledWith(1, "2");
     expect(isValidUnitEntered).toHaveBeenNthCalledWith(2, "5");
-    expect(isValidFeeEntered).toHaveBeenCalledWith("2.34")
+    expect(isValidFeeEntered).toHaveBeenCalledWith("2.34");
     expect(getAdditionalFees).toHaveBeenCalledWith(req);
   });
 
@@ -292,10 +292,9 @@ describe("postAdditionalCostsPage", () => {
     );
     expect(isValidUnitEntered).toHaveBeenNthCalledWith(1, "2");
     expect(isValidUnitEntered).toHaveBeenNthCalledWith(2, "5");
-    expect(isValidFeeEntered).toHaveBeenCalledTimes(0)
+    expect(isValidFeeEntered).toHaveBeenCalledTimes(0);
     expect(getAdditionalFees).toHaveBeenCalledWith(req);
   });
-
 
   it("render error page when expected value from form is missing", async () => {
     req.body.LVL5 = null;
@@ -338,10 +337,9 @@ describe("postAdditionalCostsPage", () => {
 
     expect(req.session.data.additionalCosts).toBeUndefined();
     expect(isValidUnitEntered).toHaveBeenCalledWith("2");
-    expect(isValidFeeEntered).toHaveBeenCalledWith("2.34")
+    expect(isValidFeeEntered).toHaveBeenCalledWith("2.34");
     expect(getAdditionalFees).toHaveBeenCalledWith(req);
   });
-
 
   it("should render error page if getAdditionalFees call throws error", async () => {
     getAdditionalFees.mockImplementation(() => {

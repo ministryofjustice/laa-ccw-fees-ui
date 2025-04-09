@@ -117,17 +117,17 @@ function createImmigrationRequest(sessionData) {
         );
       }
 
-      if (fee.type === feeTypes.optionalFee){
+      if (fee.type === feeTypes.optionalFee) {
         responseLevelCodes.push({
           levelCode: fee.levelCode,
-          fee: enteredFee.value
-        })
+          fee: enteredFee.value,
+        });
       } else {
-      responseLevelCodes.push({
-        levelCode: fee.levelCode,
-        units: enteredFee.value,
-      });
-    }
+        responseLevelCodes.push({
+          levelCode: fee.levelCode,
+          units: enteredFee.value,
+        });
+      }
     }
   }
 
