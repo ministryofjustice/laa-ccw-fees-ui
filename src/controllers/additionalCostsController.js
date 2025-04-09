@@ -1,7 +1,7 @@
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import {
-  feeType_OptionalUnit,
   getAdditionalFees,
+  getOptionalUnitFees,
   isValidUnitEntered,
 } from "../service/additionalFeeService";
 import { immigrationLaw } from "../service/lawCategoryService";
@@ -13,7 +13,7 @@ import { getSessionData } from "../service/sessionDataService";
  * Load the page for the user to enter any Additional Costs
  * @param {import('express').Request} req Express request object
  * @param {import('express').Response} res Express response object
- * @returns {void}
+ * @returns {Promise<void>}
  */
 export async function showAdditionalCostsPage(req, res) {
   try {
@@ -78,13 +78,4 @@ export async function postAdditionalCostsPage(req, res) {
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }
-}
-
-/**
- * Filter out the OptionalUnit fields
- * @param {Array<object>} additionalFees - additional fees to filter
- * @returns {Array<object>} - fields with OptionalUnit
- */
-function getOptionalUnitFees(additionalFees) {
-  return additionalFees.filter((fee) => fee.type === feeType_OptionalUnit);
 }

@@ -1,5 +1,5 @@
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
-import { feeType_OptionalUnit } from "./additionalFeeService";
+import { getOptionalUnitFees } from "./additionalFeeService";
 import { notApplicable } from "./londonRateService";
 
 /**
@@ -90,6 +90,8 @@ function createImmigrationRequest(sessionData) {
   }
 
   if (validAdditionalFees != null && validAdditionalFees.length > 0) {
+    // We are expecting some add ons to be there
+
     if (additionalCosts == null) {
       throw new Error("Additional cost data is missing");
     }
@@ -97,6 +99,7 @@ function createImmigrationRequest(sessionData) {
     const optionalUnitFees = getOptionalUnitFees(validAdditionalFees);
 
     if (optionalUnitFees.length != additionalCosts.length) {
+      // We expected them to fill in x additional fees but they only answered y
       throw new Error(
         "Expected ${optionalUnitFees.length} additional fees but got ${additionalCosts.length}",
       );
@@ -108,6 +111,7 @@ function createImmigrationRequest(sessionData) {
       );
 
       if (enteredFee == null) {
+        // Expected an answer for a given fee but don't have it
         throw new Error(
           "Expected user to have entered value for ${fee.levelCode}",
         );
@@ -128,14 +132,4 @@ function createImmigrationRequest(sessionData) {
     levelCodes: responseLevelCodes,
   };
   return requestBody;
-}
-
-//TODO Dup code
-/**
- * Filter out the OptionalUnit fields
- * @param {Array<object>} additionalFees - additional fees to filter
- * @returns {Array<object>} - fields with OptionalUnit
- */
-function getOptionalUnitFees(additionalFees) {
-  return additionalFees.filter((fee) => fee.type === feeType_OptionalUnit);
 }

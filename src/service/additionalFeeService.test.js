@@ -1,4 +1,10 @@
-import { getAdditionalFees, isValidUnitEntered } from "./additionalFeeService";
+import {
+  feeType_Automatic,
+  feeType_OptionalUnit,
+  getAdditionalFees,
+  getOptionalUnitFees,
+  isValidUnitEntered,
+} from "./additionalFeeService";
 import { notApplicable } from "./londonRateService";
 
 const matterCode1 = "FAMA";
@@ -8,12 +14,12 @@ const caseStage = "_IMMD2";
 const expectedAdditionalFees = [
   {
     levelCode: "_IMSTD",
-    type: "A",
+    type: feeType_Automatic,
     description: "Stuff",
   },
   {
     levelCode: "_IMSTE",
-    type: "OU",
+    type: feeType_OptionalUnit,
     description: "Misc",
   },
 ];
@@ -159,5 +165,40 @@ describe("isValidUnitEntered", () => {
     [" ", false],
   ])("when %s is entered should return %s", (value, expected) => {
     expect(isValidUnitEntered(value)).toEqual(expected);
+  });
+});
+
+describe("getOptionalUnitFees", () => {
+  it("should return only items with type as OptionalUnit", () => {
+    const additionalFees = [
+      {
+        levelCode: "_IMSTC",
+        type: feeType_OptionalUnit,
+        description: "Misc",
+      },
+      {
+        levelCode: "_IMSTD",
+        type: feeType_Automatic,
+        description: "Stuff",
+      },
+      {
+        levelCode: "_IMSTE",
+        type: feeType_OptionalUnit,
+        description: "Misc",
+      },
+    ];
+
+    expect(getOptionalUnitFees(additionalFees)).toEqual([
+      {
+        levelCode: "_IMSTC",
+        type: feeType_OptionalUnit,
+        description: "Misc",
+      },
+      {
+        levelCode: "_IMSTE",
+        type: feeType_OptionalUnit,
+        description: "Misc",
+      },
+    ]);
   });
 });

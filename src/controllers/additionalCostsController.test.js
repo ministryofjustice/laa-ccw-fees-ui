@@ -8,6 +8,7 @@ import {
   feeType_OptionalFee,
   feeType_OptionalUnit,
   getAdditionalFees,
+  getOptionalUnitFees,
   isValidUnitEntered,
 } from "../service/additionalFeeService";
 import { getSessionData } from "../service/sessionDataService";
@@ -53,6 +54,19 @@ const additionalFees = [
   },
 ];
 
+const additionalFeesFiltered = [
+  {
+    levelCode: "LVL1",
+    description: "Level 1",
+    type: feeType_OptionalUnit,
+  },
+  {
+    levelCode: "LVL5",
+    description: "Level 5",
+    type: feeType_OptionalUnit,
+  },
+];
+
 describe("showAdditionalCostsPage", () => {
   let req = {
     csrfToken: jest.fn(),
@@ -69,6 +83,7 @@ describe("showAdditionalCostsPage", () => {
     getAdditionalFees.mockReturnValue(additionalFees);
     getCaseStageForImmigration.mockReturnValue("_IMM01");
     getSessionData.mockReturnValue({});
+    getOptionalUnitFees.mockReturnValue(additionalFeesFiltered);
 
     req.session.data.lawCategory = immigrationLaw;
 
@@ -170,6 +185,7 @@ describe("showAdditionalCostsPage", () => {
     getNextPage.mockReturnValue("nextPage");
 
     getAdditionalFees.mockReturnValue([]);
+    getOptionalUnitFees.mockReturnValue([]);
 
     await showAdditionalCostsPage(req, res);
 
@@ -190,6 +206,8 @@ describe("showAdditionalCostsPage", () => {
         type: feeType_Automatic,
       },
     ]);
+    getOptionalUnitFees.mockReturnValue([]);
+
     await showAdditionalCostsPage(req, res);
 
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
@@ -209,6 +227,8 @@ describe("postAdditionalCostsPage", () => {
 
   beforeEach(() => {
     getAdditionalFees.mockResolvedValue(additionalFees);
+    getOptionalUnitFees.mockReturnValue(additionalFeesFiltered);
+
     isValidUnitEntered.mockReturnValue(true);
 
     req = {
