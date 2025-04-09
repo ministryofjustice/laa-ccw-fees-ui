@@ -1,4 +1,5 @@
 import {
+  URL_AdditionalCosts,
   URL_CaseStage,
   URL_ClaimStart,
   URL_ErrorPage,
@@ -28,6 +29,8 @@ describe("cleanData", () => {
     req.session.data.vatIndicator = "g";
     req.session.data.startDate = "h";
     req.session.data.validCaseStages = "i";
+    req.session.data.additionalCosts = "j";
+    req.session.data.validAdditionalFees = "k";
   });
 
   it("should clean data when given ClaimStart page", () => {
@@ -42,6 +45,8 @@ describe("cleanData", () => {
     expect(req.session.data.vatIndicator).toEqual(null);
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual(null);
+    expect(req.session.data.additionalCosts).toEqual(null);
+    expect(req.session.data.validAdditionalFees).toEqual(null);
   });
 
   it("should clean data when given MatterCode1 page", () => {
@@ -56,6 +61,8 @@ describe("cleanData", () => {
     expect(req.session.data.vatIndicator).toEqual(null);
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual(null);
+    expect(req.session.data.additionalCosts).toEqual(null);
+    expect(req.session.data.validAdditionalFees).toEqual(null);
   });
 
   it("should clean data when given MatterCode2 page", () => {
@@ -70,6 +77,8 @@ describe("cleanData", () => {
     expect(req.session.data.vatIndicator).toEqual(null);
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual(null);
+    expect(req.session.data.additionalCosts).toEqual(null);
+    expect(req.session.data.validAdditionalFees).toEqual(null);
   });
 
   it.each([
@@ -79,6 +88,7 @@ describe("cleanData", () => {
     URL_ErrorPage,
     URL_CaseStage,
     URL_VatIndicator,
+    URL_AdditionalCosts,
   ])("should not clean data if any other page", (urlToTest) => {
     cleanData(req, urlToTest);
 
@@ -91,6 +101,8 @@ describe("cleanData", () => {
     expect(req.session.data.vatIndicator).toEqual("g");
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual("i");
+    expect(req.session.data.additionalCosts).toEqual("j");
+    expect(req.session.data.validAdditionalFees).toEqual("k");
   });
 });
 

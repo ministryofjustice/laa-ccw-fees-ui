@@ -14,6 +14,7 @@ import {
   showMatterCode1Page,
 } from "../controllers/matterCode1Controller";
 import {
+  URL_AdditionalCosts,
   URL_CaseStage,
   URL_ClaimStart,
   URL_ErrorPage,
@@ -37,6 +38,10 @@ import {
   showVatIndicatorPage,
 } from "../controllers/vatIndicatorController";
 import { showGenericErrorPage } from "../controllers/errorController";
+import {
+  postAdditionalCostsPage,
+  showAdditionalCostsPage,
+} from "../controllers/additionalCostsController";
 
 export const router = express.Router();
 
@@ -60,6 +65,9 @@ router.post(URL_CaseStage, postCaseStagePage);
 
 router.get(URL_VatIndicator, showVatIndicatorPage);
 router.post(URL_VatIndicator, postVatIndicatorRate);
+
+router.get(URL_AdditionalCosts, showAdditionalCostsPage);
+router.post(URL_AdditionalCosts, postAdditionalCostsPage);
 
 router.get(URL_Result, showResultPage);
 

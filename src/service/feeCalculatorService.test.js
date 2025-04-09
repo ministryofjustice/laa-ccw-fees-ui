@@ -1,5 +1,25 @@
+import {
+  feeType_Automatic,
+  feeType_OptionalUnit,
+} from "./additionalFeeService";
 import { getCalculationResult } from "./feeCalculatorService";
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
+import { notApplicable } from "./londonRateService";
+
+const additionalFees = [
+  {
+    levelCode: "LVL1",
+    type: feeType_OptionalUnit,
+  },
+  {
+    levelCode: "LVL2",
+    type: feeType_Automatic,
+  },
+  {
+    levelCode: "LVL3",
+    type: feeType_OptionalUnit,
+  },
+];
 
 describe("getCalculationResult", () => {
   const axios = {
@@ -151,27 +171,98 @@ describe("getCalculationResult", () => {
   });
 
   describe("For immigration law", () => {
-    it("should return data from api if successful call", async () => {
+    it.each([null, []])(
+      "should return data from api if successful call with no additional costs",
+      async (additionalCosts) => {
+        const sessionData = {
+          matterCode1: "FAML",
+          matterCode2: "FPET",
+          vatIndicator: false,
+          startDate: "03/04/2025",
+          lawCategory: immigrationLaw,
+          caseStage: "_IMM01",
+          validAdditionalFees: additionalCosts,
+        };
+
+        const expectedRequestBody = {
+          matterCode1: "FAML",
+          matterCode2: "FPET",
+          locationCode: notApplicable,
+          caseStage: "_IMM01",
+          levelCodes: [],
+        };
+
+        axios.get.mockResolvedValue({
+          data: {
+            matterCode1: "FAML",
+            matterCode2: "FPET",
+            locationCode: notApplicable,
+            caseStage: "_IMM01",
+            amount: 120,
+            total: 144,
+            vat: 24,
+          },
+        });
+
+        const result = await getCalculationResult(sessionData, axios);
+
+        expect(result).toEqual({
+          amount: 120,
+          total: 144,
+          vat: 24,
+        });
+
+        expect(axios.get).toHaveBeenCalledWith("/fees/calculate", {
+          data: expectedRequestBody,
+        });
+      },
+    );
+
+    it("should return data from api if successful call with additional costs", async () => {
       const sessionData = {
         matterCode1: "FAML",
         matterCode2: "FPET",
         vatIndicator: false,
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
+        caseStage: "_IMM01",
+        validAdditionalFees: additionalFees,
+        additionalCosts: [
+          {
+            levelCode: "LVL1",
+            type: feeType_OptionalUnit,
+            value: "3",
+          },
+          {
+            levelCode: "LVL3",
+            type: feeType_OptionalUnit,
+            value: "1",
+          },
+        ],
       };
 
       const expectedRequestBody = {
         matterCode1: "FAML",
         matterCode2: "FPET",
-        locationCode: "NA",
+        locationCode: notApplicable,
         caseStage: "_IMM01",
+        levelCodes: [
+          {
+            levelCode: "LVL1",
+            units: "3",
+          },
+          {
+            levelCode: "LVL3",
+            units: "1",
+          },
+        ],
       };
 
       axios.get.mockResolvedValue({
         data: {
           matterCode1: "FAML",
           matterCode2: "FPET",
-          locationCode: "NA",
+          locationCode: notApplicable,
           caseStage: "_IMM01",
           amount: 120,
           total: 144,
@@ -198,6 +289,7 @@ describe("getCalculationResult", () => {
         vatIndicator: false,
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
+        caseStage: "_IMM01",
       };
 
       await expect(() =>
@@ -210,6 +302,23 @@ describe("getCalculationResult", () => {
     it("should throw error if no matterCode2 in session data", async () => {
       const sessionData = {
         matterCode1: "FAML",
+        vatIndicator: false,
+        startDate: "03/04/2025",
+        lawCategory: immigrationLaw,
+        caseStage: "_IMM01",
+      };
+
+      await expect(() =>
+        getCalculationResult(sessionData, axios),
+      ).rejects.toThrow(Error);
+
+      expect(axios.get).toHaveBeenCalledTimes(0);
+    });
+
+    it("should throw error if no caseStage in session data", async () => {
+      const sessionData = {
+        matterCode1: "FAML",
+        matterCode2: "FPET",
         vatIndicator: false,
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
@@ -229,13 +338,15 @@ describe("getCalculationResult", () => {
         vatIndicator: false,
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
+        caseStage: "_IMM01",
       };
 
       const expectedRequestBody = {
         matterCode1: "FAML",
         matterCode2: "FPET",
-        locationCode: "NA",
+        locationCode: notApplicable,
         caseStage: "_IMM01",
+        levelCodes: [],
       };
 
       axios.get.mockImplementation(() => {
@@ -250,6 +361,54 @@ describe("getCalculationResult", () => {
         data: expectedRequestBody,
       });
     });
+
+    const suppliedLessThanExpected = [
+      {
+        levelCode: "LVL1",
+        type: feeType_OptionalUnit,
+        value: "3",
+      },
+    ];
+
+    const suppliedOneThatIsUnexpected = [
+      {
+        levelCode: "LVL1",
+        type: feeType_OptionalUnit,
+        value: "3",
+      },
+      {
+        levelCode: "LVL8",
+        type: feeType_OptionalUnit,
+        value: "3",
+      },
+    ];
+    it.each([
+      null,
+      [],
+      [{}],
+      suppliedLessThanExpected,
+      suppliedOneThatIsUnexpected,
+    ])(
+      "should throw error if additional costs user entered are insufficient",
+      async (additionalCosts) => {
+        const sessionData = {
+          matterCode1: "FAML",
+          matterCode2: "FPET",
+          caseStage: "_IMM01",
+          vatIndicator: false,
+          startDate: "03/04/2025",
+          lawCategory: immigrationLaw,
+          validAdditionalFees: additionalFees,
+          additionalCosts: additionalCosts,
+        };
+
+        await expect(() =>
+          getCalculationResult(sessionData, axios),
+        ).rejects.toThrow(Error);
+
+        expect(axios.get).toHaveBeenCalledTimes(0);
+      },
+    );
   });
 
   it("should error if unexpected law category", async () => {

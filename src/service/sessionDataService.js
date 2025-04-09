@@ -8,11 +8,13 @@
  *  - caseStage
  *  - londonRate
  *  - vatIndicator
+ *  - additionalCosts
  *
  * Cached data:
  *  - validMatterCode1s
  *  - validMatterCode2s
  *  - validCaseStages
+ *  - validAdditionalFees
  */
 import {
   URL_ClaimStart,
@@ -38,6 +40,8 @@ export function cleanData(req, page) {
       req.session.data.caseStage = null;
       req.session.data.londonRate = null;
       req.session.data.vatIndicator = null;
+      req.session.data.additionalCosts = null;
+      req.session.data.validAdditionalFees = null;
       break;
     case URL_MatterCode1:
       req.session.data.validMatterCode2s = null;
@@ -46,12 +50,18 @@ export function cleanData(req, page) {
       req.session.data.caseStage = null;
       req.session.data.londonRate = null;
       req.session.data.vatIndicator = null;
+      req.session.data.additionalCosts = null;
+      req.session.data.validAdditionalFees = null;
+
       break;
     case URL_MatterCode2:
       req.session.data.validCaseStages = null;
       req.session.data.caseStage = null;
       req.session.data.londonRate = null;
       req.session.data.vatIndicator = null;
+      req.session.data.additionalCosts = null;
+      req.session.data.validAdditionalFees = null;
+
       break;
   }
 }
