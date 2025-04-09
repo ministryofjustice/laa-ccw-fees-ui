@@ -84,6 +84,11 @@ export function isValidUnitEntered(value) {
   return true;
 }
 
+export function isValidFeeEntered(value) {
+  const regex = /^\d+(\.\d{1,2})?$/;
+  return regex.test(value);
+}
+
 /**
  * Filter so only fees that need to be displayed to user are shown
  * @param {Array<object>} additionalFees - additional fees to filter
