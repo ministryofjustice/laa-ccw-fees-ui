@@ -64,8 +64,6 @@ const externalModules = [
   "express-session",
   "morgan",
   "compression",
-  "sqlite3",
-  "sqlite",
   "axios",
   "figlet",
   "csrf-sync",

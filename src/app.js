@@ -2,12 +2,7 @@ import express from "express";
 import chalk from "chalk";
 import morgan from "morgan";
 import compression from "compression";
-import {
-  setupCsrf,
-  setupMiddlewares,
-  setupConfig,
-  setupDB,
-} from "../src/middleware";
+import { setupCsrf, setupMiddlewares, setupConfig } from "../src/middleware";
 import session from "express-session";
 import {
   nunjucksSetup,
@@ -30,123 +25,116 @@ setupMiddlewares(app);
 
 app.use(axiosMiddleware);
 
-// Set up DB to be used in requests
-setupDB(app)
-  .then(() => {
+/**
+ * Response compression setup. Compresses responses unless the 'x-no-compression' header is present.
+ * Improves the performance of your app by reducing the size of responses.
+ */
+app.use(
+  compression({
     /**
-     * Response compression setup. Compresses responses unless the 'x-no-compression' header is present.
-     * Improves the performance of your app by reducing the size of responses.
-     */
-    app.use(
-      compression({
-        /**
-         * Custom filter for compression.
-         * Prevents compression if the 'x-no-compression' header is set in the request.
-         *
-         * @param {import('express').Request} req - The Express request object.
-         * @param {import('express').Response} res - The Express response object.
-         * @returns {boolean} - Returns true if compression should be applied, false otherwise.
-         */
-        filter: (req, res) => {
-          if (req.headers["x-no-compression"]) {
-            // Don't compress responses with this request header
-            return false;
-          }
-          // Fallback to the standard filter function
-          return compression.filter(req, res);
-        },
-      }),
-    );
-
-    /**
-     * Sets up security headers using Helmet to protect the app from well-known web vulnerabilities.
+     * Custom filter for compression.
+     * Prevents compression if the 'x-no-compression' header is set in the request.
      *
-     * @param {import('express').Application} app - The Express application instance.
+     * @param {import('express').Request} req - The Express request object.
+     * @param {import('express').Response} res - The Express response object.
+     * @returns {boolean} - Returns true if compression should be applied, false otherwise.
      */
-    helmetSetup(app);
+    filter: (req, res) => {
+      if (req.headers["x-no-compression"]) {
+        // Don't compress responses with this request header
+        return false;
+      }
+      // Fallback to the standard filter function
+      return compression.filter(req, res);
+    },
+  }),
+);
 
-    // Reducing fingerprinting by removing the 'x-powered-by' header
-    app.disable("x-powered-by");
+/**
+ * Sets up security headers using Helmet to protect the app from well-known web vulnerabilities.
+ *
+ * @param {import('express').Application} app - The Express application instance.
+ */
+helmetSetup(app);
 
-    /**
-     * Set up cookie security for sessions.
-     * Configures session management with secure cookie settings and session IDs.
-     */
-    app.set("trust proxy", 1); // trust first proxy
-    app.use(
-      session({
-        secret: Math.round(Math.random() * 100000).toString(), // Secret for session encryption
-        name: "sessionId", // Custom session ID cookie name
-        resave: false, // Prevents resaving unchanged sessions
-        saveUninitialized: false, // Only save sessions that are modified
-      }),
-    );
+// Reducing fingerprinting by removing the 'x-powered-by' header
+app.disable("x-powered-by");
 
-    /**
-     * Middleware function to set up a Content Security Policy (CSP) nonce for each request.
-     * This helps in preventing certain types of attacks like XSS.
-     * This is only on in production.
-     */
-    setupCsrf(app);
+/**
+ * Set up cookie security for sessions.
+ * Configures session management with secure cookie settings and session IDs.
+ */
+app.set("trust proxy", 1); // trust first proxy
+app.use(
+  session({
+    secret: Math.round(Math.random() * 100000).toString(), // Secret for session encryption
+    name: "sessionId", // Custom session ID cookie name
+    resave: false, // Prevents resaving unchanged sessions
+    saveUninitialized: false, // Only save sessions that are modified
+  }),
+);
 
-    /**
-     * Sets up Nunjucks as the template engine for the Express app.
-     * Configures the view engine and template paths.
-     *
-     * @param {import('express').Application} app - The Express application instance.
-     */
-    nunjucksSetup(app);
+/**
+ * Middleware function to set up a Content Security Policy (CSP) nonce for each request.
+ * This helps in preventing certain types of attacks like XSS.
+ * This is only on in production.
+ */
+setupCsrf(app);
 
-    /**
-     * Applies a general rate limiter to all requests to prevent abuse.
-     *
-     * @param {import('express').Application} app - The Express application instance.
-     * @param {object} config - Configuration object containing rate limit settings.
-     */
-    rateLimitSetUp(app, config);
+/**
+ * Sets up Nunjucks as the template engine for the Express app.
+ * Configures the view engine and template paths.
+ *
+ * @param {import('express').Application} app - The Express application instance.
+ */
+nunjucksSetup(app);
 
-    /**
-     * Sets up application-specific configurations that are made available in templates.
-     *
-     * @param {import('express').Application} app - The Express application instance.
-     */
-    setupConfig(app);
+/**
+ * Applies a general rate limiter to all requests to prevent abuse.
+ *
+ * @param {import('express').Application} app - The Express application instance.
+ * @param {object} config - Configuration object containing rate limit settings.
+ */
+rateLimitSetUp(app, config);
 
-    /**
-     * Sets up request logging using Morgan for better debugging and analysis.
-     */
-    app.use(morgan("dev"));
+/**
+ * Sets up application-specific configurations that are made available in templates.
+ *
+ * @param {import('express').Application} app - The Express application instance.
+ */
+setupConfig(app);
 
-    /**
-     * Registers the main router for the application.
-     * Serves routes defined in the 'indexRouter' module.
-     */
-    app.use("/", indexRouter);
+/**
+ * Sets up request logging using Morgan for better debugging and analysis.
+ */
+app.use(morgan("dev"));
 
-    /**
-     * Enables live-reload middleware in development mode to automatically reload
-     * the server when changes are detected.
-     */
-    if (process.env.NODE_ENV === "development") {
-      app.use(livereload());
-    }
+/**
+ * Registers the main router for the application.
+ * Serves routes defined in the 'indexRouter' module.
+ */
+app.use("/", indexRouter);
 
-    /**
-     * Displays an ASCII Art banner for the application startup.
-     *
-     * @function displayAsciiBanner
-     * @param {object} config - Configuration object containing service details.
-     */
-    displayAsciiBanner(config);
+/**
+ * Enables live-reload middleware in development mode to automatically reload
+ * the server when changes are detected.
+ */
+if (process.env.NODE_ENV === "development") {
+  app.use(livereload());
+}
 
-    /**
-     * Starts the Express server on the specified port.
-     * Logs the port number to the console upon successful startup.
-     */
-    app.listen(config.app.port, () => {
-      console.log(chalk.yellow(`Listening on port ${config.app.port}...`));
-    });
-  })
-  .catch((error) => {
-    console.error("Failed to set up the database:", error);
-  });
+/**
+ * Displays an ASCII Art banner for the application startup.
+ *
+ * @function displayAsciiBanner
+ * @param {object} config - Configuration object containing service details.
+ */
+displayAsciiBanner(config);
+
+/**
+ * Starts the Express server on the specified port.
+ * Logs the port number to the console upon successful startup.
+ */
+app.listen(config.app.port, () => {
+  console.log(chalk.yellow(`Listening on port ${config.app.port}...`));
+});
