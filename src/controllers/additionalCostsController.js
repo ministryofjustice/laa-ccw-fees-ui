@@ -1,7 +1,9 @@
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import {
+  feeTypes,
   getAdditionalFees,
-  getOptionalUnitFees,
+  getDisplayableFees,
+  isValidFeeEntered,
   isValidUnitEntered,
 } from "../service/additionalFeeService";
 import { immigrationLaw } from "../service/lawCategoryService";
@@ -26,7 +28,7 @@ export async function showAdditionalCostsPage(req, res) {
     await getCaseStageForImmigration(req);
     const additionalFees = await getAdditionalFees(req);
 
-    const fields = getOptionalUnitFees(additionalFees);
+    const fields = getDisplayableFees(additionalFees);
 
     if (fields.length == 0) {
       //Nothing to ask them
@@ -36,6 +38,7 @@ export async function showAdditionalCostsPage(req, res) {
     res.render("main/additionalCosts", {
       csrfToken: req.csrfToken(),
       fieldsToShow: fields,
+      feeTypes: feeTypes,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -50,20 +53,33 @@ export async function showAdditionalCostsPage(req, res) {
 export async function postAdditionalCostsPage(req, res) {
   try {
     const additionalFees = await getAdditionalFees(req);
-    const fields = getOptionalUnitFees(additionalFees);
+    const fields = getDisplayableFees(additionalFees);
     let enteredAdditionalCosts = [];
 
     for (const field of fields) {
-      const value = req.body[field.levelCode];
+      let value = req.body[field.levelCode];
 
       if (value == null) {
         throw new Error(field.levelCode + " not defined");
       }
 
-      if (!isValidUnitEntered(value)) {
-        throw new Error(
-          field.levelCode + " must be an integer between 0 and 9",
-        );
+      if (field.type === feeTypes.optionalFee) {
+        if (value.trim() == "") {
+          // Allowed to skip this field if you have no fee
+          value = "0";
+        } else {
+          if (!isValidFeeEntered(value)) {
+            throw new Error(
+              field.levelCode + " must be a currency value or empty",
+            );
+          }
+        }
+      } else {
+        if (!isValidUnitEntered(value)) {
+          throw new Error(
+            field.levelCode + " must be an integer between 0 and 9",
+          );
+        }
       }
 
       enteredAdditionalCosts.push({

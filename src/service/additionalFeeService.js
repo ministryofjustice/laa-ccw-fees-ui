@@ -1,9 +1,11 @@
 import { notApplicable } from "./londonRateService";
 
-export const feeType_Automatic = "A";
-export const feeType_OptionalBool = "O";
-export const feeType_OptionalUnit = "OU";
-export const feeType_OptionalFee = "OF";
+export const feeTypes = {
+  automatic: "A",
+  optionalBool: "O",
+  optionalUnit: "OU",
+  optionalFee: "OF",
+};
 
 /**
  * Gets the additional fees (bolt ons)
@@ -85,10 +87,23 @@ export function isValidUnitEntered(value) {
 }
 
 /**
- * Filter out the OptionalUnit fields
- * @param {Array<object>} additionalFees - additional fees to filter
- * @returns {Array<object>} - fields with OptionalUnit
+ * Check Optional_Fee field has valid value (currency)
+ * @param {string} value - user entered value
+ * @returns {boolean} - true if valid, false otherwise
  */
-export function getOptionalUnitFees(additionalFees) {
-  return additionalFees.filter((fee) => fee.type === feeType_OptionalUnit);
+export function isValidFeeEntered(value) {
+  const regex = /^\d+(\.\d{1,2})?$/;
+  return regex.test(value);
+}
+
+/**
+ * Filter so only fees that need to be displayed to user are shown
+ * @param {Array<object>} additionalFees - additional fees to filter
+ * @returns {Array<object>} - fields to show
+ */
+export function getDisplayableFees(additionalFees) {
+  return additionalFees.filter(
+    (fee) =>
+      fee.type === feeTypes.optionalUnit || fee.type === feeTypes.optionalFee,
+  );
 }

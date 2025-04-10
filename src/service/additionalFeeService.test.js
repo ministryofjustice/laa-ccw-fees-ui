@@ -1,8 +1,8 @@
 import {
-  feeType_Automatic,
-  feeType_OptionalUnit,
+  feeTypes,
   getAdditionalFees,
-  getOptionalUnitFees,
+  getDisplayableFees,
+  isValidFeeEntered,
   isValidUnitEntered,
 } from "./additionalFeeService";
 import { notApplicable } from "./londonRateService";
@@ -14,12 +14,12 @@ const caseStage = "_IMMD2";
 const expectedAdditionalFees = [
   {
     levelCode: "_IMSTD",
-    type: feeType_Automatic,
+    type: feeTypes.automatic,
     description: "Stuff",
   },
   {
     levelCode: "_IMSTE",
-    type: feeType_OptionalUnit,
+    type: feeTypes.optionalUnit,
     description: "Misc",
   },
 ];
@@ -168,35 +168,63 @@ describe("isValidUnitEntered", () => {
   });
 });
 
-describe("getOptionalUnitFees", () => {
+describe("isValidFeeEntered", () => {
+  it.each([
+    ["123.45", true],
+    ["123", true],
+    ["2", true],
+    ["0", true],
+    ["", false],
+    ["0.01", true],
+    ["-1", false],
+    ["-123.43", false],
+    ["abdc", false],
+    ["£43.12", false],
+    ["123.456", false],
+  ])("when %s is entered should return %s", (value, expected) => {
+    expect(isValidFeeEntered(value)).toEqual(expected);
+  });
+});
+
+describe("getDisplayableFees", () => {
   it("should return only items with type as OptionalUnit", () => {
     const additionalFees = [
       {
         levelCode: "_IMSTC",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         description: "Misc",
       },
       {
         levelCode: "_IMSTD",
-        type: feeType_Automatic,
+        type: feeTypes.automatic,
         description: "Stuff",
       },
       {
+        levelCode: "_IMSTX",
+        type: feeTypes.optionalFee,
+        description: "idk",
+      },
+      {
         levelCode: "_IMSTE",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         description: "Misc",
       },
     ];
 
-    expect(getOptionalUnitFees(additionalFees)).toEqual([
+    expect(getDisplayableFees(additionalFees)).toEqual([
       {
         levelCode: "_IMSTC",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         description: "Misc",
       },
       {
+        levelCode: "_IMSTX",
+        type: feeTypes.optionalFee,
+        description: "idk",
+      },
+      {
         levelCode: "_IMSTE",
-        type: feeType_OptionalUnit,
+        type: feeTypes.optionalUnit,
         description: "Misc",
       },
     ]);

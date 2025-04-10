@@ -9,16 +9,33 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         
         {% for field in fieldsToShow %}
-            {{ govukInput({
-                label: {
-                    text: field.description,
-                    classes: "govuk-label--s"
-                },
-                classes: "govuk-input--width-3",
-                id: field.levelCode,
-                name: field.levelCode,
-                inputmode: "numeric"
-            }) }}
+            {% if field.type == feeTypes.optionalFee %}
+               {{ govukInput({
+                    label: {
+                        text: field.description,
+                        classes: "govuk-label--s"
+                    },
+                    hint: {
+                        text: "Excluding VAT"
+                    },
+                    classes: "govuk-input--width-5",
+                    id: field.levelCode,
+                    name: field.levelCode,
+                    prefix: {text: "£"}
+                }) }}
+            {% else %}
+                {{ govukInput({
+                    label: {
+                        text: field.description,
+                        classes: "govuk-label--s"
+                    },
+                    classes: "govuk-input--width-3",
+                    id: field.levelCode,
+                    name: field.levelCode,
+                    inputmode: "numeric"
+                }) }}
+            
+            {% endif %}
         {% endfor %}
 
         {{ govukButton({
