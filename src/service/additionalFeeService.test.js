@@ -209,6 +209,11 @@ describe("getDisplayableFees", () => {
         type: feeTypes.optionalUnit,
         description: "Misc",
       },
+      {
+        levelCode: "_IMST",
+        type: feeTypes.optionalBool,
+        description: "Misca",
+      },
     ];
 
     expect(getDisplayableFees(additionalFees)).toEqual([
@@ -226,6 +231,11 @@ describe("getDisplayableFees", () => {
         levelCode: "_IMSTE",
         type: feeTypes.optionalUnit,
         description: "Misc",
+      },
+      {
+        levelCode: "_IMST",
+        type: feeTypes.optionalBool,
+        description: "Misca",
       },
     ]);
   });

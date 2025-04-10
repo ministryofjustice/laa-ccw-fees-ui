@@ -102,8 +102,14 @@ export function isValidFeeEntered(value) {
  * @returns {Array<object>} - fields to show
  */
 export function getDisplayableFees(additionalFees) {
-  return additionalFees.filter(
-    (fee) =>
-      fee.type === feeTypes.optionalUnit || fee.type === feeTypes.optionalFee,
-  );
+  return additionalFees.filter((fee) => {
+    switch (fee.type) {
+      case feeTypes.optionalUnit:
+      case feeTypes.optionalFee:
+      case feeTypes.optionalBool:
+        return true;
+      default:
+        return false;
+    }
+  });
 }
