@@ -1,4 +1,10 @@
-import { isValidLondonRate } from "./londonRateService";
+import { getLondonRates, isValidLondonRate } from "./londonRateService";
+
+describe("getLondonRates", () => {
+  it("should return values for London Rate", () => {
+    expect(getLondonRates().length).toEqual(2);
+  });
+});
 
 describe("isValidLondonRate", () => {
   it("should return true if valid category", () => {

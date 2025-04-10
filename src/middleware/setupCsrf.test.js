@@ -1,6 +1,6 @@
 import { csrfSync } from "csrf-sync";
 import { URL_ErrorPage } from "../routes/navigator";
-import { interceptCSRFError } from "./setupCsrf";
+import { interceptCSRFError, setupCsrf } from "./setupCsrf";
 
 describe("csrf-sync middleware", () => {
   let req, res, next;
@@ -72,6 +72,15 @@ describe("csrf-sync middleware", () => {
       const errorArg = next.mock.calls[0][0];
       expect(errorArg).toBeInstanceOf(Error);
       expect(errorArg.message).toMatch(/invalid csrf token/i);
+    });
+
+    it("should tell the app to use csrf features", () => {
+      let app = {
+        use: jest.fn(),
+      };
+      setupCsrf(app);
+
+      expect(app.use).toHaveBeenCalledTimes(3);
     });
   });
 
