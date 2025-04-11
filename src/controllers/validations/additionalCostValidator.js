@@ -68,23 +68,6 @@ function isValidFeeEntered(value) {
  * @returns {boolean} - true if valid, false otherwise
  */
 function isValidUnitEntered(value) {
-  if (value.trim() == "") {
-    return false;
-  }
-
-  const valueAsInt = Number(value);
-
-  if (!Number.isInteger(valueAsInt)) {
-    return false;
-  }
-
-  if (valueAsInt < 0) {
-    return false;
-  }
-
-  if (valueAsInt > 9) {
-    return false;
-  }
-
-  return true;
+  const regex = /^\d{1}?$/;
+  return regex.test(value);
 }
