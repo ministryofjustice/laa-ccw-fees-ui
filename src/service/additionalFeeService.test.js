@@ -168,24 +168,6 @@ describe("isValidUnitEntered", () => {
   });
 });
 
-describe("isValidFeeEntered", () => {
-  it.each([
-    ["123.45", true],
-    ["123", true],
-    ["2", true],
-    ["0", true],
-    ["", false],
-    ["0.01", true],
-    ["-1", false],
-    ["-123.43", false],
-    ["abdc", false],
-    ["£43.12", false],
-    ["123.456", false],
-  ])("when %s is entered should return %s", (value, expected) => {
-    expect(isValidFeeEntered(value)).toEqual(expected);
-  });
-});
-
 describe("getDisplayableFees", () => {
   it("should return only items with type as OptionalUnit", () => {
     const additionalFees = [

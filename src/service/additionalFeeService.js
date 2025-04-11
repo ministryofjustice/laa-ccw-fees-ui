@@ -60,43 +60,6 @@ async function getAdditionalFeesFromService(
 }
 
 /**
- * Check Optional_Unit field has valid value (int between 0 to 9)
- * @param {string} value - user entered value
- * @returns {boolean} - true if valid, false otherwise
- */
-export function isValidUnitEntered(value) {
-  if (value.trim() == "") {
-    return false;
-  }
-
-  const valueAsInt = Number(value);
-
-  if (!Number.isInteger(valueAsInt)) {
-    return false;
-  }
-
-  if (valueAsInt < 0) {
-    return false;
-  }
-
-  if (valueAsInt > 9) {
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * Check Optional_Fee field has valid value (currency)
- * @param {string} value - user entered value
- * @returns {boolean} - true if valid, false otherwise
- */
-export function isValidFeeEntered(value) {
-  const regex = /^\d+(\.\d{1,2})?$/;
-  return regex.test(value);
-}
-
-/**
  * Filter so only fees that need to be displayed to user are shown
  * @param {Array<object>} additionalFees - additional fees to filter
  * @returns {Array<object>} - fields to show
