@@ -117,7 +117,7 @@ function createImmigrationRequest(sessionData) {
         );
       }
 
-      switch(fee.type) {
+      switch (fee.type) {
         case feeTypes.optionalFee:
           responseLevelCodes.push({
             levelCode: fee.levelCode,
@@ -132,15 +132,13 @@ function createImmigrationRequest(sessionData) {
           break;
         case feeTypes.optionalBool:
           //No need to send false ones. Sending it will cause it to be added to the calculation
-          if (enteredFee.value == true )
-          responseLevelCodes.push({
-            levelCode: fee.levelCode,
-          });
+          if (enteredFee.value == true)
+            responseLevelCodes.push({
+              levelCode: fee.levelCode,
+            });
           break;
         default:
-          throw new Error(
-            "Unexpected fee type ${fee.type}",
-          );
+          throw new Error("Unexpected fee type ${fee.type}");
       }
     }
   }
