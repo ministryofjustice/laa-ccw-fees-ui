@@ -29,7 +29,7 @@ export async function showAdditionalCostsPage(req, res) {
     const additionalFees = await getAdditionalFees(req);
 
     const fields = getDisplayableFees(additionalFees);
-
+    
     if (fields.length == 0) {
       //Nothing to ask them
       return res.redirect(getNextPage(URL_AdditionalCosts));
@@ -63,23 +63,42 @@ export async function postAdditionalCostsPage(req, res) {
         throw new Error(field.levelCode + " not defined");
       }
 
-      if (field.type === feeTypes.optionalFee) {
-        if (value.trim() == "") {
-          // Allowed to skip this field if you have no fee
-          value = "0";
-        } else {
-          if (!isValidFeeEntered(value)) {
+      switch (field.type){
+        case feeTypes.optionalFee:
+          if (value.trim() == "") {
+            // Allowed to skip this field if you have no fee
+            value = "0";
+          } else {
+            if (!isValidFeeEntered(value)) {
+              throw new Error(
+                field.levelCode + " must be a currency value or empty",
+              );
+            }
+          }
+          break;
+        case feeTypes.optionalUnit:
+          if (!isValidUnitEntered(value)) {
             throw new Error(
-              field.levelCode + " must be a currency value or empty",
+              field.levelCode + " must be an integer between 0 and 9",
             );
           }
-        }
-      } else {
-        if (!isValidUnitEntered(value)) {
-          throw new Error(
-            field.levelCode + " must be an integer between 0 and 9",
-          );
-        }
+          break;
+        case feeTypes.optionalBool:
+          if (value == null) {
+            throw new Error(field.levelCode + " not defined");
+          }
+          console.log(value)
+          if (value === "yes") {
+            value = true
+          } else if (value === "no"){
+            value = false
+          } else {
+            throw new Error(field.levelCode + " is not valid");
+          }
+        
+          break;
+        default:
+          throw new Error("Unexpected fee type: " + field.type);
       }
 
       enteredAdditionalCosts.push({
