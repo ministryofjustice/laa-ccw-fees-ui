@@ -20,6 +20,8 @@ const additionalFees = [
     levelCode: "LVL4",
     type: feeTypes.optionalFee,
   },
+  { levelCode: "LVL5", type: feeTypes.optionalBool },
+  { levelCode: "LVL6", type: feeTypes.optionalBool },
 ];
 
 describe("getCalculationResult", () => {
@@ -244,6 +246,16 @@ describe("getCalculationResult", () => {
             type: feeTypes.optionalFee,
             value: "2.34",
           },
+          {
+            levelCode: "LVL5",
+            type: feeTypes.optionalBool,
+            value: true,
+          },
+          {
+            levelCode: "LVL6",
+            type: feeTypes.optionalBool,
+            value: false,
+          },
         ],
       };
 
@@ -264,6 +276,9 @@ describe("getCalculationResult", () => {
           {
             levelCode: "LVL4",
             fee: "2.34",
+          },
+          {
+            levelCode: "LVL5",
           },
         ],
       };
@@ -387,11 +402,27 @@ describe("getCalculationResult", () => {
         value: "3",
       },
       {
-        levelCode: "LVL8",
+        levelCode: "LVL3",
         type: feeTypes.optionalUnit,
-        value: "3",
+        value: "1",
+      },
+      {
+        levelCode: "LVL4",
+        type: feeTypes.optionalFee,
+        value: "2.34",
+      },
+      {
+        levelCode: "LVL5",
+        type: feeTypes.optionalBool,
+        value: true,
+      },
+      {
+        levelCode: "LVL8",
+        type: feeTypes.optionalBool,
+        value: false,
       },
     ];
+
     it.each([
       null,
       [],

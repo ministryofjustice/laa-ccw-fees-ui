@@ -13,7 +13,7 @@ import { familyLaw, immigrationLaw } from "../service/lawCategoryService";
 import { getCaseStageForImmigration } from "../service/caseStageService";
 import { validateAndReturnAdditionalCostValue } from "./validations/additionalCostValidator";
 
-jest.mock("./validations/additionalCostValidator")
+jest.mock("./validations/additionalCostValidator");
 jest.mock("../service/additionalFeeService");
 jest.mock("../service/caseStageService");
 jest.mock("../service/sessionDataService");
@@ -23,38 +23,36 @@ const lvl1 = {
   levelCode: "LVL1",
   description: "Level 1",
   type: feeTypes.optionalUnit,
-}
-const lvl2 =  {
+};
+const lvl2 = {
   levelCode: "LVL2",
   description: "Level 2",
   type: feeTypes.automatic,
-}
-const lvl3 = 
-{
+};
+const lvl3 = {
   levelCode: "LVL3",
   description: "Level 3",
   type: feeTypes.optionalBool,
-}
-const lvl4 =  {
+};
+const lvl4 = {
   levelCode: "LVL4",
   description: "Level 4",
   type: feeTypes.optionalFee,
-}
+};
 const lvl5 = {
   levelCode: "LVL5",
   description: "Level 5",
   type: feeTypes.optionalUnit,
-}
+};
 const lvl6 = {
   levelCode: "LVL6",
   description: "Level 6",
   type: feeTypes.automatic,
-}
-
+};
 
 const additionalFees = [lvl1, lvl2, lvl3, lvl4, lvl5, lvl6];
 
-const additionalFeesFiltered = [lvl1, lvl3,lvl4, lvl5]
+const additionalFeesFiltered = [lvl1, lvl3, lvl4, lvl5];
 
 describe("showAdditionalCostsPage", () => {
   let req = {
@@ -201,7 +199,7 @@ describe("postAdditionalCostsPage", () => {
   beforeEach(() => {
     getAdditionalFees.mockResolvedValue(additionalFees);
     getDisplayableFees.mockReturnValue(additionalFeesFiltered);
-  
+
     validateAndReturnAdditionalCostValue.mockReturnValueOnce("2");
     validateAndReturnAdditionalCostValue.mockReturnValueOnce(true);
     validateAndReturnAdditionalCostValue.mockReturnValueOnce("2.34");
@@ -237,19 +235,36 @@ describe("postAdditionalCostsPage", () => {
       req.session.data,
     );
 
-    expect(validateAndReturnAdditionalCostValue).toHaveBeenNthCalledWith(1, "2", lvl1);
-    expect(validateAndReturnAdditionalCostValue).toHaveBeenNthCalledWith(2, "yes", lvl3);
-    expect(validateAndReturnAdditionalCostValue).toHaveBeenNthCalledWith(3, "2.34", lvl4);
-    expect(validateAndReturnAdditionalCostValue).toHaveBeenNthCalledWith(4, "5", lvl5);
+    expect(validateAndReturnAdditionalCostValue).toHaveBeenNthCalledWith(
+      1,
+      "2",
+      lvl1,
+    );
+    expect(validateAndReturnAdditionalCostValue).toHaveBeenNthCalledWith(
+      2,
+      "yes",
+      lvl3,
+    );
+    expect(validateAndReturnAdditionalCostValue).toHaveBeenNthCalledWith(
+      3,
+      "2.34",
+      lvl4,
+    );
+    expect(validateAndReturnAdditionalCostValue).toHaveBeenNthCalledWith(
+      4,
+      "5",
+      lvl5,
+    );
     expect(getAdditionalFees).toHaveBeenCalledWith(req);
   });
 
   it("render error page when validation fails", async () => {
-    validateAndReturnAdditionalCostValue.mockReset()
-    .mockReturnValueOnce("2")
-    .mockImplementation(() => {
-      throw new Error("Validation failed");
-    })
+    validateAndReturnAdditionalCostValue
+      .mockReset()
+      .mockReturnValueOnce("2")
+      .mockImplementation(() => {
+        throw new Error("Validation failed");
+      });
 
     await postAdditionalCostsPage(req, res);
 
@@ -259,7 +274,6 @@ describe("postAdditionalCostsPage", () => {
     });
     expect(req.session.data.additionalCosts).toBeUndefined();
   });
-
 
   it("should render error page if getAdditionalFees call throws error", async () => {
     getAdditionalFees.mockImplementation(() => {
