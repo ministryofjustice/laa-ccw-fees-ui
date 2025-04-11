@@ -2,8 +2,6 @@ import {
   feeTypes,
   getAdditionalFees,
   getDisplayableFees,
-  isValidFeeEntered,
-  isValidUnitEntered,
 } from "./additionalFeeService";
 import { notApplicable } from "./londonRateService";
 
@@ -144,48 +142,6 @@ describe("getAdditionalFees", () => {
   });
 });
 
-describe("isValidUnitEntered", () => {
-  it.each([
-    ["0", true],
-    ["1", true],
-    ["2", true],
-    ["3", true],
-    ["4", true],
-    ["5", true],
-    ["6", true],
-    ["7", true],
-    ["8", true],
-    ["9", true],
-    ["10", false],
-    ["-1", false],
-    ["4.3", false],
-    ["0.000000003", false],
-    ["abd", false],
-    ["", false],
-    [" ", false],
-  ])("when %s is entered should return %s", (value, expected) => {
-    expect(isValidUnitEntered(value)).toEqual(expected);
-  });
-});
-
-describe("isValidFeeEntered", () => {
-  it.each([
-    ["123.45", true],
-    ["123", true],
-    ["2", true],
-    ["0", true],
-    ["", false],
-    ["0.01", true],
-    ["-1", false],
-    ["-123.43", false],
-    ["abdc", false],
-    ["£43.12", false],
-    ["123.456", false],
-  ])("when %s is entered should return %s", (value, expected) => {
-    expect(isValidFeeEntered(value)).toEqual(expected);
-  });
-});
-
 describe("getDisplayableFees", () => {
   it("should return only items with type as OptionalUnit", () => {
     const additionalFees = [
@@ -209,6 +165,11 @@ describe("getDisplayableFees", () => {
         type: feeTypes.optionalUnit,
         description: "Misc",
       },
+      {
+        levelCode: "_IMST",
+        type: feeTypes.optionalBool,
+        description: "Misca",
+      },
     ];
 
     expect(getDisplayableFees(additionalFees)).toEqual([
@@ -226,6 +187,11 @@ describe("getDisplayableFees", () => {
         levelCode: "_IMSTE",
         type: feeTypes.optionalUnit,
         description: "Misc",
+      },
+      {
+        levelCode: "_IMST",
+        type: feeTypes.optionalBool,
+        description: "Misca",
       },
     ]);
   });
