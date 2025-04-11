@@ -10,10 +10,11 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         
         {% for field in fieldsToShow %}
+            {% set description = field.formQuestion or field.description %}
             {% if field.type == feeTypes.optionalFee %}
                {{ govukInput({
                     label: {
-                        text: field.description,
+                        text: description,
                         classes: "govuk-label--s"
                     },
                     hint: {
@@ -27,7 +28,7 @@
             {% elif field.type == feeTypes.optionalUnit %}
                 {{ govukInput({
                     label: {
-                        text: field.description,
+                        text: description,
                         classes: "govuk-label--s"
                     },
                     classes: "govuk-input--width-3",
@@ -42,7 +43,7 @@
                     id: field.levelCode,
                     fieldset: {
                         legend: {
-                            text: field.description,
+                            text: description,
                             isPageHeading: false,
                             classes: "govuk-fieldset__legend--s"
                         }
