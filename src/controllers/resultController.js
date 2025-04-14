@@ -21,13 +21,17 @@ export async function showResultPage(req, res) {
       ? formatToPounds(calculatorResult.total)
       : formatToPounds(calculatorResult.amount);
     const vatAmount = formatToPounds(calculatorResult.vat);
-    const breakdown = createBreakdown(calculatorResult.feeBreakdown, data.validAdditionalFees, isVat)
+    const breakdown = createBreakdown(
+      calculatorResult.feeBreakdown,
+      data.validAdditionalFees,
+      isVat,
+    );
 
     res.render("main/result", {
       total: total,
       isVatRegistered: isVat,
       vatAmount: vatAmount,
-      breakdown: breakdown
+      breakdown: breakdown,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -43,41 +47,53 @@ function formatToPounds(amount) {
   return `£${Number(amount).toFixed(2)}`;
 }
 
-function createBreakdown(feeBreakdown, feeList, isVatRegistered) {
+/**
+ * Turn the breakdown we got from backend into something useful for nunjucks file
+ * @param {Array<object>} feeBreakdown - list of fees we got from the backend result calculator
+ * @param {Array<object>} savedFeeList - the valid fees we got earlier and stored in session data
+ * @param {boolean} isVatRegistered - is VAT applicable for this calculation?
+ * @returns {Array<object>} - breakdown summary
+ */
+function createBreakdown(feeBreakdown, savedFeeList, isVatRegistered) {
+  let breakdownList = [];
 
-  let breakdownList = []
-
-  for (const fee of feeBreakdown) {
-    if (fee.feeType === "totals") {
-      if (isVatRegistered) {
-        breakdownList.push({
-          desc: "Total",
-          amount: formatToPounds(fee.total),
-        })
-        breakdownList.push({
-          desc: "of which VAT",
-          amount: formatToPounds(fee.vat)
-        })
+  if (feeBreakdown) {
+    for (const fee of feeBreakdown) {
+      if (fee.feeType === "totals") {
+        if (isVatRegistered) {
+          breakdownList.push({
+            desc: "Total",
+            amount: formatToPounds(fee.total),
+          });
+          breakdownList.push({
+            desc: "of which VAT",
+            amount: formatToPounds(fee.vat),
+          });
+        } else {
+          breakdownList.push({
+            desc: "Total",
+            amount: formatToPounds(fee.amount),
+          });
+        }
       } else {
         breakdownList.push({
-          desc: "Total",
+          desc: getDescriptionForFee(savedFeeList, fee.feeType),
           amount: formatToPounds(fee.amount),
-        })
+        });
       }
-    } else {
-      breakdownList.push({
-        desc: getFeeForLevelCode(feeList, fee),
-        amount: formatToPounds(fee.amount),
-      })
     }
   }
 
   return breakdownList;
-
 }
 
-function getFeeForLevelCode(feeList, feeToFind) {
-  return feeList.find(
-    (fee) => fee.levelCode == feeToFind.levelCode
-  )
+/**
+ * Get description for a fee
+ * @param {Array<object>} savedFeeList - the fees we got earlier and stored in session data
+ * @param {string} feeToFind - fee we are looking for
+ * @returns {string | undefined} - description if found
+ */
+function getDescriptionForFee(savedFeeList, feeToFind) {
+  const foundFee = savedFeeList.find((fee) => fee.levelCode === feeToFind);
+  return foundFee?.description;
 }

@@ -1,3 +1,4 @@
+import { feeTypes } from "../service/additionalFeeService";
 import { getCalculationResult } from "../service/feeCalculatorService";
 import { getSessionData } from "../service/sessionDataService";
 import { showResultPage } from "./resultController";
@@ -30,6 +31,14 @@ describe("showResultPage", () => {
       amount: 120,
       total: 144,
       vat: 24,
+      feeBreakdown: [
+        {
+          feeType: "totals",
+          amount: "33.2",
+          vat: "12.10",
+          total: "43.30",
+        },
+      ],
     });
 
     await showResultPage(req, res);
@@ -38,6 +47,12 @@ describe("showResultPage", () => {
       total: "£120.00",
       isVatRegistered: false,
       vatAmount: "£24.00",
+      breakdown: [
+        {
+          desc: "Total",
+          amount: "£33.20",
+        },
+      ],
     });
 
     expect(getCalculationResult).toHaveBeenCalledWith(
@@ -55,6 +70,14 @@ describe("showResultPage", () => {
       amount: 120,
       total: 144,
       vat: 24,
+      feeBreakdown: [
+        {
+          feeType: "totals",
+          amount: "120",
+          vat: "24.0",
+          total: "144.00",
+        },
+      ],
     });
 
     await showResultPage(req, res);
@@ -63,6 +86,86 @@ describe("showResultPage", () => {
       total: "£144.00",
       isVatRegistered: true,
       vatAmount: "£24.00",
+      breakdown: [
+        {
+          desc: "Total",
+          amount: "£144.00",
+        },
+        {
+          desc: "of which VAT",
+          amount: "£24.00",
+        },
+      ],
+    });
+  });
+
+  it("should build up the breakdown by replacing code with description and adding currency formatting", async () => {
+    getSessionData.mockReturnValue({
+      vatIndicator: true,
+      validAdditionalFees: [
+        {
+          levelCode: "_IMSTD",
+          levelCodeType: feeTypes.automatic,
+          description: "Stuff",
+        },
+        {
+          levelCode: "_IMSTE",
+          levelCodeType: feeTypes.optionalUnit,
+          description: "Misc",
+        },
+      ],
+    });
+
+    getCalculationResult.mockReturnValue({
+      amount: 120,
+      total: 144,
+      vat: 24,
+      feeBreakdown: [
+        {
+          feeType: "_IMSTD",
+          amount: "33.33",
+          vat: "12.3",
+          total: "45.63",
+        },
+        {
+          feeType: "_IMSTE",
+          amount: "44.55",
+          vat: "22.1",
+          total: "66.65",
+        },
+        {
+          feeType: "totals",
+          amount: "120",
+          vat: "24.0",
+          total: "144.00",
+        },
+      ],
+    });
+
+    await showResultPage(req, res);
+
+    expect(res.render).toHaveBeenCalledWith("main/result", {
+      total: "£144.00",
+      isVatRegistered: true,
+      vatAmount: "£24.00",
+      breakdown: [
+        {
+          desc: "Stuff",
+          amount: "£33.33",
+        },
+        {
+          desc: "Misc",
+          amount: "£44.55",
+        },
+        {
+          desc: "Total",
+          amount: "£144.00",
+        },
+        {
+          desc: "of which VAT",
+          amount: "£24.00",
+        },
+      ],
     });
   });
 
@@ -81,6 +184,7 @@ describe("showResultPage", () => {
       total: "£144.00",
       isVatRegistered: true,
       vatAmount: "£24.00",
+      breakdown: [],
     });
   });
 

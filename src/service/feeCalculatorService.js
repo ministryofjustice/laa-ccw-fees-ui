@@ -20,7 +20,7 @@ export async function getCalculationResult(sessionData, axios) {
     amount: result.amount,
     total: result.total, // = amount + vat
     vat: result.vat,
-    feeBreakdown: result.fees
+    feeBreakdown: result.fees,
   };
 }
 
