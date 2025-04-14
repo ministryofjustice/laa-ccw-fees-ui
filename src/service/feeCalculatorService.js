@@ -117,16 +117,28 @@ function createImmigrationRequest(sessionData) {
         );
       }
 
-      if (fee.type === feeTypes.optionalFee) {
-        responseLevelCodes.push({
-          levelCode: fee.levelCode,
-          fee: enteredFee.value,
-        });
-      } else {
-        responseLevelCodes.push({
-          levelCode: fee.levelCode,
-          units: enteredFee.value,
-        });
+      switch (fee.levelCodeType) {
+        case feeTypes.optionalFee:
+          responseLevelCodes.push({
+            levelCode: fee.levelCode,
+            fee: enteredFee.value,
+          });
+          break;
+        case feeTypes.optionalUnit:
+          responseLevelCodes.push({
+            levelCode: fee.levelCode,
+            units: enteredFee.value,
+          });
+          break;
+        case feeTypes.optionalBool:
+          //No need to send false ones. Sending it will cause it to be added to the calculation
+          if (enteredFee.value == true)
+            responseLevelCodes.push({
+              levelCode: fee.levelCode,
+            });
+          break;
+        default:
+          throw new Error("Unexpected fee type ${fee.levelCodeType}");
       }
     }
   }
@@ -138,5 +150,6 @@ function createImmigrationRequest(sessionData) {
     caseStage: caseStage,
     levelCodes: responseLevelCodes,
   };
+
   return requestBody;
 }

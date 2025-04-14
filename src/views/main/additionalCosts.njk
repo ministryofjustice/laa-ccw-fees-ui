@@ -1,6 +1,7 @@
 {% extends "base.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% block wrappedContent %}
 
@@ -9,10 +10,11 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         
         {% for field in fieldsToShow %}
-            {% if field.type == feeTypes.optionalFee %}
+            {% set description = field.formQuestion or field.description %}
+            {% if field.levelCodeType == feeTypes.optionalFee %}
                {{ govukInput({
                     label: {
-                        text: field.description,
+                        text: description,
                         classes: "govuk-label--s"
                     },
                     hint: {
@@ -23,10 +25,10 @@
                     name: field.levelCode,
                     prefix: {text: "£"}
                 }) }}
-            {% else %}
+            {% elif field.levelCodeType == feeTypes.optionalUnit %}
                 {{ govukInput({
                     label: {
-                        text: field.description,
+                        text: description,
                         classes: "govuk-label--s"
                     },
                     classes: "govuk-input--width-3",
@@ -35,6 +37,28 @@
                     inputmode: "numeric"
                 }) }}
             
+            {% elif field.levelCodeType == feeTypes.optionalBool %}
+                {{ govukRadios({
+                    name: field.levelCode,
+                    id: field.levelCode,
+                    fieldset: {
+                        legend: {
+                            text: description,
+                            isPageHeading: false,
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },           
+                    items: [
+                        {
+                            value: "yes",
+                            text: "Yes"
+                        },
+                        {
+                            value: "no",
+                            text: "No"
+                        }
+                    ]
+                }) }}
             {% endif %}
         {% endfor %}
 
