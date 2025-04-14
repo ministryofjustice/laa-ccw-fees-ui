@@ -21,11 +21,13 @@ export async function showResultPage(req, res) {
       ? formatToPounds(calculatorResult.total)
       : formatToPounds(calculatorResult.amount);
     const vatAmount = formatToPounds(calculatorResult.vat);
+    const breakdown = createBreakdown(calculatorResult.feeBreakdown, data.validAdditionalFees, isVat)
 
     res.render("main/result", {
       total: total,
       isVatRegistered: isVat,
       vatAmount: vatAmount,
+      breakdown: breakdown
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -39,4 +41,43 @@ export async function showResultPage(req, res) {
  */
 function formatToPounds(amount) {
   return `£${Number(amount).toFixed(2)}`;
+}
+
+function createBreakdown(feeBreakdown, feeList, isVatRegistered) {
+
+  let breakdownList = []
+
+  for (const fee of feeBreakdown) {
+    if (fee.feeType === "totals") {
+      if (isVatRegistered) {
+        breakdownList.push({
+          desc: "Total",
+          amount: formatToPounds(fee.total),
+        })
+        breakdownList.push({
+          desc: "of which VAT",
+          amount: formatToPounds(fee.vat)
+        })
+      } else {
+        breakdownList.push({
+          desc: "Total",
+          amount: formatToPounds(fee.amount),
+        })
+      }
+    } else {
+      breakdownList.push({
+        desc: getFeeForLevelCode(feeList, fee),
+        amount: formatToPounds(fee.amount),
+      })
+    }
+  }
+
+  return breakdownList;
+
+}
+
+function getFeeForLevelCode(feeList, feeToFind) {
+  return feeList.find(
+    (fee) => fee.levelCode == feeToFind.levelCode
+  )
 }

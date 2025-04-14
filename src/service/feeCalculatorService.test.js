@@ -48,6 +48,12 @@ describe("getCalculationResult", () => {
         caseStage: "FPL01",
       };
 
+      const feeBreakdown = [{
+        feeType: "totals",
+        amount: "86.00",
+        vat: "17.20",
+        total: "103.20"
+    }]
       axios.get.mockResolvedValue({
         data: {
           matterCode1: "FAML",
@@ -57,6 +63,7 @@ describe("getCalculationResult", () => {
           amount: 120,
           total: 144,
           vat: 24,
+          fees: feeBreakdown
         },
       });
 
@@ -66,6 +73,7 @@ describe("getCalculationResult", () => {
         amount: 120,
         total: 144,
         vat: 24,
+        feeBreakdown: feeBreakdown
       });
 
       expect(axios.get).toHaveBeenCalledWith("/fees/calculate", {
@@ -195,6 +203,13 @@ describe("getCalculationResult", () => {
           levelCodes: [],
         };
 
+        const feeBreakdown = [{
+          feeType: "totals",
+          amount: "86.00",
+          vat: "17.20",
+          total: "103.20"
+      }]
+
         axios.get.mockResolvedValue({
           data: {
             matterCode1: "FAML",
@@ -204,6 +219,7 @@ describe("getCalculationResult", () => {
             amount: 120,
             total: 144,
             vat: 24,
+            fees: feeBreakdown
           },
         });
 
@@ -213,6 +229,7 @@ describe("getCalculationResult", () => {
           amount: 120,
           total: 144,
           vat: 24,
+          feeBreakdown: feeBreakdown
         });
 
         expect(axios.get).toHaveBeenCalledWith("/fees/calculate", {
@@ -282,6 +299,31 @@ describe("getCalculationResult", () => {
           },
         ],
       };
+      
+      const feeBreakdown = [ {
+        feeType: "LVL1",
+        amount: "33.2",
+        vat: "12.10",
+        total: "43.30"
+      },
+      {
+        levelCode: "LVL3",
+        amount: "10",
+        vat: "2",
+        total: "12"
+      },
+      {
+        levelCode: "LVL4",
+        amount: "44",
+        vat: "33.01",
+        total: "77.01"
+      },
+      {
+        levelCode: "LVL5",
+        amount: "33.2",
+        vat: "12.10",
+        total: "43.30"
+      },]
 
       axios.get.mockResolvedValue({
         data: {
@@ -292,6 +334,7 @@ describe("getCalculationResult", () => {
           amount: 120,
           total: 144,
           vat: 24,
+          fees: feeBreakdown
         },
       });
 
@@ -301,6 +344,7 @@ describe("getCalculationResult", () => {
         amount: 120,
         total: 144,
         vat: 24,
+        feeBreakdown:feeBreakdown
       });
 
       expect(axios.get).toHaveBeenCalledWith("/fees/calculate", {
