@@ -22,32 +22,32 @@ jest.mock("../routes/navigator.js");
 const lvl1 = {
   levelCode: "LVL1",
   description: "Level 1",
-  type: feeTypes.optionalUnit,
+  levelCodeType: feeTypes.optionalUnit,
 };
 const lvl2 = {
   levelCode: "LVL2",
   description: "Level 2",
-  type: feeTypes.automatic,
+  levelCodeType: feeTypes.automatic,
 };
 const lvl3 = {
   levelCode: "LVL3",
   description: "Level 3",
-  type: feeTypes.optionalBool,
+  levelCodeType: feeTypes.optionalBool,
 };
 const lvl4 = {
   levelCode: "LVL4",
   description: "Level 4",
-  type: feeTypes.optionalFee,
+  levelCodeType: feeTypes.optionalFee,
 };
 const lvl5 = {
   levelCode: "LVL5",
   description: "Level 5",
-  type: feeTypes.optionalUnit,
+  levelCodeType: feeTypes.optionalUnit,
 };
 const lvl6 = {
   levelCode: "LVL6",
   description: "Level 6",
-  type: feeTypes.automatic,
+  levelCodeType: feeTypes.automatic,
 };
 
 const additionalFees = [lvl1, lvl2, lvl3, lvl4, lvl5, lvl6];

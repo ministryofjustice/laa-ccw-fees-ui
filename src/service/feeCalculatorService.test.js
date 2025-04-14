@@ -6,22 +6,22 @@ import { notApplicable } from "./londonRateService";
 const additionalFees = [
   {
     levelCode: "LVL1",
-    type: feeTypes.optionalUnit,
+    levelCodeType: feeTypes.optionalUnit,
   },
   {
     levelCode: "LVL2",
-    type: feeTypes.automatic,
+    levelCodeType: feeTypes.automatic,
   },
   {
     levelCode: "LVL3",
-    type: feeTypes.optionalUnit,
+    levelCodeType: feeTypes.optionalUnit,
   },
   {
     levelCode: "LVL4",
-    type: feeTypes.optionalFee,
+    levelCodeType: feeTypes.optionalFee,
   },
-  { levelCode: "LVL5", type: feeTypes.optionalBool },
-  { levelCode: "LVL6", type: feeTypes.optionalBool },
+  { levelCode: "LVL5", levelCodeType: feeTypes.optionalBool },
+  { levelCode: "LVL6", levelCodeType: feeTypes.optionalBool },
 ];
 
 describe("getCalculationResult", () => {
@@ -233,27 +233,27 @@ describe("getCalculationResult", () => {
         additionalCosts: [
           {
             levelCode: "LVL1",
-            type: feeTypes.optionalUnit,
+            levelCodeType: feeTypes.optionalUnit,
             value: "3",
           },
           {
             levelCode: "LVL3",
-            type: feeTypes.optionalUnit,
+            levelCodeType: feeTypes.optionalUnit,
             value: "1",
           },
           {
             levelCode: "LVL4",
-            type: feeTypes.optionalFee,
+            levelCodeType: feeTypes.optionalFee,
             value: "2.34",
           },
           {
             levelCode: "LVL5",
-            type: feeTypes.optionalBool,
+            levelCodeType: feeTypes.optionalBool,
             value: true,
           },
           {
             levelCode: "LVL6",
-            type: feeTypes.optionalBool,
+            levelCodeType: feeTypes.optionalBool,
             value: false,
           },
         ],
@@ -390,7 +390,7 @@ describe("getCalculationResult", () => {
     const suppliedLessThanExpected = [
       {
         levelCode: "LVL1",
-        type: feeTypes.optionalUnit,
+        levelCodeType: feeTypes.optionalUnit,
         value: "3",
       },
     ];
@@ -398,27 +398,27 @@ describe("getCalculationResult", () => {
     const suppliedOneThatIsUnexpected = [
       {
         levelCode: "LVL1",
-        type: feeTypes.optionalUnit,
+        levelCodeType: feeTypes.optionalUnit,
         value: "3",
       },
       {
         levelCode: "LVL3",
-        type: feeTypes.optionalUnit,
+        levelCodeType: feeTypes.optionalUnit,
         value: "1",
       },
       {
         levelCode: "LVL4",
-        type: feeTypes.optionalFee,
+        levelCodeType: feeTypes.optionalFee,
         value: "2.34",
       },
       {
         levelCode: "LVL5",
-        type: feeTypes.optionalBool,
+        levelCodeType: feeTypes.optionalBool,
         value: true,
       },
       {
         levelCode: "LVL8",
-        type: feeTypes.optionalBool,
+        levelCodeType: feeTypes.optionalBool,
         value: false,
       },
     ];

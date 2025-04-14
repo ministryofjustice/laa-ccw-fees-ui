@@ -10,7 +10,7 @@ describe("validateAndReturnAdditionalCostValue", () => {
 
   describe("for an optional fee field", () => {
     const feeField = {
-      type: feeTypes.optionalFee,
+      levelCodeType: feeTypes.optionalFee,
       levelCode: "_IMM01",
     };
 
@@ -41,7 +41,7 @@ describe("validateAndReturnAdditionalCostValue", () => {
 
   describe("for an optional unit field", () => {
     const feeField = {
-      type: feeTypes.optionalUnit,
+      levelCodeType: feeTypes.optionalUnit,
       levelCode: "_IMM01",
     };
 
@@ -66,7 +66,7 @@ describe("validateAndReturnAdditionalCostValue", () => {
 
   describe("for an optional boolean field", () => {
     const feeField = {
-      type: feeTypes.optionalBool,
+      levelCodeType: feeTypes.optionalBool,
       levelCode: "_IMM01",
     };
 
@@ -95,7 +95,7 @@ describe("validateAndReturnAdditionalCostValue", () => {
   it("should error if unrecognised fee type", () => {
     expect(() =>
       validateAndReturnAdditionalCostValue("1234", {
-        type: feeTypes.automatic,
+        levelCodeType: feeTypes.automatic,
       }),
     ).toThrow(Error);
   });

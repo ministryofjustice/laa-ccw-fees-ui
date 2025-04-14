@@ -117,7 +117,7 @@ function createImmigrationRequest(sessionData) {
         );
       }
 
-      switch (fee.type) {
+      switch (fee.levelCodeType) {
         case feeTypes.optionalFee:
           responseLevelCodes.push({
             levelCode: fee.levelCode,
@@ -138,7 +138,7 @@ function createImmigrationRequest(sessionData) {
             });
           break;
         default:
-          throw new Error("Unexpected fee type ${fee.type}");
+          throw new Error("Unexpected fee type ${fee.levelCodeType}");
       }
     }
   }

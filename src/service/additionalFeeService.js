@@ -66,7 +66,7 @@ async function getAdditionalFeesFromService(
  */
 export function getDisplayableFees(additionalFees) {
   return additionalFees.filter((fee) => {
-    switch (fee.type) {
+    switch (fee.levelCodeType) {
       case feeTypes.optionalUnit:
       case feeTypes.optionalFee:
       case feeTypes.optionalBool:

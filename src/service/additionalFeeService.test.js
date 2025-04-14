@@ -12,12 +12,12 @@ const caseStage = "_IMMD2";
 const expectedAdditionalFees = [
   {
     levelCode: "_IMSTD",
-    type: feeTypes.automatic,
+    levelCodeType: feeTypes.automatic,
     description: "Stuff",
   },
   {
     levelCode: "_IMSTE",
-    type: feeTypes.optionalUnit,
+    levelCodeType: feeTypes.optionalUnit,
     description: "Misc",
   },
 ];
@@ -147,27 +147,27 @@ describe("getDisplayableFees", () => {
     const additionalFees = [
       {
         levelCode: "_IMSTC",
-        type: feeTypes.optionalUnit,
+        levelCodeType: feeTypes.optionalUnit,
         description: "Misc",
       },
       {
         levelCode: "_IMSTD",
-        type: feeTypes.automatic,
+        levelCodeType: feeTypes.automatic,
         description: "Stuff",
       },
       {
         levelCode: "_IMSTX",
-        type: feeTypes.optionalFee,
+        levelCodeType: feeTypes.optionalFee,
         description: "idk",
       },
       {
         levelCode: "_IMSTE",
-        type: feeTypes.optionalUnit,
+        levelCodeType: feeTypes.optionalUnit,
         description: "Misc",
       },
       {
         levelCode: "_IMST",
-        type: feeTypes.optionalBool,
+        levelCodeType: feeTypes.optionalBool,
         description: "Misca",
       },
     ];
@@ -175,22 +175,22 @@ describe("getDisplayableFees", () => {
     expect(getDisplayableFees(additionalFees)).toEqual([
       {
         levelCode: "_IMSTC",
-        type: feeTypes.optionalUnit,
+        levelCodeType: feeTypes.optionalUnit,
         description: "Misc",
       },
       {
         levelCode: "_IMSTX",
-        type: feeTypes.optionalFee,
+        levelCodeType: feeTypes.optionalFee,
         description: "idk",
       },
       {
         levelCode: "_IMSTE",
-        type: feeTypes.optionalUnit,
+        levelCodeType: feeTypes.optionalUnit,
         description: "Misc",
       },
       {
         levelCode: "_IMST",
-        type: feeTypes.optionalBool,
+        levelCodeType: feeTypes.optionalBool,
         description: "Misca",
       },
     ]);

@@ -15,7 +15,7 @@ export function validateAndReturnAdditionalCostValue(
     throw new Error(fieldDetails.levelCode + " not defined");
   }
 
-  switch (fieldDetails.type) {
+  switch (fieldDetails.levelCodeType) {
     case feeTypes.optionalFee:
       if (initialValue.trim() == "") {
         // Allowed to skip this field if you have no fee
@@ -48,7 +48,7 @@ export function validateAndReturnAdditionalCostValue(
       }
 
     default:
-      throw new Error("Unexpected fee type: " + fieldDetails.type);
+      throw new Error("Unexpected fee type: " + fieldDetails.levelCodeType);
   }
 }
 

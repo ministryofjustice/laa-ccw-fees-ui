@@ -11,7 +11,7 @@
         
         {% for field in fieldsToShow %}
             {% set description = field.formQuestion or field.description %}
-            {% if field.type == feeTypes.optionalFee %}
+            {% if field.levelCodeType == feeTypes.optionalFee %}
                {{ govukInput({
                     label: {
                         text: description,
@@ -25,7 +25,7 @@
                     name: field.levelCode,
                     prefix: {text: "£"}
                 }) }}
-            {% elif field.type == feeTypes.optionalUnit %}
+            {% elif field.levelCodeType == feeTypes.optionalUnit %}
                 {{ govukInput({
                     label: {
                         text: description,
@@ -37,7 +37,7 @@
                     inputmode: "numeric"
                 }) }}
             
-            {% elif field.type == feeTypes.optionalBool %}
+            {% elif field.levelCodeType == feeTypes.optionalBool %}
                 {{ govukRadios({
                     name: field.levelCode,
                     id: field.levelCode,
