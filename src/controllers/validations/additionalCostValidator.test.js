@@ -1,4 +1,4 @@
-import { feeTypes } from "../../service/additionalFeeService";
+import { feeTypes } from "../../service/feeDetailsService";
 import { validateAndReturnAdditionalCostValue } from "./additionalCostValidator";
 
 describe("validateAndReturnAdditionalCostValue", () => {

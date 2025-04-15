@@ -2,7 +2,7 @@ import { getSessionData } from "../service/sessionDataService";
 import { getCalculationResult } from "../service/feeCalculatorService";
 import { pageLoadError } from "./errorController";
 import { familyLaw, immigrationLaw } from "../service/lawCategoryService";
-import { getAdditionalFees } from "../service/additionalFeeService";
+import { getFeeDetails } from "../service/feeDetailsService";
 
 /**
  * Load the page to display the result
@@ -23,10 +23,10 @@ export async function showResultPage(req, res) {
     const total = isVat
       ? formatToPounds(calculatorResult.total)
       : formatToPounds(calculatorResult.amount);
-    console.log("formatted total " + total)
+    console.log("formatted total " + total);
     const vatAmount = formatToPounds(calculatorResult.vat);
 
-    const feeDetails = await getAdditionalFees(req) 
+    const feeDetails = await getFeeDetails(req);
     const breakdown = createBreakdown(
       calculatorResult.feeBreakdown,
       feeDetails,
@@ -50,7 +50,7 @@ export async function showResultPage(req, res) {
  * @returns {string} - formatted currency value
  */
 function formatToPounds(amount) {
-  console.log(amount)
+  console.log(amount);
   return `£${Number(amount).toFixed(2)}`;
 }
 
@@ -101,6 +101,6 @@ function createBreakdown(feeBreakdown, feeDetails, isVatRegistered) {
  * @returns {string | undefined} - description if found
  */
 function getDescriptionForFee(feeDetails, feeToFind) {
-      const foundFee = feeDetails.find((fee) => fee.levelCode === feeToFind);
-      return foundFee?.description;  
+  const foundFee = feeDetails.find((fee) => fee.levelCode === feeToFind);
+  return foundFee?.description;
 }

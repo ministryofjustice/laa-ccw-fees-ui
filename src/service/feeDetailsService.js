@@ -9,51 +9,53 @@ export const feeTypes = {
 };
 
 /**
- * Gets the additional fees (bolt ons)
+ * Gets the fee details (incl. bolt ons)
  * @param {import('express').Request} req Express request object
  * @returns {Promise<Array[]>} - the valid case stage
  * @async
  */
-export async function getAdditionalFees(req) {
-  if (req.session.data.validAdditionalFees == null) {
-    req.session.data.validAdditionalFees = await getAdditionalFeesFromService(
+export async function getFeeDetails(req) {
+  if (req.session.data.feeDetails == null) {
+    req.session.data.feeDetails = await getFeeDetailsFromService(
       req.axiosMiddleware,
       req.session.data.matterCode1,
       req.session.data.matterCode2,
       req.session.data.caseStage,
       req.session.data.lawCategory,
-      req.session.data.londonRate
+      req.session.data.londonRate,
     );
   }
 
-  return req.session.data.validAdditionalFees;
+  return req.session.data.feeDetails;
 }
 
 /**
- * Get the additional fees (bolt ons) from the backend service
+ * Get the fee details (incl. bolt ons) from the backend service
  * @param {import('middleware-axios').AxiosInstanceWrapper} axios - axios middleware instance
  * @param {string} matterCode1 - matter code 1 to get fees for
  * @param {string} matterCode2 - matter code 2 to get fees for
  * @param {string} caseStage - case stage to get fees for
+ * @param {string} lawCategory - law category user selected
+ * @param {string} suppliedLocation - location to get fees for
  * @returns {Promise<Array<object>>} - response from api
  * @async
  */
-async function getAdditionalFeesFromService(
+async function getFeeDetailsFromService(
   axios,
   matterCode1,
   matterCode2,
   caseStage,
   lawCategory,
-  suppliedLocation
+  suppliedLocation,
 ) {
   if (matterCode1 == null || matterCode2 == null || caseStage == null) {
     throw new Error("Data is missing");
   }
 
-  let locationCode = suppliedLocation
+  let locationCode = suppliedLocation;
 
-  if (lawCategory === immigrationLaw){
-    locationCode = notApplicable
+  if (lawCategory === immigrationLaw) {
+    locationCode = notApplicable;
   }
 
   const requestBody = {
@@ -72,11 +74,11 @@ async function getAdditionalFeesFromService(
 
 /**
  * Filter so only fees that need to be displayed to user are shown
- * @param {Array<object>} additionalFees - additional fees to filter
+ * @param {Array<object>} feeDetails - fees to filter
  * @returns {Array<object>} - fields to show
  */
-export function getDisplayableFees(additionalFees) {
-  return additionalFees.filter((fee) => {
+export function getDisplayableFees(feeDetails) {
+  return feeDetails.filter((fee) => {
     switch (fee.levelCodeType) {
       case feeTypes.optionalUnit:
       case feeTypes.optionalFee:

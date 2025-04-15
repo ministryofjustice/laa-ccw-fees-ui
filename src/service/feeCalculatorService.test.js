@@ -1,4 +1,4 @@
-import { feeTypes } from "./additionalFeeService";
+import { feeTypes } from "./feeDetailsService";
 import { getCalculationResult } from "./feeCalculatorService";
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
 import { notApplicable } from "./londonRateService";
@@ -194,7 +194,7 @@ describe("getCalculationResult", () => {
           startDate: "03/04/2025",
           lawCategory: immigrationLaw,
           caseStage: "_IMM01",
-          validAdditionalFees: additionalCosts,
+          feeDetails: additionalCosts,
         };
 
         const expectedRequestBody = {
@@ -250,7 +250,7 @@ describe("getCalculationResult", () => {
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
         caseStage: "_IMM01",
-        validAdditionalFees: additionalFees,
+        feeDetails: additionalFees,
         additionalCosts: [
           {
             levelCode: "LVL1",
@@ -489,7 +489,7 @@ describe("getCalculationResult", () => {
           vatIndicator: false,
           startDate: "03/04/2025",
           lawCategory: immigrationLaw,
-          validAdditionalFees: additionalFees,
+          feeDetails: additionalFees,
           additionalCosts: additionalCosts,
         };
 

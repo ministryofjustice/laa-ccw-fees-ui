@@ -1,4 +1,4 @@
-import { feeTypes } from "../service/additionalFeeService";
+import { feeTypes } from "../service/feeDetailsService";
 import { getCalculationResult } from "../service/feeCalculatorService";
 import { getSessionData } from "../service/sessionDataService";
 import { showResultPage } from "./resultController";
@@ -102,7 +102,7 @@ describe("showResultPage", () => {
   it("should build up the breakdown by replacing code with description and adding currency formatting", async () => {
     getSessionData.mockReturnValue({
       vatIndicator: true,
-      validAdditionalFees: [
+      feeDetails: [
         {
           levelCode: "_IMSTD",
           levelCodeType: feeTypes.automatic,

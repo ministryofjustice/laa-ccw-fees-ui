@@ -1,5 +1,5 @@
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
-import { feeTypes, getDisplayableFees } from "./additionalFeeService";
+import { feeTypes, getDisplayableFees } from "./feeDetailsService";
 import { notApplicable } from "./londonRateService";
 
 /**
@@ -17,8 +17,8 @@ export async function getCalculationResult(sessionData, axios) {
   const result = response.data;
 
   const totals = result.fees.find((fee) => fee.feeType === "totals");
-  if (!totals){
-    throw new Error("No totals supplied")
+  if (!totals) {
+    throw new Error("No totals supplied");
   }
 
   return {
@@ -86,7 +86,7 @@ function createImmigrationRequest(sessionData) {
   const matterCode1 = sessionData.matterCode1;
   const matterCode2 = sessionData.matterCode2;
   const caseStage = sessionData.caseStage;
-  const validAdditionalFees = sessionData.validAdditionalFees;
+  const feeDetails = sessionData.feeDetails;
   const additionalCosts = sessionData.additionalCosts;
 
   let responseLevelCodes = [];
@@ -95,14 +95,14 @@ function createImmigrationRequest(sessionData) {
     throw new Error("Data is missing");
   }
 
-  if (validAdditionalFees != null && validAdditionalFees.length > 0) {
+  if (feeDetails != null && feeDetails.length > 0) {
     // We are expecting some add ons to be there
 
     if (additionalCosts == null) {
       throw new Error("Additional cost data is missing");
     }
 
-    const displayableFees = getDisplayableFees(validAdditionalFees);
+    const displayableFees = getDisplayableFees(feeDetails);
 
     if (displayableFees.length != additionalCosts.length) {
       // We expected them to fill in x additional fees but they only answered y
