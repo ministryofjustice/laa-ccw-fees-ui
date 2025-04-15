@@ -1,3 +1,4 @@
+import { immigrationLaw } from "./lawCategoryService";
 import { notApplicable } from "./londonRateService";
 
 export const feeTypes = {
@@ -20,6 +21,8 @@ export async function getAdditionalFees(req) {
       req.session.data.matterCode1,
       req.session.data.matterCode2,
       req.session.data.caseStage,
+      req.session.data.lawCategory,
+      req.session.data.londonRate
     );
   }
 
@@ -40,15 +43,23 @@ async function getAdditionalFeesFromService(
   matterCode1,
   matterCode2,
   caseStage,
+  lawCategory,
+  suppliedLocation
 ) {
   if (matterCode1 == null || matterCode2 == null || caseStage == null) {
     throw new Error("Data is missing");
   }
 
+  let locationCode = suppliedLocation
+
+  if (lawCategory === immigrationLaw){
+    locationCode = notApplicable
+  }
+
   const requestBody = {
     matterCode1: matterCode1,
     matterCode2: matterCode2,
-    locationCode: notApplicable,
+    locationCode: locationCode,
     caseStage: caseStage,
   };
 
