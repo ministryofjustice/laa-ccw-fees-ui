@@ -1,6 +1,8 @@
 import { getSessionData } from "../service/sessionDataService";
 import { getCalculationResult } from "../service/feeCalculatorService";
 import { pageLoadError } from "./errorController";
+import { familyLaw, immigrationLaw } from "../service/lawCategoryService";
+import { getAdditionalFees } from "../service/additionalFeeService";
 
 /**
  * Load the page to display the result
@@ -17,13 +19,20 @@ export async function showResultPage(req, res) {
     );
 
     const isVat = data.vatIndicator != null ? data.vatIndicator : true;
+    console.log("returned amount " + calculatorResult.amount)
+    console.log("returned total " + calculatorResult.total)
+    console.log("returned vat " + calculatorResult.vat)
+
     const total = isVat
       ? formatToPounds(calculatorResult.total)
       : formatToPounds(calculatorResult.amount);
+    console.log("formatted total " + total)
     const vatAmount = formatToPounds(calculatorResult.vat);
+
+    const feeDetails = await getAdditionalFees(req) 
     const breakdown = createBreakdown(
       calculatorResult.feeBreakdown,
-      data.validAdditionalFees,
+      feeDetails,
       isVat,
     );
 
@@ -44,6 +53,7 @@ export async function showResultPage(req, res) {
  * @returns {string} - formatted currency value
  */
 function formatToPounds(amount) {
+  console.log(amount)
   return `£${Number(amount).toFixed(2)}`;
 }
 
@@ -54,7 +64,7 @@ function formatToPounds(amount) {
  * @param {boolean} isVatRegistered - is VAT applicable for this calculation?
  * @returns {Array<object>} - breakdown summary
  */
-function createBreakdown(feeBreakdown, savedFeeList, isVatRegistered) {
+function createBreakdown(feeBreakdown, feeDetails, isVatRegistered) {
   let breakdownList = [];
 
   if (feeBreakdown) {
@@ -77,7 +87,7 @@ function createBreakdown(feeBreakdown, savedFeeList, isVatRegistered) {
         }
       } else {
         breakdownList.push({
-          desc: getDescriptionForFee(savedFeeList, fee.feeType),
+          desc: getDescriptionForFee(feeDetails, fee.feeType),
           amount: formatToPounds(fee.amount),
         });
       }
@@ -93,7 +103,7 @@ function createBreakdown(feeBreakdown, savedFeeList, isVatRegistered) {
  * @param {string} feeToFind - fee we are looking for
  * @returns {string | undefined} - description if found
  */
-function getDescriptionForFee(savedFeeList, feeToFind) {
-  const foundFee = savedFeeList.find((fee) => fee.levelCode === feeToFind);
-  return foundFee?.description;
+function getDescriptionForFee(feeDetails, feeToFind) {
+      const foundFee = feeDetails.find((fee) => fee.levelCode === feeToFind);
+      return foundFee?.description;  
 }
