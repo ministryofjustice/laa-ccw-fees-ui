@@ -19,9 +19,6 @@ export async function showResultPage(req, res) {
     );
 
     const isVat = data.vatIndicator != null ? data.vatIndicator : true;
-    console.log("returned amount " + calculatorResult.amount)
-    console.log("returned total " + calculatorResult.total)
-    console.log("returned vat " + calculatorResult.vat)
 
     const total = isVat
       ? formatToPounds(calculatorResult.total)
