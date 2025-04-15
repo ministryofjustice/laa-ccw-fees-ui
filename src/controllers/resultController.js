@@ -54,7 +54,7 @@ function formatToPounds(amount) {
 /**
  * Turn the breakdown we got from backend into something useful for nunjucks file
  * @param {Array<object>} feeBreakdown - list of fees we got from the backend result calculator
- * @param {Array<object>} savedFeeList - the valid fees we got earlier and stored in session data
+ * @param {Array<object>} feeDetails - the fee details
  * @param {boolean} isVatRegistered - is VAT applicable for this calculation?
  * @returns {Array<object>} - breakdown summary
  */
@@ -93,7 +93,7 @@ function createBreakdown(feeBreakdown, feeDetails, isVatRegistered) {
 
 /**
  * Get description for a fee
- * @param {Array<object>} savedFeeList - the fees we got earlier and stored in session data
+ * @param {Array<object>} feeDetails - the fee details
  * @param {string} feeToFind - fee we are looking for
  * @returns {string | undefined} - description if found
  */
