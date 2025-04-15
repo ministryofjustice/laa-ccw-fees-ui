@@ -18,17 +18,9 @@
     ]) | reject() }}
 {% endfor %}
 
-
-{% set vatText = "" %}
-{% if isVatRegistered %}
-    {% set vatText = "You are VAT registered and " + vatAmount + " is VAT." %}
-{% else %}
-    {% set vatText = "You are not VAT registered" %}
-{% endif %}
-
 {{ govukPanel({
-  titleText: "Your total is " + total,
-  html: vatText
+  titleText: "Calculation complete" ,
+  html: "Your total is " + total
 }) }}
 
 {{ govukTable({
