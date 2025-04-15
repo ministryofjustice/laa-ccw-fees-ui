@@ -16,10 +16,15 @@ export async function getCalculationResult(sessionData, axios) {
   const response = await axios.get("/fees/calculate", { data: requestBody });
   const result = response.data;
 
+  const totals = result.fees.find((fee) => fee.feeType === "totals");
+  if (!totals){
+    throw new Error("No totals supplied")
+  }
+
   return {
-    amount: result.amount,
-    total: result.total, // = amount + vat
-    vat: result.vat,
+    amount: totals.amount,
+    total: totals.total, // = amount + vat
+    vat: totals.vat,
     feeBreakdown: result.fees,
   };
 }
