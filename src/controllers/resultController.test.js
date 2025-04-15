@@ -1,10 +1,24 @@
-import { feeTypes } from "../service/feeDetailsService";
+import { feeTypes, getFeeDetails } from "../service/feeDetailsService";
 import { getCalculationResult } from "../service/feeCalculatorService";
 import { getSessionData } from "../service/sessionDataService";
 import { showResultPage } from "./resultController";
 
 jest.mock("../service/sessionDataService");
 jest.mock("../service/feeCalculatorService");
+jest.mock("../service/feeDetailsService");
+
+const feeDetails = [
+  {
+    levelCode: "_IMSTD",
+    levelCodeType: feeTypes.automatic,
+    description: "Stuff",
+  },
+  {
+    levelCode: "_IMSTE",
+    levelCodeType: feeTypes.optionalUnit,
+    description: "Misc",
+  },
+];
 
 describe("showResultPage", () => {
   let axiosMiddleware = jest.fn();
@@ -19,12 +33,14 @@ describe("showResultPage", () => {
 
   beforeEach(() => {
     req.csrfToken.mockReturnValue("mocked-csrf-token");
+    getFeeDetails.mockResolvedValue(feeDetails);
   });
 
   it("should render result page when no VAT", async () => {
     const sessionData = {
       vatIndicator: false,
     };
+
     getSessionData.mockReturnValue(sessionData);
 
     getCalculationResult.mockReturnValue({
@@ -45,8 +61,6 @@ describe("showResultPage", () => {
 
     expect(res.render).toHaveBeenCalledWith("main/result", {
       total: "£120.00",
-      isVatRegistered: false,
-      vatAmount: "£24.00",
       breakdown: [
         {
           desc: "Total",
@@ -84,8 +98,6 @@ describe("showResultPage", () => {
 
     expect(res.render).toHaveBeenCalledWith("main/result", {
       total: "£144.00",
-      isVatRegistered: true,
-      vatAmount: "£24.00",
       breakdown: [
         {
           desc: "Total",
@@ -146,8 +158,6 @@ describe("showResultPage", () => {
 
     expect(res.render).toHaveBeenCalledWith("main/result", {
       total: "£144.00",
-      isVatRegistered: true,
-      vatAmount: "£24.00",
       breakdown: [
         {
           desc: "Stuff",
@@ -182,8 +192,6 @@ describe("showResultPage", () => {
 
     expect(res.render).toHaveBeenCalledWith("main/result", {
       total: "£144.00",
-      isVatRegistered: true,
-      vatAmount: "£24.00",
       breakdown: [],
     });
   });

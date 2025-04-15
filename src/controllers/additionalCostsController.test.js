@@ -50,9 +50,9 @@ const lvl6 = {
   levelCodeType: feeTypes.automatic,
 };
 
-const additionalFees = [lvl1, lvl2, lvl3, lvl4, lvl5, lvl6];
+const feeDetails = [lvl1, lvl2, lvl3, lvl4, lvl5, lvl6];
 
-const additionalFeesFiltered = [lvl1, lvl3, lvl4, lvl5];
+const displayableFees = [lvl1, lvl3, lvl4, lvl5];
 
 describe("showAdditionalCostsPage", () => {
   let req = {
@@ -67,10 +67,10 @@ describe("showAdditionalCostsPage", () => {
   };
 
   beforeEach(() => {
-    getFeeDetails.mockReturnValue(additionalFees);
+    getFeeDetails.mockReturnValue(feeDetails);
     getCaseStageForImmigration.mockReturnValue("_IMM01");
     getSessionData.mockReturnValue({});
-    getDisplayableFees.mockReturnValue(additionalFeesFiltered);
+    getDisplayableFees.mockReturnValue(displayableFees);
 
     req.session.data.lawCategory = immigrationLaw;
 
@@ -81,7 +81,7 @@ describe("showAdditionalCostsPage", () => {
     await showAdditionalCostsPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
-      fieldsToShow: additionalFeesFiltered,
+      fieldsToShow: displayableFees,
       csrfToken: "mocked-csrf-token",
       feeTypes: feeTypes,
     });
@@ -176,7 +176,7 @@ describe("showAdditionalCostsPage", () => {
   it("should redirect to the next page if no additional fees can be shown", async () => {
     getNextPage.mockReturnValue("nextPage");
 
-    getFeeDetails.mockReturnValue(additionalFees);
+    getFeeDetails.mockReturnValue(feeDetails);
     getDisplayableFees.mockReturnValue([]);
 
     await showAdditionalCostsPage(req, res);
@@ -197,8 +197,8 @@ describe("postAdditionalCostsPage", () => {
   };
 
   beforeEach(() => {
-    getFeeDetails.mockResolvedValue(additionalFees);
-    getDisplayableFees.mockReturnValue(additionalFeesFiltered);
+    getFeeDetails.mockResolvedValue(feeDetails);
+    getDisplayableFees.mockReturnValue(displayableFees);
 
     validateAndReturnAdditionalCostValue.mockReturnValueOnce("2");
     validateAndReturnAdditionalCostValue.mockReturnValueOnce(true);

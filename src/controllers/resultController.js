@@ -1,7 +1,6 @@
 import { getSessionData } from "../service/sessionDataService";
 import { getCalculationResult } from "../service/feeCalculatorService";
 import { pageLoadError } from "./errorController";
-import { familyLaw, immigrationLaw } from "../service/lawCategoryService";
 import { getFeeDetails } from "../service/feeDetailsService";
 
 /**
@@ -23,8 +22,6 @@ export async function showResultPage(req, res) {
     const total = isVat
       ? formatToPounds(calculatorResult.total)
       : formatToPounds(calculatorResult.amount);
-    console.log("formatted total " + total);
-    const vatAmount = formatToPounds(calculatorResult.vat);
 
     const feeDetails = await getFeeDetails(req);
     const breakdown = createBreakdown(
@@ -35,8 +32,6 @@ export async function showResultPage(req, res) {
 
     res.render("main/result", {
       total: total,
-      isVatRegistered: isVat,
-      vatAmount: vatAmount,
       breakdown: breakdown,
     });
   } catch (ex) {
@@ -50,7 +45,6 @@ export async function showResultPage(req, res) {
  * @returns {string} - formatted currency value
  */
 function formatToPounds(amount) {
-  console.log(amount);
   return `£${Number(amount).toFixed(2)}`;
 }
 
