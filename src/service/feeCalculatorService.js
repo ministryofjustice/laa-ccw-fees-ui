@@ -2,6 +2,8 @@ import { familyLaw, immigrationLaw } from "./lawCategoryService";
 import { feeTypes, getDisplayableFees } from "./feeDetailsService";
 import { notApplicable } from "./londonRateService";
 
+export const totalHeading = "totals";
+
 /**
  * Ask API for calculation detials
  * @async
@@ -16,7 +18,7 @@ export async function getCalculationResult(sessionData, axios) {
   const response = await axios.get("/fees/calculate", { data: requestBody });
   const result = response.data;
 
-  const totals = result.fees.find((fee) => fee.feeType === "totals");
+  const totals = result.fees.find((fee) => fee.feeType === totalHeading);
   if (!totals) {
     throw new Error("No totals supplied");
   }

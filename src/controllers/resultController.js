@@ -1,5 +1,8 @@
 import { getSessionData } from "../service/sessionDataService";
-import { getCalculationResult } from "../service/feeCalculatorService";
+import {
+  getCalculationResult,
+  totalHeading,
+} from "../service/feeCalculatorService";
 import { pageLoadError } from "./errorController";
 import { getFeeDetails } from "../service/feeDetailsService";
 
@@ -60,7 +63,7 @@ function createBreakdown(feeBreakdown, feeDetails, isVatRegistered) {
 
   if (feeBreakdown) {
     for (const fee of feeBreakdown) {
-      if (fee.feeType === "totals") {
+      if (fee.feeType === totalHeading) {
         if (isVatRegistered) {
           breakdownList.push({
             desc: "Total",
