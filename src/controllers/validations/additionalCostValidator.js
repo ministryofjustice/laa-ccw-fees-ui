@@ -1,4 +1,4 @@
-import { feeTypes } from "../../service/additionalFeeService";
+import { feeTypes } from "../../service/feeDetailsService";
 
 /**
  * Check entered additional cost is valid and return the cleaned up value

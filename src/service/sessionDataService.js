@@ -14,7 +14,7 @@
  *  - validMatterCode1s
  *  - validMatterCode2s
  *  - validCaseStages
- *  - validAdditionalFees
+ *  - feeDetails
  */
 import {
   URL_ClaimStart,
@@ -41,7 +41,7 @@ export function cleanData(req, page) {
       req.session.data.londonRate = null;
       req.session.data.vatIndicator = null;
       req.session.data.additionalCosts = null;
-      req.session.data.validAdditionalFees = null;
+      req.session.data.feeDetails = null;
       break;
     case URL_MatterCode1:
       req.session.data.validMatterCode2s = null;
@@ -51,7 +51,7 @@ export function cleanData(req, page) {
       req.session.data.londonRate = null;
       req.session.data.vatIndicator = null;
       req.session.data.additionalCosts = null;
-      req.session.data.validAdditionalFees = null;
+      req.session.data.feeDetails = null;
 
       break;
     case URL_MatterCode2:
@@ -60,7 +60,7 @@ export function cleanData(req, page) {
       req.session.data.londonRate = null;
       req.session.data.vatIndicator = null;
       req.session.data.additionalCosts = null;
-      req.session.data.validAdditionalFees = null;
+      req.session.data.feeDetails = null;
 
       break;
   }

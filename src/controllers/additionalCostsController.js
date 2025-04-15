@@ -1,9 +1,9 @@
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import {
   feeTypes,
-  getAdditionalFees,
+  getFeeDetails,
   getDisplayableFees,
-} from "../service/additionalFeeService";
+} from "../service/feeDetailsService";
 import { immigrationLaw } from "../service/lawCategoryService";
 import { getCaseStageForImmigration } from "../service/caseStageService";
 import { pageLoadError, pageSubmitError } from "./errorController";
@@ -25,9 +25,9 @@ export async function showAdditionalCostsPage(req, res) {
     }
 
     await getCaseStageForImmigration(req);
-    const additionalFees = await getAdditionalFees(req);
+    const feeDetails = await getFeeDetails(req);
 
-    const fields = getDisplayableFees(additionalFees);
+    const fields = getDisplayableFees(feeDetails);
 
     if (fields.length == 0) {
       //Nothing to ask them
@@ -51,8 +51,8 @@ export async function showAdditionalCostsPage(req, res) {
  */
 export async function postAdditionalCostsPage(req, res) {
   try {
-    const additionalFees = await getAdditionalFees(req);
-    const fields = getDisplayableFees(additionalFees);
+    const feeDetails = await getFeeDetails(req);
+    const fields = getDisplayableFees(feeDetails);
     let enteredAdditionalCosts = [];
 
     for (const field of fields) {

@@ -30,7 +30,7 @@ describe("cleanData", () => {
     req.session.data.startDate = "h";
     req.session.data.validCaseStages = "i";
     req.session.data.additionalCosts = "j";
-    req.session.data.validAdditionalFees = "k";
+    req.session.data.feeDetails = "k";
   });
 
   it("should clean data when given ClaimStart page", () => {
@@ -46,7 +46,7 @@ describe("cleanData", () => {
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual(null);
     expect(req.session.data.additionalCosts).toEqual(null);
-    expect(req.session.data.validAdditionalFees).toEqual(null);
+    expect(req.session.data.feeDetails).toEqual(null);
   });
 
   it("should clean data when given MatterCode1 page", () => {
@@ -62,7 +62,7 @@ describe("cleanData", () => {
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual(null);
     expect(req.session.data.additionalCosts).toEqual(null);
-    expect(req.session.data.validAdditionalFees).toEqual(null);
+    expect(req.session.data.feeDetails).toEqual(null);
   });
 
   it("should clean data when given MatterCode2 page", () => {
@@ -78,7 +78,7 @@ describe("cleanData", () => {
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual(null);
     expect(req.session.data.additionalCosts).toEqual(null);
-    expect(req.session.data.validAdditionalFees).toEqual(null);
+    expect(req.session.data.feeDetails).toEqual(null);
   });
 
   it.each([
@@ -102,7 +102,7 @@ describe("cleanData", () => {
     expect(req.session.data.startDate).toEqual("h");
     expect(req.session.data.validCaseStages).toEqual("i");
     expect(req.session.data.additionalCosts).toEqual("j");
-    expect(req.session.data.validAdditionalFees).toEqual("k");
+    expect(req.session.data.feeDetails).toEqual("k");
   });
 });
 

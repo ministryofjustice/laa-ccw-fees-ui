@@ -1,25 +1,13 @@
-import { feeTypes } from "./additionalFeeService";
+import { feeTypes } from "./feeDetailsService";
 import { getCalculationResult } from "./feeCalculatorService";
 import { familyLaw, immigrationLaw } from "./lawCategoryService";
 import { notApplicable } from "./londonRateService";
 
-const additionalFees = [
-  {
-    levelCode: "LVL1",
-    levelCodeType: feeTypes.optionalUnit,
-  },
-  {
-    levelCode: "LVL2",
-    levelCodeType: feeTypes.automatic,
-  },
-  {
-    levelCode: "LVL3",
-    levelCodeType: feeTypes.optionalUnit,
-  },
-  {
-    levelCode: "LVL4",
-    levelCodeType: feeTypes.optionalFee,
-  },
+const feeDetails = [
+  { levelCode: "LVL1", levelCodeType: feeTypes.optionalUnit },
+  { levelCode: "LVL2", levelCodeType: feeTypes.automatic },
+  { levelCode: "LVL3", levelCodeType: feeTypes.optionalUnit },
+  { levelCode: "LVL4", levelCodeType: feeTypes.optionalFee },
   { levelCode: "LVL5", levelCodeType: feeTypes.optionalBool },
   { levelCode: "LVL6", levelCodeType: feeTypes.optionalBool },
 ];
@@ -48,24 +36,27 @@ describe("getCalculationResult", () => {
         caseStage: "FPL01",
       };
 
+      const feeBreakdown = [
+        {
+          feeType: "totals",
+          amount: "86.00",
+          vat: "17.20",
+          total: "103.20",
+        },
+      ];
       axios.get.mockResolvedValue({
         data: {
-          matterCode1: "FAML",
-          matterCode2: "FPET",
-          locationCode: "LDN",
-          caseStage: "FPL01",
-          amount: 120,
-          total: 144,
-          vat: 24,
+          fees: feeBreakdown,
         },
       });
 
       const result = await getCalculationResult(sessionData, axios);
 
       expect(result).toEqual({
-        amount: 120,
-        total: 144,
-        vat: 24,
+        amount: "86.00",
+        total: "103.20",
+        vat: "17.20",
+        feeBreakdown: feeBreakdown,
       });
 
       expect(axios.get).toHaveBeenCalledWith("/fees/calculate", {
@@ -184,7 +175,7 @@ describe("getCalculationResult", () => {
           startDate: "03/04/2025",
           lawCategory: immigrationLaw,
           caseStage: "_IMM01",
-          validAdditionalFees: additionalCosts,
+          feeDetails: additionalCosts,
         };
 
         const expectedRequestBody = {
@@ -195,24 +186,28 @@ describe("getCalculationResult", () => {
           levelCodes: [],
         };
 
+        const feeBreakdown = [
+          {
+            feeType: "totals",
+            amount: "86.00",
+            vat: "17.20",
+            total: "103.20",
+          },
+        ];
+
         axios.get.mockResolvedValue({
           data: {
-            matterCode1: "FAML",
-            matterCode2: "FPET",
-            locationCode: notApplicable,
-            caseStage: "_IMM01",
-            amount: 120,
-            total: 144,
-            vat: 24,
+            fees: feeBreakdown,
           },
         });
 
         const result = await getCalculationResult(sessionData, axios);
 
         expect(result).toEqual({
-          amount: 120,
-          total: 144,
-          vat: 24,
+          amount: "86.00",
+          vat: "17.20",
+          total: "103.20",
+          feeBreakdown: feeBreakdown,
         });
 
         expect(axios.get).toHaveBeenCalledWith("/fees/calculate", {
@@ -229,7 +224,7 @@ describe("getCalculationResult", () => {
         startDate: "03/04/2025",
         lawCategory: immigrationLaw,
         caseStage: "_IMM01",
-        validAdditionalFees: additionalFees,
+        feeDetails: feeDetails,
         additionalCosts: [
           {
             levelCode: "LVL1",
@@ -283,25 +278,110 @@ describe("getCalculationResult", () => {
         ],
       };
 
+      const feeBreakdown = [
+        {
+          feeType: "LVL1",
+          amount: "33.2",
+          vat: "12.10",
+          total: "43.30",
+        },
+        {
+          levelCode: "LVL3",
+          amount: "10",
+          vat: "2",
+          total: "12",
+        },
+        {
+          levelCode: "LVL4",
+          amount: "44",
+          vat: "33.01",
+          total: "77.01",
+        },
+        {
+          levelCode: "LVL5",
+          amount: "33.2",
+          vat: "12.10",
+          total: "43.30",
+        },
+        {
+          feeType: "totals",
+          amount: "86.00",
+          vat: "17.20",
+          total: "103.20",
+        },
+      ];
+
       axios.get.mockResolvedValue({
         data: {
-          matterCode1: "FAML",
-          matterCode2: "FPET",
-          locationCode: notApplicable,
-          caseStage: "_IMM01",
-          amount: 120,
-          total: 144,
-          vat: 24,
+          fees: feeBreakdown,
         },
       });
 
       const result = await getCalculationResult(sessionData, axios);
 
       expect(result).toEqual({
-        amount: 120,
-        total: 144,
-        vat: 24,
+        amount: "86.00",
+        vat: "17.20",
+        total: "103.20",
+        feeBreakdown: feeBreakdown,
       });
+
+      expect(axios.get).toHaveBeenCalledWith("/fees/calculate", {
+        data: expectedRequestBody,
+      });
+    });
+
+    it("should throw error if no totals returned from api", async () => {
+      const sessionData = {
+        matterCode1: "FAML",
+        matterCode2: "FPET",
+        vatIndicator: false,
+        startDate: "03/04/2025",
+        lawCategory: immigrationLaw,
+        caseStage: "_IMM01",
+        feeDetails: [
+          { levelCode: "LVL1", levelCodeType: feeTypes.optionalUnit },
+        ],
+        additionalCosts: [
+          {
+            levelCode: "LVL1",
+            levelCodeType: feeTypes.optionalUnit,
+            value: "3",
+          },
+        ],
+      };
+
+      const expectedRequestBody = {
+        matterCode1: "FAML",
+        matterCode2: "FPET",
+        locationCode: notApplicable,
+        caseStage: "_IMM01",
+        levelCodes: [
+          {
+            levelCode: "LVL1",
+            units: "3",
+          },
+        ],
+      };
+
+      const feeBreakdown = [
+        {
+          feeType: "LVL1",
+          amount: "33.2",
+          vat: "12.10",
+          total: "43.30",
+        },
+      ];
+
+      axios.get.mockResolvedValue({
+        data: {
+          fees: feeBreakdown,
+        },
+      });
+
+      await expect(() =>
+        getCalculationResult(sessionData, axios),
+      ).rejects.toThrow(Error);
 
       expect(axios.get).toHaveBeenCalledWith("/fees/calculate", {
         data: expectedRequestBody,
@@ -439,7 +519,7 @@ describe("getCalculationResult", () => {
           vatIndicator: false,
           startDate: "03/04/2025",
           lawCategory: immigrationLaw,
-          validAdditionalFees: additionalFees,
+          feeDetails: feeDetails,
           additionalCosts: additionalCosts,
         };
 

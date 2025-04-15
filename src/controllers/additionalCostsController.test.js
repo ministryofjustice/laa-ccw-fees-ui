@@ -4,9 +4,9 @@ import {
 } from "./additionalCostsController";
 import {
   feeTypes,
-  getAdditionalFees,
+  getFeeDetails,
   getDisplayableFees,
-} from "../service/additionalFeeService";
+} from "../service/feeDetailsService";
 import { getSessionData } from "../service/sessionDataService";
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import { familyLaw, immigrationLaw } from "../service/lawCategoryService";
@@ -14,7 +14,7 @@ import { getCaseStageForImmigration } from "../service/caseStageService";
 import { validateAndReturnAdditionalCostValue } from "./validations/additionalCostValidator";
 
 jest.mock("./validations/additionalCostValidator");
-jest.mock("../service/additionalFeeService");
+jest.mock("../service/feeDetailsService");
 jest.mock("../service/caseStageService");
 jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
@@ -50,9 +50,9 @@ const lvl6 = {
   levelCodeType: feeTypes.automatic,
 };
 
-const additionalFees = [lvl1, lvl2, lvl3, lvl4, lvl5, lvl6];
+const feeDetails = [lvl1, lvl2, lvl3, lvl4, lvl5, lvl6];
 
-const additionalFeesFiltered = [lvl1, lvl3, lvl4, lvl5];
+const displayableFees = [lvl1, lvl3, lvl4, lvl5];
 
 describe("showAdditionalCostsPage", () => {
   let req = {
@@ -67,10 +67,10 @@ describe("showAdditionalCostsPage", () => {
   };
 
   beforeEach(() => {
-    getAdditionalFees.mockReturnValue(additionalFees);
+    getFeeDetails.mockReturnValue(feeDetails);
     getCaseStageForImmigration.mockReturnValue("_IMM01");
     getSessionData.mockReturnValue({});
-    getDisplayableFees.mockReturnValue(additionalFeesFiltered);
+    getDisplayableFees.mockReturnValue(displayableFees);
 
     req.session.data.lawCategory = immigrationLaw;
 
@@ -81,12 +81,12 @@ describe("showAdditionalCostsPage", () => {
     await showAdditionalCostsPage(req, res);
 
     expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
-      fieldsToShow: additionalFeesFiltered,
+      fieldsToShow: displayableFees,
       csrfToken: "mocked-csrf-token",
       feeTypes: feeTypes,
     });
     expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
-    expect(getAdditionalFees).toHaveBeenCalledWith(req);
+    expect(getFeeDetails).toHaveBeenCalledWith(req);
   });
 
   it("should render error page if fails to load page", async () => {
@@ -130,8 +130,8 @@ describe("showAdditionalCostsPage", () => {
     expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
   });
 
-  it("should render error page if getAdditionalFees call throws error", async () => {
-    getAdditionalFees.mockImplementation(() => {
+  it("should render error page if getFeeDetails call throws error", async () => {
+    getFeeDetails.mockImplementation(() => {
       throw new Error("API error");
     });
 
@@ -142,7 +142,7 @@ describe("showAdditionalCostsPage", () => {
       status: "An error occurred",
     });
 
-    expect(getAdditionalFees).toHaveBeenCalledWith(req);
+    expect(getFeeDetails).toHaveBeenCalledWith(req);
   });
 
   it("should redirect to the next page if not immigration law", async () => {
@@ -154,14 +154,14 @@ describe("showAdditionalCostsPage", () => {
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(res.render).toHaveBeenCalledTimes(0);
     expect(getCaseStageForImmigration).toHaveBeenCalledTimes(0);
-    expect(getAdditionalFees).toHaveBeenCalledTimes(0);
+    expect(getFeeDetails).toHaveBeenCalledTimes(0);
     expect(getNextPage).toHaveBeenCalledWith(URL_AdditionalCosts);
   });
 
   it("should redirect to the next page if no additional fees", async () => {
     getNextPage.mockReturnValue("nextPage");
 
-    getAdditionalFees.mockReturnValue([]);
+    getFeeDetails.mockReturnValue([]);
     getDisplayableFees.mockReturnValue([]);
 
     await showAdditionalCostsPage(req, res);
@@ -169,14 +169,14 @@ describe("showAdditionalCostsPage", () => {
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(res.render).toHaveBeenCalledTimes(0);
     expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
-    expect(getAdditionalFees).toHaveBeenCalledWith(req);
+    expect(getFeeDetails).toHaveBeenCalledWith(req);
     expect(getNextPage).toHaveBeenCalledWith(URL_AdditionalCosts);
   });
 
   it("should redirect to the next page if no additional fees can be shown", async () => {
     getNextPage.mockReturnValue("nextPage");
 
-    getAdditionalFees.mockReturnValue(additionalFees);
+    getFeeDetails.mockReturnValue(feeDetails);
     getDisplayableFees.mockReturnValue([]);
 
     await showAdditionalCostsPage(req, res);
@@ -184,7 +184,7 @@ describe("showAdditionalCostsPage", () => {
     expect(res.redirect).toHaveBeenCalledWith("nextPage");
     expect(res.render).toHaveBeenCalledTimes(0);
     expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
-    expect(getAdditionalFees).toHaveBeenCalledWith(req);
+    expect(getFeeDetails).toHaveBeenCalledWith(req);
     expect(getNextPage).toHaveBeenCalledWith(URL_AdditionalCosts);
   });
 });
@@ -197,8 +197,8 @@ describe("postAdditionalCostsPage", () => {
   };
 
   beforeEach(() => {
-    getAdditionalFees.mockResolvedValue(additionalFees);
-    getDisplayableFees.mockReturnValue(additionalFeesFiltered);
+    getFeeDetails.mockResolvedValue(feeDetails);
+    getDisplayableFees.mockReturnValue(displayableFees);
 
     validateAndReturnAdditionalCostValue.mockReturnValueOnce("2");
     validateAndReturnAdditionalCostValue.mockReturnValueOnce(true);
@@ -255,7 +255,7 @@ describe("postAdditionalCostsPage", () => {
       "5",
       lvl5,
     );
-    expect(getAdditionalFees).toHaveBeenCalledWith(req);
+    expect(getFeeDetails).toHaveBeenCalledWith(req);
   });
 
   it("render error page when validation fails", async () => {
@@ -275,8 +275,8 @@ describe("postAdditionalCostsPage", () => {
     expect(req.session.data.additionalCosts).toBeUndefined();
   });
 
-  it("should render error page if getAdditionalFees call throws error", async () => {
-    getAdditionalFees.mockImplementation(() => {
+  it("should render error page if getFeeDetails call throws error", async () => {
+    getFeeDetails.mockImplementation(() => {
       throw new Error("API error");
     });
 
@@ -287,6 +287,6 @@ describe("postAdditionalCostsPage", () => {
       status: "An error occurred",
     });
 
-    expect(getAdditionalFees).toHaveBeenCalledWith(req);
+    expect(getFeeDetails).toHaveBeenCalledWith(req);
   });
 });
