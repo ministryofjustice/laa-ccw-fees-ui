@@ -150,9 +150,35 @@ describe("postMatterCode2Page", () => {
 
     await postMatterCode2Page(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred saving the answer.",
-      status: "An error occurred",
+    expect(res.render).toHaveBeenCalledWith("main/matterCode", {
+      errors: {
+        list: [
+          {
+            href: "#matterCode2",
+            text: "'Matter Code 2' not entered",
+          },
+        ],
+        messages: {
+          matterCode2: {
+            text: "'Matter Code 2' not entered",
+          },
+        },
+      },
+      formValues: {
+        matterCode2: null,
+      },
+      id: "matterCode2",
+      label: "Matter Code 2",
+      matterCodes: [
+        {
+          description: "Matter code A",
+          id: "MC2A"
+        },
+        {
+          description: "Matter code B",
+          id: "MC2B"
+        },
+      ],
     });
     expect(req.session.data.matterCode2).toBeUndefined();
   });
@@ -162,9 +188,35 @@ describe("postMatterCode2Page", () => {
 
     await postMatterCode2Page(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred saving the answer.",
-      status: "An error occurred",
+    expect(res.render).toHaveBeenCalledWith("main/matterCode", {
+      errors: {
+        list: [
+          {
+            href: "#matterCode2",
+            text: "'Matter Code 2' is not valid",
+          },
+        ],
+        messages: {
+          matterCode2: {
+            text: "'Matter Code 2' is not valid",
+          },
+        },
+      },
+      formValues: {
+        matterCode2: "MC2A",
+      },
+      id: "matterCode2",
+      label: "Matter Code 2",
+      matterCodes: [
+        {
+          description: "Matter code A",
+          id: "MC2A",
+        },
+        {
+          description: "Matter code B",
+          id: "MC2B",
+        },
+      ],
     });
 
     expect(req.session.data.matterCode2).toBeUndefined();

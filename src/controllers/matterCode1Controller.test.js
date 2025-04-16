@@ -152,9 +152,35 @@ describe("postMatterCode1Page", () => {
 
     await postMatterCode1Page(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred saving the answer.",
-      status: "An error occurred",
+    expect(res.render).toHaveBeenCalledWith("main/matterCode", {
+      errors: {
+        list: [
+          {
+            href: "#matterCode1",
+            text: "'Matter Code 1' not entered",
+          },
+        ],
+        messages: {
+          matterCode1: {
+            text: "'Matter Code 1' not entered",
+          },
+        },
+      },
+      formValues: {
+        matterCode1: null,
+      },
+      id: "matterCode1",
+      label: "Matter Code 1",
+      matterCodes: [
+        {
+          description: "Matter code A",
+          matterCode: "MC1A",
+        },
+        {
+          description: "Matter code B",
+          matterCode: "MC1B",
+        },
+      ],
     });
     expect(req.session.data.matterCode1).toBeUndefined();
   });
@@ -164,9 +190,35 @@ describe("postMatterCode1Page", () => {
 
     await postMatterCode1Page(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred saving the answer.",
-      status: "An error occurred",
+    expect(res.render).toHaveBeenCalledWith("main/matterCode", {
+      errors: {
+        list: [
+          {
+            href: "#matterCode1",
+            text: "'Matter Code 1' is not valid",
+          },
+        ],
+        messages: {
+          matterCode1: {
+            text: "'Matter Code 1' is not valid",
+          },
+        },
+      },
+      formValues: {
+        matterCode1: "MC1A",
+      },
+      id: "matterCode1",
+      label: "Matter Code 1",
+      matterCodes: [
+        {
+          description: "Matter code A",
+          matterCode: "MC1A",
+        },
+        {
+          description: "Matter code B",
+          matterCode: "MC1B",
+        },
+      ],
     });
 
     expect(req.session.data.matterCode1).toBeUndefined();
