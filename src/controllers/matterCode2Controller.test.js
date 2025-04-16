@@ -172,11 +172,11 @@ describe("postMatterCode2Page", () => {
       matterCodes: [
         {
           description: "Matter code A",
-          id: "MC2A"
+          id: "MC2A",
         },
         {
           description: "Matter code B",
-          id: "MC2B"
+          id: "MC2B",
         },
       ],
     });
