@@ -91,7 +91,7 @@ describe("postClaimStartPage", () => {
 
   beforeEach(() => {
     isValidLawCategory.mockReturnValue(true);
-    validateEnteredDate.mockReturnValue(true);
+    validateEnteredDate.mockReturnValue(null);
 
     req = {
       session: {
@@ -136,9 +136,35 @@ describe("postClaimStartPage", () => {
 
     postClaimStartPage(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred saving the answer.",
-      status: "An error occurred",
+    expect(res.render).toHaveBeenCalledWith("main/claimStart", {
+      categories: [
+        {
+          description: "Family",
+          id: "family",
+        },
+        {
+          description: "Immigration",
+          id: "immigration",
+        },
+      ],
+      errors: {
+        list: [
+          {
+            href: "#category",
+            text: "'Law Category' not entered",
+          },
+        ],
+        messages: {
+          category: {
+            text: "'Law Category' not entered",
+          },
+        },
+      },
+      formValues: {
+        category: null,
+        date: "31/03/2025",
+      },
+      today: "31/03/2025",
     });
     expect(req.session.data.lawCategory).toBeUndefined();
     expect(req.session.data.startDate).toBeUndefined();
@@ -149,9 +175,35 @@ describe("postClaimStartPage", () => {
 
     postClaimStartPage(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred saving the answer.",
-      status: "An error occurred",
+    expect(res.render).toHaveBeenCalledWith("main/claimStart", {
+      categories: [
+        {
+          description: "Family",
+          id: "family",
+        },
+        {
+          description: "Immigration",
+          id: "immigration",
+        },
+      ],
+      errors: {
+        list: [
+          {
+            href: "#date",
+            text: "'Date case was opened' not entered",
+          },
+        ],
+        messages: {
+          date: {
+            text: "'Date case was opened' not entered",
+          },
+        },
+      },
+      formValues: {
+        category: "family",
+        date: null,
+      },
+      today: "31/03/2025",
     });
     expect(req.session.data.lawCategory).toBeUndefined();
     expect(req.session.data.startDate).toBeUndefined();
@@ -162,24 +214,76 @@ describe("postClaimStartPage", () => {
 
     postClaimStartPage(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred saving the answer.",
-      status: "An error occurred",
+    expect(res.render).toHaveBeenCalledWith("main/claimStart", {
+      categories: [
+        {
+          description: "Family",
+          id: "family",
+        },
+        {
+          description: "Immigration",
+          id: "immigration",
+        },
+      ],
+      errors: {
+        list: [
+          {
+            href: "#category",
+            text: "'Law Category' is not valid",
+          },
+        ],
+        messages: {
+          category: {
+            text: "'Law Category' is not valid",
+          },
+        },
+      },
+      formValues: {
+        category: "family",
+        date: "31/03/2025",
+      },
+      today: "31/03/2025",
     });
-
     expect(req.session.data.lawCategory).toBeUndefined();
     expect(req.session.data.startDate).toBeUndefined();
     expect(isValidLawCategory).toHaveBeenCalledWith(familyLaw);
   });
 
-  it("render error page when date validation returns false", async () => {
-    validateEnteredDate.mockReturnValue(false);
+  it("render error page when date validation returns error", async () => {
+    validateEnteredDate.mockReturnValue("is not valid");
 
     postClaimStartPage(req, res);
 
-    expect(res.render).toHaveBeenCalledWith("main/error", {
-      error: "An error occurred saving the answer.",
-      status: "An error occurred",
+    expect(res.render).toHaveBeenCalledWith("main/claimStart", {
+      categories: [
+        {
+          description: "Family",
+          id: "family",
+        },
+        {
+          description: "Immigration",
+          id: "immigration",
+        },
+      ],
+
+      errors: {
+        list: [
+          {
+            href: "#date",
+            text: "'Date case was opened' is not valid",
+          },
+        ],
+        messages: {
+          date: {
+            text: "'Date case was opened' is not valid",
+          },
+        },
+      },
+      formValues: {
+        category: "family",
+        date: "31/03/2025",
+      },
+      today: "31/03/2025",
     });
 
     expect(req.session.data.lawCategory).toBeUndefined();
