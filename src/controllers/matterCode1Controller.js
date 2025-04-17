@@ -52,6 +52,7 @@ export async function postMatterCode1Page(req, res) {
     } else {
       const hasMatterCodeChanged =
         req.session.data?.matterCode1 !== matterCode1;
+
       if (hasMatterCodeChanged) {
         cleanData(req, URL_MatterCode1);
       }

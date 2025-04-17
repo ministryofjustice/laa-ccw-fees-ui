@@ -2,6 +2,10 @@ import { getNextPage, URL_CaseStage } from "../routes/navigator";
 import { isValidCaseStage, getCaseStages } from "../service/caseStageService";
 import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
+import {
+  validateCase,
+  validateCaseStage,
+} from "./validations/caseStageValidator.js";
 
 /**
  * Load the page for the user entering a Case Stage
@@ -32,19 +36,23 @@ export async function postCaseStagePage(req, res) {
   try {
     const caseStage = req.body.caseStage;
 
-    if (caseStage == null) {
-      throw new Error("Case Stage not defined");
-    }
-
     const validCaseStages = await getCaseStages(req);
 
-    if (!isValidCaseStage(validCaseStages, caseStage)) {
-      throw new Error("Case Stage is not valid");
+    const errors = validateCaseStage(validCaseStages, caseStage);
+
+    if (errors.list.length > 0) {
+      res.render("main/caseStage", {
+        caseStages: validCaseStages,
+        errors,
+        formValues: {
+          caseStage,
+        },
+      });
+    } else {
+      req.session.data.caseStage = caseStage;
+
+      res.redirect(getNextPage(URL_CaseStage, req.session.data));
     }
-
-    req.session.data.caseStage = caseStage;
-
-    res.redirect(getNextPage(URL_CaseStage, req.session.data));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }
