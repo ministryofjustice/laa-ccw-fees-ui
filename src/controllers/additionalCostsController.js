@@ -29,7 +29,7 @@ export async function showAdditionalCostsPage(req, res) {
 
     const fields = getDisplayableFees(feeDetails);
 
-    if (fields.length == 0) {
+    if (fields.length === 0) {
       //Nothing to ask them
       return res.redirect(getNextPage(URL_AdditionalCosts));
     }
@@ -54,22 +54,39 @@ export async function postAdditionalCostsPage(req, res) {
     const feeDetails = await getFeeDetails(req);
     const fields = getDisplayableFees(feeDetails);
     let enteredAdditionalCosts = [];
-
+    const errors = { list: [], messages: {} };
+    const formValues = {};
     for (const field of fields) {
-      const value = validateAndReturnAdditionalCostValue(
+      const { error, value } = validateAndReturnAdditionalCostValue(
         req.body[field.levelCode],
         field,
       );
 
-      enteredAdditionalCosts.push({
-        levelCode: field.levelCode,
-        value: value,
-      });
+      if (error) {
+        const text = `'${field.formQuestion || field.description}' ${error}`;
+        errors.list.push({ href: `#${field.levelCode}`, text });
+        errors.messages[field.levelCode] = { text };
+      } else {
+        enteredAdditionalCosts.push({
+          levelCode: field.levelCode,
+          value: value,
+        });
+      }
+      formValues[field.levelCode] = value;
     }
 
-    req.session.data.additionalCosts = enteredAdditionalCosts;
+    if (errors.list.length > 0) {
+      res.render("main/additionalCosts", {
+        fieldsToShow: fields,
+        feeTypes: feeTypes,
+        errors,
+        formValues,
+      });
+    } else {
+      req.session.data.additionalCosts = enteredAdditionalCosts;
 
-    res.redirect(getNextPage(URL_AdditionalCosts, req.session.data));
+      res.redirect(getNextPage(URL_AdditionalCosts, req.session.data));
+    }
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

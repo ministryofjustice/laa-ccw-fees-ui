@@ -4,51 +4,46 @@ import { feeTypes } from "../../service/feeDetailsService";
  * Check entered additional cost is valid and return the cleaned up value
  * @param {string} initialValue - value user entered
  * @param {object} fieldDetails - field we are validating
- * @returns {string} - cleaned up value
- * @throws {Error} - if not valid
+ * @returns {object} - cleaned up value or error
  */
 export function validateAndReturnAdditionalCostValue(
   initialValue,
   fieldDetails,
 ) {
   if (initialValue == null) {
-    throw new Error(fieldDetails.levelCode + " not defined");
+    return { error: "not entered" };
   }
 
   switch (fieldDetails.levelCodeType) {
     case feeTypes.optionalFee:
-      if (initialValue.trim() == "") {
+      if (initialValue.trim() === "") {
         // Allowed to skip this field if you have no fee
-        return "0";
+        return { value: "0" };
       }
 
       if (!isValidFeeEntered(initialValue)) {
-        throw new Error(
-          fieldDetails.levelCode + " must be a currency value or empty",
-        );
+        return { error: "is not valid" };
       }
 
-      return initialValue;
+      return { value: initialValue };
 
     case feeTypes.optionalUnit:
       if (!isValidUnitEntered(initialValue)) {
-        throw new Error(
-          fieldDetails.levelCode + " must be an integer between 0 and 9",
-        );
+        return { error: "must be a number between 0 and 9" };
       }
-      return initialValue;
+      return { value: initialValue };
 
     case feeTypes.optionalBool:
       if (initialValue === "yes") {
-        return true;
+        return { value: true };
       } else if (initialValue === "no") {
-        return false;
+        return { value: false };
       } else {
-        throw new Error(fieldDetails.levelCode + " is not valid");
+        return { error: "is not valid" };
       }
 
     default:
-      throw new Error("Unexpected fee type: " + fieldDetails.levelCodeType);
+      return { error: "is not valid" };
   }
 }
 

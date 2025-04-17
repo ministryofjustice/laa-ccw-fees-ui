@@ -109,21 +109,21 @@ describe("vatIndicatorController", () => {
       postVatIndicatorRate(req, res);
 
       expect(res.render).toHaveBeenCalledWith("main/vatIndicator", {
-        "errors":  {
-          "list":  [
+        errors: {
+          list: [
             {
-              "href": "#vatIndicator",
-              "text": "'London/Non-London Rate' not entered",
+              href: "#vatIndicator",
+              text: "'Vat Indicator' not entered",
             },
           ],
-          "messages":  {
-            "vatIndicator":  {
-              "text": "'London/Non-London Rate' not entered",
+          messages: {
+            vatIndicator: {
+              text: "'Vat Indicator' not entered",
             },
           },
         },
-        "formValues":  {
-          "vatIndicator": null,
+        formValues: {
+          vatIndicator: null,
         },
       });
       expect(sessionData.vatIndicator).toBeUndefined();
@@ -136,21 +136,21 @@ describe("vatIndicatorController", () => {
       postVatIndicatorRate(req, res);
 
       expect(res.render).toHaveBeenCalledWith("main/vatIndicator", {
-        "errors":  {
-          "list":  [
+        errors: {
+          list: [
             {
-              "href": "#vatIndicator",
-              "text": "'London/Non-London Rate' is not valid",
+              href: "#vatIndicator",
+              text: "'Vat Indicator' is not valid",
             },
           ],
-          "messages":  {
-            "vatIndicator":  {
-              "text": "'London/Non-London Rate' is not valid",
+          messages: {
+            vatIndicator: {
+              text: "'Vat Indicator' is not valid",
             },
           },
         },
-        "formValues":  {
-          "vatIndicator": "foo",
+        formValues: {
+          vatIndicator: "foo",
         },
       });
 

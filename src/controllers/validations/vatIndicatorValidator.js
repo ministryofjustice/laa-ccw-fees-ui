@@ -6,9 +6,9 @@
 export function validateVatIndicator(vatIndicator) {
   let errors = { list: [], messages: {} };
 
-  const vatIndicatorError = checkLondonRate(vatIndicator);
+  const vatIndicatorError = checkVatIndicator(vatIndicator);
   if (vatIndicatorError) {
-    const text = `'London/Non-London Rate' ${vatIndicatorError}`;
+    const text = `'Vat Indicator' ${vatIndicatorError}`;
     errors.list.push({ href: "#vatIndicator", text });
     errors.messages.vatIndicator = { text };
   }
@@ -21,7 +21,7 @@ export function validateVatIndicator(vatIndicator) {
  * @param {string} vatIndicator - the vat indicator
  * @returns {string} - the error message
  */
-function checkLondonRate(vatIndicator) {
+function checkVatIndicator(vatIndicator) {
   if (!vatIndicator) {
     return "not entered";
   }

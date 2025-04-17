@@ -18,12 +18,12 @@ describe("validateVatIndicator", () => {
         list: [
           {
             href: "#vatIndicator",
-            text: "'London/Non-London Rate' not entered",
+            text: "'Vat Indicator' not entered",
           },
         ],
         messages: {
           vatIndicator: {
-            text: "'London/Non-London Rate' not entered",
+            text: "'Vat Indicator' not entered",
           },
         },
       });
@@ -35,12 +35,12 @@ describe("validateVatIndicator", () => {
       list: [
         {
           href: "#vatIndicator",
-          text: "'London/Non-London Rate' is not valid",
+          text: "'Vat Indicator' is not valid",
         },
       ],
       messages: {
         vatIndicator: {
-          text: "'London/Non-London Rate' is not valid",
+          text: "'Vat Indicator' is not valid",
         },
       },
     });
