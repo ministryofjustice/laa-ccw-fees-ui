@@ -1,10 +1,8 @@
 import { getNextPage, URL_MatterCode2 } from "../routes/navigator";
-import {
-  getMatterCode2s,
-  isValidMatterCode2,
-} from "../service/matterCode2Service";
+import { getMatterCode2s } from "../service/matterCode2Service";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { cleanData, getSessionData } from "../service/sessionDataService";
+import { validateMatterCode2 } from "./validations/matterCode2Validator.js";
 
 /**
  * Load the page for the user to enter Matter Code 2
@@ -37,24 +35,30 @@ export async function postMatterCode2Page(req, res) {
   try {
     const matterCode2 = req.body.matterCode2;
 
-    if (matterCode2 == null) {
-      throw new Error("Matter Code 2 not defined");
-    }
-
     const validMatterCode2s = await getMatterCode2s(req);
 
-    if (!isValidMatterCode2(validMatterCode2s, matterCode2)) {
-      throw new Error("Matter Code 2 is not valid");
+    const errors = validateMatterCode2(validMatterCode2s, matterCode2);
+
+    if (errors.list.length > 0) {
+      res.render("main/matterCode", {
+        matterCodes: validMatterCode2s,
+        id: "matterCode2",
+        label: "Matter Code 2",
+        errors,
+        formValues: {
+          matterCode2: matterCode2,
+        },
+      });
+    } else {
+      const hasMatterCodeChanged = req.session.data?.matterCode2 != matterCode2;
+      if (hasMatterCodeChanged) {
+        cleanData(req, URL_MatterCode2);
+      }
+
+      req.session.data.matterCode2 = matterCode2;
+
+      res.redirect(getNextPage(URL_MatterCode2, req.session.data));
     }
-
-    const hasMatterCodeChanged = req.session.data?.matterCode2 != matterCode2;
-    if (hasMatterCodeChanged) {
-      cleanData(req, URL_MatterCode2);
-    }
-
-    req.session.data.matterCode2 = matterCode2;
-
-    res.redirect(getNextPage(URL_MatterCode2, req.session.data));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

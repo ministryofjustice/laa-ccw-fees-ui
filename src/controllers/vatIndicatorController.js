@@ -1,6 +1,7 @@
 import { getNextPage, URL_VatIndicator } from "../routes/navigator";
 import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
+import { validateVatIndicator } from "./validations/vatIndicatorValidator.js";
 
 /**
  * Load the page for the user entering VAT Indicator
@@ -28,17 +29,20 @@ export function postVatIndicatorRate(req, res) {
   try {
     const vatIndicator = req.body.vatIndicator;
 
-    if (vatIndicator == null) {
-      throw new Error("VAT Indicator not defined");
+    const errors = validateVatIndicator(vatIndicator);
+
+    if (errors.list.length > 0) {
+      res.render("main/vatIndicator", {
+        errors,
+        formValues: {
+          vatIndicator,
+        },
+      });
+    } else {
+      req.session.data.vatIndicator = vatIndicator === "yes" ? true : false;
+
+      res.redirect(getNextPage(URL_VatIndicator, req.session.data));
     }
-
-    if (vatIndicator !== "yes" && vatIndicator !== "no") {
-      throw new Error("VAT Indicator is not valid");
-    }
-
-    req.session.data.vatIndicator = vatIndicator === "yes" ? true : false;
-
-    res.redirect(getNextPage(URL_VatIndicator, req.session.data));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

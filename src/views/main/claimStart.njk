@@ -14,6 +14,8 @@
         }) | reject() }}
     {% endfor %}
 
+    {% include "main/errorSummary.njk" %}
+
     <h1 class="govuk-heading-xl">Claim details</h1>
     <p class="govuk-body-m">To set up your claim we need some initial information</p>
     <form method="post">
@@ -29,7 +31,9 @@
             hint: {
                 text: "For example, 17/5/2024."
             },
-            maxDate: today
+            maxDate: today,
+            value: formValues.date,
+            errorMessage: errors.messages.date
         }) }}
 
         {{ govukRadios({
@@ -44,7 +48,9 @@
             hint: {
                 text: "Select one option"
             },
-            items: items
+            items: items,
+            value: formValues.category,
+            errorMessage: errors.messages.category
         }) }}
         
         {{ govukButton({

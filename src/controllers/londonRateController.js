@@ -1,10 +1,8 @@
 import { getNextPage, URL_LondonRate } from "../routes/navigator";
-import {
-  getLondonRates,
-  isValidLondonRate,
-} from "../service/londonRateService";
+import { getLondonRates } from "../service/londonRateService";
 import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
+import { validateLondonRate } from "./validations/londonRateValidator.js";
 
 /**
  * Load the page for the user entering London / Non-London Rate
@@ -33,17 +31,21 @@ export function postLondonRatePage(req, res) {
   try {
     const londonRate = req.body.londonRate;
 
-    if (londonRate == null) {
-      throw new Error("London Rate not defined");
+    const errors = validateLondonRate(londonRate);
+
+    if (errors.list.length > 0) {
+      res.render("main/londonRate", {
+        rates: getLondonRates(),
+        errors,
+        formValues: {
+          londonRate,
+        },
+      });
+    } else {
+      req.session.data.londonRate = londonRate;
+
+      res.redirect(getNextPage(URL_LondonRate, req.session.data));
     }
-
-    if (!isValidLondonRate(londonRate)) {
-      throw new Error("London Rate is not valid");
-    }
-
-    req.session.data.londonRate = londonRate;
-
-    res.redirect(getNextPage(URL_LondonRate, req.session.data));
   } catch (ex) {
     pageSubmitError(req, res, ex);
   }

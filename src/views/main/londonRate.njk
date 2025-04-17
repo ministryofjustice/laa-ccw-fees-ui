@@ -13,6 +13,8 @@
         }) | reject() }}
     {% endfor %}
 
+    {% include "main/errorSummary.njk" %}
+
     <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
@@ -28,7 +30,9 @@
             hint: {
                 text: "Select one option"
             },
-            items: items
+            items: items,
+            value: formValues.londonRate,
+            errorMessage: errors.messages.londonRate
             }) }}
         
         {{ govukButton({
