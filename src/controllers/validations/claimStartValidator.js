@@ -2,7 +2,7 @@ import { isValidLawCategory } from "../../service/lawCategoryService";
 import { validateEnteredDate } from "../../utils/dateTimeUtils";
 
 /**
- * Check entered claim start date and category
+ * Validate claim start date and category
  * @param {string} date - date entered
  * @param {string} category - category entered
  * @returns {object} - any errors

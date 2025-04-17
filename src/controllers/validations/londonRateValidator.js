@@ -1,7 +1,7 @@
 import { isValidLondonRate } from "../../service/londonRateService.js";
 
 /**
- * Check entered london rate
+ * Validate entered london rate
  * @param {string} londonRate - london rate entered
  * @returns {object} - any errors
  */

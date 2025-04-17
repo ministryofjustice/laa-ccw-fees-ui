@@ -1,9 +1,8 @@
 import { getNextPage, URL_CaseStage } from "../routes/navigator";
-import { isValidCaseStage, getCaseStages } from "../service/caseStageService";
+import { getCaseStages } from "../service/caseStageService";
 import { getSessionData } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import {
-  validateCase,
   validateCaseStage,
 } from "./validations/caseStageValidator.js";
 

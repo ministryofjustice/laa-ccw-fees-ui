@@ -1,7 +1,7 @@
 import { isValidCaseStage } from "../../service/caseStageService.js";
 
 /**
- * Check entered case stage
+ * Validate entered case stage
  * @param {Array[Object]} validCaseStages - list of valid case stages
  * @param {string} caseStage - case stage entered
  * @returns {object} - any errors

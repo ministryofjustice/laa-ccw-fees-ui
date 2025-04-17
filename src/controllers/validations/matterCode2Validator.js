@@ -1,9 +1,9 @@
 import { isValidMatterCode2 } from "../../service/matterCode2Service.js";
 
 /**
- * Check entered matter Code 2
+ * Validate entered matter Code 2
  * @param {Array[Object]} validMatterCode2s - list of valid matter codes
- * @param {string} matterCode2 - matter Code 2 entered
+ * @param {string} matterCode2 - matter code 2 entered
  * @returns {object} - any errors
  */
 export function validateMatterCode2(validMatterCode2s, matterCode2) {
@@ -20,9 +20,9 @@ export function validateMatterCode2(validMatterCode2s, matterCode2) {
 }
 
 /**
- * Check category entered
+ * Check matter code 2 entered
  * @param {Array[Object]} validMatterCode2s - list of valid matter codes
- * @param {string} matterCode2 - the matter Code 2
+ * @param {string} matterCode2 - the matter code 2
  * @returns {string} - the error message
  */
 function checkMatterCode2(validMatterCode2s, matterCode2) {
