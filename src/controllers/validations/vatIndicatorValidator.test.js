@@ -18,12 +18,12 @@ describe("validateVatIndicator", () => {
         list: [
           {
             href: "#vatIndicator",
-            text: "'Vat Indicator' not entered",
+            text: "'Are you VAT registered?' not entered",
           },
         ],
         messages: {
           vatIndicator: {
-            text: "'Vat Indicator' not entered",
+            text: "'Are you VAT registered?' not entered",
           },
         },
       });
@@ -35,12 +35,12 @@ describe("validateVatIndicator", () => {
       list: [
         {
           href: "#vatIndicator",
-          text: "'Vat Indicator' is not valid",
+          text: "'Are you VAT registered?' is not valid",
         },
       ],
       messages: {
         vatIndicator: {
-          text: "'Vat Indicator' is not valid",
+          text: "'Are you VAT registered?' is not valid",
         },
       },
     });

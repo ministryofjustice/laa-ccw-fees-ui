@@ -8,7 +8,7 @@ export function validateVatIndicator(vatIndicator) {
 
   const vatIndicatorError = checkVatIndicator(vatIndicator);
   if (vatIndicatorError) {
-    const text = `'Vat Indicator' ${vatIndicatorError}`;
+    const text = `'Are you VAT registered?' ${vatIndicatorError}`;
     errors.list.push({ href: "#vatIndicator", text });
     errors.messages.vatIndicator = { text };
   }
