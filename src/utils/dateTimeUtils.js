@@ -18,8 +18,7 @@ function addMissingZeroes(inputDate) {
   const [day, month, year] = inputDate.split("/");
 
   if (day == null || month == null || year == null) {
-    //Not in right format
-    throw new DateInputError("Date is not in dd/MM/yyyy format");
+    return null;
   }
 
   // Ensure 0 added if needed to match the format
@@ -32,41 +31,31 @@ function addMissingZeroes(inputDate) {
 /**
  * Check date user entered is valid - correct format, a real date and not in the future
  * @param {string} inputDate - date user entered
- * @returns {boolean} true if valid date
- * @throws {DateInputError} with error context
+ * @returns {string} - error type otherwise null
  */
 export function validateEnteredDate(inputDate) {
   const formattedInput = addMissingZeroes(inputDate);
+  if (!formattedInput) {
+    return "is not valid";
+  }
+
   const parsedDate = parse(formattedInput, DATE_FORMAT, new Date());
 
   // Check date is valid
   if (!isValid(parsedDate)) {
-    throw new DateInputError("Date is not a valid date");
+    return "is not valid";
   }
 
   if (parsedDate > new Date()) {
-    throw new DateInputError("Date cannot be in the future");
+    return "cannot be in the future";
   }
 
   // Make sure it matches - handles some edge cases around timezones, weird formats, etc
   const formattedDate = format(parsedDate, DATE_FORMAT);
 
   if (formattedDate !== formattedDate) {
-    throw new DateInputError("Date parsing has failed");
+    return "is not valid";
   }
 
-  return true;
-}
-
-/**
- * Error wrapper for user date input issues
- */
-class DateInputError extends Error {
-  /**
-   * Create DateInputError
-   * @param {string} message - reason date is invalid
-   */
-  constructor(message) {
-    super("Date input error: " + message);
-  }
+  return null;
 }
