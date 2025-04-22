@@ -13,6 +13,20 @@ export async function showMatterCode1Page(req, res) {
   try {
     validateSession(req);
 
+    let errors = {};
+    let formValues = {};
+    if (req.session.formError) {
+      errors = req.session.formError;
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (req.session.data.matterCode1) {
+        formValues.matterCode1 = req.session.data.matterCode1;
+      }
+    }
+
     const matterCodes = await getMatterCode1s(req);
 
     res.render("main/matterCode", {
@@ -20,6 +34,8 @@ export async function showMatterCode1Page(req, res) {
       matterCodes: matterCodes,
       id: "matterCode1",
       label: "Matter Code 1",
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -39,16 +55,13 @@ export async function postMatterCode1Page(req, res) {
 
     const errors = validateMatterCode1(validMatterCode1s, matterCode1);
 
-    if (errors.list.length > 0) {
-      res.render("main/matterCode", {
-        matterCodes: validMatterCode1s,
-        id: "matterCode1",
-        label: "Matter Code 1",
-        errors,
-        formValues: {
-          matterCode1: matterCode1,
-        },
-      });
+    if (errors.list?.length > 0) {
+      req.session.formError = errors;
+      req.session.formValues = {
+        matterCode1: matterCode1,
+      };
+
+      res.redirect(URL_MatterCode1);
     } else {
       const hasMatterCodeChanged =
         req.session.data?.matterCode1 !== matterCode1;
