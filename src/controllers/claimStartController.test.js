@@ -29,7 +29,7 @@ describe("claimStartController", () => {
     let req = {
       csrfToken: jest.fn(),
       session: {
-        data :{}
+        data: {},
       },
     };
     let res = {

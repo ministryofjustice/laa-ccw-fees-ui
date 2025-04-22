@@ -7,10 +7,7 @@ import {
   getFeeDetails,
   getDisplayableFees,
 } from "../service/feeDetailsService";
-import {
-  getSessiovalidateSessionnData,
-  validateSession,
-} from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import { familyLaw, immigrationLaw } from "../service/lawCategoryService";
 import { getCaseStageForImmigration } from "../service/caseStageService";

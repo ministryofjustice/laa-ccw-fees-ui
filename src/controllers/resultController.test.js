@@ -27,8 +27,8 @@ describe("showResultPage", () => {
     csrfToken: jest.fn(),
     axiosMiddleware: axiosMiddleware,
     session: {
-      data: {}
-    }
+      data: {},
+    },
   };
   let res = {
     render: render,
@@ -37,13 +37,13 @@ describe("showResultPage", () => {
   beforeEach(() => {
     req.csrfToken.mockReturnValue("mocked-csrf-token");
     getFeeDetails.mockResolvedValue(feeDetails);
-    validateSession.mockReturnValue(true)
+    validateSession.mockReturnValue(true);
   });
 
   it("should render result page when no VAT", async () => {
     const sessionData = {
       vatIndicator: false,
-    }
+    };
     req.session.data = sessionData;
 
     getCalculationResult.mockReturnValue({

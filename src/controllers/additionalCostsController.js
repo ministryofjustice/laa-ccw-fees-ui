@@ -19,7 +19,7 @@ import { validateAndReturnAdditionalCostValue } from "./validations/additionalCo
 export async function showAdditionalCostsPage(req, res) {
   try {
     validateSession(req);
-    const sessionData = req.session.data
+    const sessionData = req.session.data;
 
     if (sessionData.lawCategory !== immigrationLaw) {
       return res.redirect(getNextPage(URL_AdditionalCosts));
