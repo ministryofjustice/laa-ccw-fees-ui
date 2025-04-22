@@ -12,12 +12,30 @@ import { validateClaimStart } from "./validations/claimStartValidator.js";
  */
 export function showClaimStartPage(req, res) {
   try {
-    getSessionData(req);
+    const sessionData = getSessionData(req);
+
+    let errors = {};
+    let formValues = {};
+
+    if (req.session.formError) {
+      errors = req.session.formError;
+
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (sessionData.startDate) formValues.date = sessionData.startDate;
+      if (sessionData.lawCategory)
+        formValues.category = sessionData.lawCategory;
+    }
 
     res.render("main/claimStart", {
       csrfToken: req.csrfToken(),
       categories: getLawCategories(),
       today: todayString(),
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -36,16 +54,14 @@ export function postClaimStartPage(req, res) {
 
     const errors = validateClaimStart(date, category);
 
-    if (errors.list.length > 0) {
-      res.render("main/claimStart", {
-        categories: getLawCategories(),
-        today: todayString(),
-        errors,
-        formValues: {
-          date,
-          category,
-        },
-      });
+    if (errors.list?.length > 0) {
+      req.session.formError = errors;
+      req.session.formValues = {
+        date: date,
+        category: category,
+      };
+
+      res.redirect(URL_ClaimStart);
     } else {
       const hasCategoryChanged = req.session.data?.lawCategory !== category;
       if (hasCategoryChanged) {

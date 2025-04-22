@@ -1,20 +1,15 @@
 import { postClaimStartPage, showClaimStartPage } from "./claimStartController";
-import {
-  getLawCategories,
-  isValidLawCategory,
-} from "../service/lawCategoryService";
-import {
-  todayString,
-  validateEnteredDate,
-  DateInputError,
-} from "../utils/dateTimeUtils";
+import { getLawCategories } from "../service/lawCategoryService";
+import { todayString } from "../utils/dateTimeUtils";
 import { getNextPage, URL_ClaimStart } from "../routes/navigator";
 import { cleanData, getSessionData } from "../service/sessionDataService";
+import { validateClaimStart } from "./validations/claimStartValidator";
 
 jest.mock("../service/lawCategoryService");
 jest.mock("../utils/dateTimeUtils");
 jest.mock("../routes/navigator.js");
 jest.mock("../service/sessionDataService");
+jest.mock("./validations/claimStartValidator");
 
 const today = "31/03/2025";
 const lawCategories = [
@@ -33,6 +28,7 @@ describe("claimStartController", () => {
   describe("showClaimStartPage", () => {
     let req = {
       csrfToken: jest.fn(),
+      session: {},
     };
     let res = {
       render: jest.fn(),
@@ -53,7 +49,36 @@ describe("claimStartController", () => {
         categories: lawCategories,
         csrfToken: "mocked-csrf-token",
         today: today,
+        errors: {},
+        formValues: {},
       });
+    });
+
+    it("should render page with errors if session has errors in", () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+      showClaimStartPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/claimStart", {
+        categories: lawCategories,
+        csrfToken: "mocked-csrf-token",
+        today: today,
+        errors: mockError,
+        formValues: mockFormValues,
+      });
+    });
+
+    it("should delete validation errors from session if been supplied them", () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+      showClaimStartPage(req, res);
+
+      expect(req.session.formError).toBeUndefined();
+      expect(req.session.formValues).toBeUndefined();
     });
 
     it("should render error page if fails to load page", async () => {
@@ -91,8 +116,7 @@ describe("claimStartController", () => {
     };
 
     beforeEach(() => {
-      isValidLawCategory.mockReturnValue(true);
-      validateEnteredDate.mockReturnValue(null);
+      validateClaimStart.mockReturnValue({});
 
       req = {
         session: {
@@ -115,10 +139,13 @@ describe("claimStartController", () => {
       expect(res.redirect).toHaveBeenCalledWith("nextPage");
       expect(req.session.data.lawCategory).toEqual(familyLaw);
       expect(req.session.data.startDate).toEqual(today);
+      expect(req.session.formValues).toBeUndefined();
+      expect(req.session.formError).toBeUndefined();
       expect(getNextPage).toHaveBeenCalledWith(
         URL_ClaimStart,
         req.session.data,
       );
+      expect(validateClaimStart).toHaveBeenCalledWith(today, familyLaw);
     });
 
     it("should clean up data that depends on law category if law category changed", () => {
@@ -135,181 +162,24 @@ describe("claimStartController", () => {
       expect(cleanData).toHaveBeenCalledTimes(0);
     });
 
-    it("render error page when law category from form is missing", async () => {
-      req.body.category = null;
+    it("redirect to show the errors when data is invalid", async () => {
+      const mockError = {
+        list: [{ error: "error" }],
+      };
+      validateClaimStart.mockReturnValue(mockError);
 
       postClaimStartPage(req, res);
 
-      expect(res.render).toHaveBeenCalledWith("main/claimStart", {
-        categories: [
-          {
-            description: "Family",
-            id: "family",
-          },
-          {
-            description: "Immigration",
-            id: "immigration",
-          },
-        ],
-        errors: {
-          list: [
-            {
-              href: "#category",
-              text: "'Law Category' not entered",
-            },
-          ],
-          messages: {
-            category: {
-              text: "'Law Category' not entered",
-            },
-          },
-        },
-        formValues: {
-          category: null,
-          date: "31/03/2025",
-        },
-        today: "31/03/2025",
-      });
-      expect(req.session.data.lawCategory).toBeUndefined();
-      expect(req.session.data.startDate).toBeUndefined();
-    });
-
-    it("render error page when start date from form is missing", async () => {
-      req.body.date = null;
-
-      postClaimStartPage(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/claimStart", {
-        categories: [
-          {
-            description: "Family",
-            id: "family",
-          },
-          {
-            description: "Immigration",
-            id: "immigration",
-          },
-        ],
-        errors: {
-          list: [
-            {
-              href: "#date",
-              text: "'Date case was opened' not entered",
-            },
-          ],
-          messages: {
-            date: {
-              text: "'Date case was opened' not entered",
-            },
-          },
-        },
-        formValues: {
-          category: "family",
-          date: null,
-        },
-        today: "31/03/2025",
-      });
-      expect(req.session.data.lawCategory).toBeUndefined();
-      expect(req.session.data.startDate).toBeUndefined();
-    });
-
-    it("render error page when law category is invalid", async () => {
-      isValidLawCategory.mockReturnValue(false);
-
-      postClaimStartPage(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/claimStart", {
-        categories: [
-          {
-            description: "Family",
-            id: "family",
-          },
-          {
-            description: "Immigration",
-            id: "immigration",
-          },
-        ],
-        errors: {
-          list: [
-            {
-              href: "#category",
-              text: "'Law Category' is not valid",
-            },
-          ],
-          messages: {
-            category: {
-              text: "'Law Category' is not valid",
-            },
-          },
-        },
-        formValues: {
-          category: "family",
-          date: "31/03/2025",
-        },
-        today: "31/03/2025",
-      });
-      expect(req.session.data.lawCategory).toBeUndefined();
-      expect(req.session.data.startDate).toBeUndefined();
-      expect(isValidLawCategory).toHaveBeenCalledWith(familyLaw);
-    });
-
-    it("render error page when date validation returns error", async () => {
-      validateEnteredDate.mockReturnValue("is not valid");
-
-      postClaimStartPage(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/claimStart", {
-        categories: [
-          {
-            description: "Family",
-            id: "family",
-          },
-          {
-            description: "Immigration",
-            id: "immigration",
-          },
-        ],
-
-        errors: {
-          list: [
-            {
-              href: "#date",
-              text: "'Date case was opened' is not valid",
-            },
-          ],
-          messages: {
-            date: {
-              text: "'Date case was opened' is not valid",
-            },
-          },
-        },
-        formValues: {
-          category: "family",
-          date: "31/03/2025",
-        },
-        today: "31/03/2025",
+      expect(res.redirect).toHaveBeenCalledWith(URL_ClaimStart);
+      expect(req.session.formError).toEqual(mockError);
+      expect(req.session.formValues).toEqual({
+        date: today,
+        category: familyLaw,
       });
 
       expect(req.session.data.lawCategory).toBeUndefined();
       expect(req.session.data.startDate).toBeUndefined();
-      expect(validateEnteredDate).toHaveBeenCalledWith(today);
-    });
-
-    it("render error page when date validation throws error", async () => {
-      validateEnteredDate.mockImplementation(() => {
-        throw new DateInputError("Date error");
-      });
-
-      postClaimStartPage(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/error", {
-        error: "An error occurred saving the answer.",
-        status: "An error occurred",
-      });
-
-      expect(req.session.data.lawCategory).toBeUndefined();
-      expect(req.session.data.startDate).toBeUndefined();
-      expect(validateEnteredDate).toHaveBeenCalledWith(today);
+      expect(cleanData).toHaveBeenCalledTimes(0);
     });
   });
 });
