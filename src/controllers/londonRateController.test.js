@@ -1,7 +1,6 @@
 import { validateSession } from "../service/sessionDataService";
 import {
   getLondonRates,
-  isValidLondonRate,
 } from "../service/londonRateService";
 import { postLondonRatePage, showLondonRatePage } from "./londonRateController";
 import { getNextPage, URL_LondonRate } from "../routes/navigator";

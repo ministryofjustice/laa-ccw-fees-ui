@@ -1,6 +1,5 @@
 import {
   getMatterCode2s,
-  isValidMatterCode2,
 } from "../service/matterCode2Service";
 import {
   postMatterCode2Page,
