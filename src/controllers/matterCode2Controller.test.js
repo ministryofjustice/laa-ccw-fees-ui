@@ -8,10 +8,12 @@ import {
 } from "./matterCode2Controller";
 import { getNextPage, URL_MatterCode2 } from "../routes/navigator";
 import { cleanData, validateSession } from "../service/sessionDataService";
+import { validateMatterCode2 } from "./validations/matterCode2Validator";
 
 jest.mock("../service/matterCode2Service");
 jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
+jest.mock("./validations/matterCode2Validator");
 
 const matterCode2s = [
   {
@@ -30,6 +32,9 @@ describe("matterCode2Controller", () => {
   describe("showMatterCode2Page", () => {
     let req = {
       csrfToken: jest.fn(),
+      session: {
+        data: {},
+      },
     };
     let res = {
       render: jest.fn(),
@@ -42,7 +47,7 @@ describe("matterCode2Controller", () => {
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
 
-    it("should render claim start page", async () => {
+    it("should render matter code 2 page", async () => {
       await showMatterCode2Page(req, res);
 
       expect(res.render).toHaveBeenCalledWith("main/matterCode", {
@@ -50,7 +55,59 @@ describe("matterCode2Controller", () => {
         csrfToken: "mocked-csrf-token",
         id: "matterCode2",
         label: "Matter Code 2",
+        errors: {},
+        formValues: {},
       });
+    });
+
+    it("should prepopuate data if in session", async () => {
+      req.session.data.matterCode2 = chosenMatterCode;
+      await showMatterCode2Page(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/matterCode", {
+        matterCodes: matterCode2s,
+        csrfToken: "mocked-csrf-token",
+        id: "matterCode2",
+        label: "Matter Code 2",
+        errors: {},
+        formValues: {
+          matterCode2: chosenMatterCode,
+        },
+      });
+
+      expect(getMatterCode2s).toHaveBeenCalledWith(req);
+    });
+
+    it("should display validation errors if supplied", async () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+
+      await showMatterCode2Page(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/matterCode", {
+        matterCodes: matterCode2s,
+        csrfToken: "mocked-csrf-token",
+        id: "matterCode2",
+        label: "Matter Code 2",
+        errors: mockError,
+        formValues: mockFormValues,
+      });
+
+      expect(getMatterCode2s).toHaveBeenCalledWith(req);
+    });
+
+    it("should delete validation errors if supplied", async () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+
+      await showMatterCode2Page(req, res);
+
+      expect(req.session.formError).toBeUndefined();
+      expect(req.session.formValues).toBeUndefined();
     });
 
     it("should render error page if fails to load page", async () => {
@@ -104,7 +161,7 @@ describe("matterCode2Controller", () => {
 
     beforeEach(() => {
       getMatterCode2s.mockResolvedValue(matterCode2s);
-      isValidMatterCode2.mockReturnValue(true);
+      validateMatterCode2.mockReturnValue(true);
 
       req = {
         session: {
@@ -125,7 +182,7 @@ describe("matterCode2Controller", () => {
       expect(req.session.data.matterCode2).toEqual(chosenMatterCode);
 
       expect(getMatterCode2s).toHaveBeenCalledWith(req);
-      expect(isValidMatterCode2).toHaveBeenCalledWith(
+      expect(validateMatterCode2).toHaveBeenCalledWith(
         matterCode2s,
         chosenMatterCode,
       );
@@ -149,86 +206,21 @@ describe("matterCode2Controller", () => {
       expect(cleanData).toHaveBeenCalledTimes(0);
     });
 
-    it("render error page when Matter Code 2 from form is missing", async () => {
-      req.body.matterCode2 = null;
+    it("redirect to GET if need to display validation errors", async () => {
+      const mockError = {
+        list: [{ error: "error" }],
+      };
+
+      validateMatterCode2.mockReturnValue(mockError);
 
       await postMatterCode2Page(req, res);
 
-      expect(res.render).toHaveBeenCalledWith("main/matterCode", {
-        errors: {
-          list: [
-            {
-              href: "#matterCode2",
-              text: "'Matter Code 2' not entered",
-            },
-          ],
-          messages: {
-            matterCode2: {
-              text: "'Matter Code 2' not entered",
-            },
-          },
-        },
-        formValues: {
-          matterCode2: null,
-        },
-        id: "matterCode2",
-        label: "Matter Code 2",
-        matterCodes: [
-          {
-            description: "Matter code A",
-            id: "MC2A",
-          },
-          {
-            description: "Matter code B",
-            id: "MC2B",
-          },
-        ],
+      expect(res.redirect).toHaveBeenCalledWith(URL_MatterCode2);
+      expect(req.session.formError).toEqual(mockError);
+      expect(req.session.formValues).toEqual({
+        matterCode2: chosenMatterCode,
       });
       expect(req.session.data.matterCode2).toBeUndefined();
-    });
-
-    it("render error page when Matter Code 2 is invalid", async () => {
-      isValidMatterCode2.mockReturnValue(false);
-
-      await postMatterCode2Page(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/matterCode", {
-        errors: {
-          list: [
-            {
-              href: "#matterCode2",
-              text: "'Matter Code 2' is not valid",
-            },
-          ],
-          messages: {
-            matterCode2: {
-              text: "'Matter Code 2' is not valid",
-            },
-          },
-        },
-        formValues: {
-          matterCode2: "MC2A",
-        },
-        id: "matterCode2",
-        label: "Matter Code 2",
-        matterCodes: [
-          {
-            description: "Matter code A",
-            id: "MC2A",
-          },
-          {
-            description: "Matter code B",
-            id: "MC2B",
-          },
-        ],
-      });
-
-      expect(req.session.data.matterCode2).toBeUndefined();
-      expect(getMatterCode2s).toHaveBeenCalledWith(req);
-      expect(isValidMatterCode2).toHaveBeenCalledWith(
-        matterCode2s,
-        chosenMatterCode,
-      );
     });
 
     it("should render error page if getMatterCode2s call throws error", async () => {
