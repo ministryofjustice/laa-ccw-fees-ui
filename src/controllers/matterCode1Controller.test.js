@@ -1,6 +1,4 @@
-import {
-  getMatterCode1s,
-} from "../service/matterCode1Service";
+import { getMatterCode1s } from "../service/matterCode1Service";
 import {
   postMatterCode1Page,
   showMatterCode1Page,

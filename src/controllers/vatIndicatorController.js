@@ -26,7 +26,7 @@ export function showVatIndicatorPage(req, res) {
         formValues.vatIndicator = req.session.data.vatIndicator;
       }
     }
-    console.log(formValues)
+    console.log(formValues);
     res.render("main/vatIndicator", {
       csrfToken: req.csrfToken(),
       errors: errors,
