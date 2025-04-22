@@ -1,5 +1,5 @@
 import { postCaseStagePage, showCaseStagePage } from "./caseStageController";
-import { getCaseStages, isValidCaseStage } from "../service/caseStageService";
+import { getCaseStages } from "../service/caseStageService";
 import { validateSession } from "../service/sessionDataService";
 import { getNextPage, URL_CaseStage } from "../routes/navigator";
 import { validateCaseStage } from "./validations/caseStageValidator";
@@ -82,6 +82,17 @@ describe("caseStageController", () => {
         formValues: mockFormValues,
       });
       expect(getCaseStages).toHaveBeenCalledWith(req);
+    });
+
+    it("should delete validation errors from session if been supplied them", () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+      showCaseStagePage(req, res);
+
+      expect(req.session.formError).toBeUndefined();
+      expect(req.session.formValues).toBeUndefined();
     });
 
     it("should render error page if fails to load page", async () => {

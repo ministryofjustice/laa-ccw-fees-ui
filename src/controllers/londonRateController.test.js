@@ -5,10 +5,12 @@ import {
 } from "../service/londonRateService";
 import { postLondonRatePage, showLondonRatePage } from "./londonRateController";
 import { getNextPage, URL_LondonRate } from "../routes/navigator";
+import { validateLondonRate } from "./validations/londonRateValidator";
 
 jest.mock("../service/londonRateService");
 jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
+jest.mock("./validations/londonRateValidator");
 
 const londonRates = [
   {
@@ -27,6 +29,9 @@ describe("londonRateController", () => {
   describe("showLondonRatePage", () => {
     let req = {
       csrfToken: jest.fn(),
+      session: {
+        data: {},
+      },
     };
     let res = {
       render: jest.fn(),
@@ -45,7 +50,50 @@ describe("londonRateController", () => {
       expect(res.render).toHaveBeenCalledWith("main/londonRate", {
         rates: londonRates,
         csrfToken: "mocked-csrf-token",
+        errors: {},
+        formValues: {},
       });
+    });
+
+    it("should pre-populate saved data", () => {
+      req.session.data.londonRate = london;
+      showLondonRatePage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/londonRate", {
+        rates: londonRates,
+        csrfToken: "mocked-csrf-token",
+        errors: {},
+        formValues: {
+          londonRate: london,
+        },
+      });
+    });
+
+    it("should show validation errors if defined", () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+
+      showLondonRatePage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/londonRate", {
+        rates: londonRates,
+        csrfToken: "mocked-csrf-token",
+        errors: mockError,
+        formValues: mockFormValues,
+      });
+    });
+
+    it("should delete validation errors from session if been supplied them", () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+      showLondonRatePage(req, res);
+
+      expect(req.session.formError).toBeUndefined();
+      expect(req.session.formValues).toBeUndefined();
     });
 
     it("should render error page if fails to load page", async () => {
@@ -77,11 +125,10 @@ describe("londonRateController", () => {
 
   describe("postLondonRatePage", () => {
     let body = {};
-    let sessionData = {};
 
     let req = {
       session: {
-        data: sessionData,
+        data: {},
       },
       body: body,
     };
@@ -91,13 +138,9 @@ describe("londonRateController", () => {
     };
 
     beforeEach(() => {
-      isValidLondonRate.mockReturnValue(true);
-
+      validateLondonRate.mockReturnValue({});
       body.londonRate = london;
-    });
-
-    afterEach(() => {
-      sessionData = {};
+      req.session.data = {};
     });
 
     it("should redirect to result page if valid form data is supplied", () => {
@@ -106,89 +149,30 @@ describe("londonRateController", () => {
       postLondonRatePage(req, res);
 
       expect(res.redirect).toHaveBeenCalledWith("nextPage");
-      expect(sessionData.londonRate).toEqual(london);
+      expect(req.session.data.londonRate).toEqual(london);
 
-      expect(isValidLondonRate).toHaveBeenCalledWith(london);
+      expect(validateLondonRate).toHaveBeenCalledWith(london);
       expect(getNextPage).toHaveBeenCalledWith(
         URL_LondonRate,
         req.session.data,
       );
     });
 
-    it("render error page when London Rate from form is missing", async () => {
-      body.londonRate = null;
+    it("set validation errors and redirect to the GET to display them", async () => {
+      const mockError = {
+        list: [{ error: "error" }],
+      };
+      validateLondonRate.mockReturnValue(mockError);
       getLondonRates.mockReturnValue(londonRates);
 
       postLondonRatePage(req, res);
 
-      expect(res.render).toHaveBeenCalledWith("main/londonRate", {
-        errors: {
-          list: [
-            {
-              href: "#londonRate",
-              text: "'London/Non-London Rate' not entered",
-            },
-          ],
-          messages: {
-            londonRate: {
-              text: "'London/Non-London Rate' not entered",
-            },
-          },
-        },
-        formValues: {
-          londonRate: null,
-        },
-        rates: [
-          {
-            description: "London",
-            id: "LDN",
-          },
-          {
-            description: "Non-London",
-            id: "NLDN",
-          },
-        ],
+      expect(res.redirect).toHaveBeenCalledWith(URL_LondonRate);
+      expect(req.session.formError).toEqual(mockError);
+      expect(req.session.formValues).toEqual({
+        londonRate: london,
       });
-      expect(sessionData.londonRate).toBeUndefined();
-    });
-
-    it("render error page when London Rate is invalid", async () => {
-      getLondonRates.mockReturnValue(londonRates);
-      isValidLondonRate.mockReturnValue(false);
-
-      postLondonRatePage(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/londonRate", {
-        errors: {
-          list: [
-            {
-              href: "#londonRate",
-              text: "'London/Non-London Rate' is not valid",
-            },
-          ],
-          messages: {
-            londonRate: {
-              text: "'London/Non-London Rate' is not valid",
-            },
-          },
-        },
-        formValues: {
-          londonRate: "LDN",
-        },
-        rates: [
-          {
-            description: "London",
-            id: "LDN",
-          },
-          {
-            description: "Non-London",
-            id: "NLDN",
-          },
-        ],
-      });
-
-      expect(sessionData.londonRate).toBeUndefined();
-      expect(isValidLondonRate).toHaveBeenCalledWith(london);
+      expect(req.session.data.londonRate).toBeUndefined();
     });
   });
 });

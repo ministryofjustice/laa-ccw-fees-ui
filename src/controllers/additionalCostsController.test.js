@@ -77,6 +77,20 @@ describe("additionalCostsController", () => {
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
 
+    it("should render additional costs page", async () => {
+      await showAdditionalCostsPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
+        fieldsToShow: displayableFees,
+        csrfToken: "mocked-csrf-token",
+        feeTypes: feeTypes,
+        errors: {},
+        formValues: {},
+      });
+      expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
+      expect(getFeeDetails).toHaveBeenCalledWith(req);
+    });
+
     it("should render page with validation errors if session has errors in", async () => {
       const mockError = { error: true };
       const mockFormValues = { value1: 2, value2: 3 };
@@ -94,6 +108,22 @@ describe("additionalCostsController", () => {
       });
       expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
       expect(getFeeDetails).toHaveBeenCalledWith(req);
+    });
+
+    it("should delete validation errors from session if been supplied them", async () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+      console.log(req.session.formError);
+
+      await showAdditionalCostsPage(req, res);
+      console.log(req.session.formError);
+
+      expect(req.session.formError).toBeUndefined();
+      console.log(req.session.formError);
+
+      expect(req.session.formValues).toBeUndefined();
     });
 
     it("should populate existing additional costs from session data if set", async () => {
