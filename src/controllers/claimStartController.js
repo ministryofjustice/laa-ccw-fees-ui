@@ -19,15 +19,17 @@ export function showClaimStartPage(req, res) {
 
     if (req.session.formError) {
       errors = req.session.formError;
-
       formValues = req.session.formValues;
 
       delete req.session.formError;
       delete req.session.formValues;
     } else {
-      if (sessionData.startDate) formValues.date = sessionData.startDate;
-      if (sessionData.lawCategory)
+      if (sessionData.startDate) {
+        formValues.date = sessionData.startDate;
+      }
+      if (sessionData.lawCategory) {
         formValues.category = sessionData.lawCategory;
+      }
     }
 
     res.render("main/claimStart", {
