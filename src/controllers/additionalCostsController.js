@@ -18,15 +18,14 @@ import { validateAndReturnAdditionalCostValue } from "./validations/additionalCo
  */
 export async function showAdditionalCostsPage(req, res) {
   try {
-    getSessionData(req);
+    const sessionData = getSessionData(req);
 
-    if (req.session.data.lawCategory !== immigrationLaw) {
+    if (sessionData.lawCategory !== immigrationLaw) {
       return res.redirect(getNextPage(URL_AdditionalCosts));
     }
 
     await getCaseStageForImmigration(req);
     const feeDetails = await getFeeDetails(req);
-
     const fields = getDisplayableFees(feeDetails);
 
     if (fields.length === 0) {
@@ -34,10 +33,32 @@ export async function showAdditionalCostsPage(req, res) {
       return res.redirect(getNextPage(URL_AdditionalCosts));
     }
 
+    let errors = {};
+    let formValues = {};
+
+    if (req.session.formError) {
+      errors = req.session.formError;
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (sessionData.additionalCosts) {
+        for (const field of fields) {
+          const savedCost = sessionData.additionalCosts.find(
+            (cost) => cost.levelCode === field.levelCode,
+          )?.value;
+          formValues[field.levelCode] = savedCost;
+        }
+      }
+    }
+
     res.render("main/additionalCosts", {
       csrfToken: req.csrfToken(),
       fieldsToShow: fields,
       feeTypes: feeTypes,
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -76,12 +97,10 @@ export async function postAdditionalCostsPage(req, res) {
     }
 
     if (errors.list.length > 0) {
-      res.render("main/additionalCosts", {
-        fieldsToShow: fields,
-        feeTypes: feeTypes,
-        errors,
-        formValues,
-      });
+      req.session.formError = errors;
+      req.session.formValues = formValues;
+
+      res.redirect(URL_AdditionalCosts);
     } else {
       req.session.data.additionalCosts = enteredAdditionalCosts;
 

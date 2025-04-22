@@ -47,6 +47,14 @@
                 }) }}
             
             {% elif field.levelCodeType == feeTypes.optionalBool %}
+                {% if fieldValue == true %}
+                    {% set boolFieldValue = "yes" %}
+                {% elif fieldValue == false %}
+                    {% set boolFieldValue = "no" %}
+                {% else %}
+                    {% set boolFieldValue = "" %}
+                {% endif %}
+
                 {{ govukRadios({
                     name: field.levelCode,
                     id: field.levelCode,
@@ -67,7 +75,7 @@
                             text: "No"
                         }
                     ],
-                    value: fieldValue,
+                    value: boolFieldValue,
                     errorMessage: fieldErrorMessage
                 }) }}
             {% endif %}

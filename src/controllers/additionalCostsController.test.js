@@ -68,23 +68,88 @@ describe("additionalCostsController", () => {
     };
 
     beforeEach(() => {
-      getFeeDetails.mockReturnValue(feeDetails);
-      getCaseStageForImmigration.mockReturnValue("_IMM01");
-      getSessionData.mockReturnValue({});
+      getFeeDetails.mockResolvedValue(feeDetails);
+      getCaseStageForImmigration.mockResolvedValue("_IMM01");
+      getSessionData.mockReturnValue({
+        lawCategory: immigrationLaw,
+      });
       getDisplayableFees.mockReturnValue(displayableFees);
-
-      req.session.data.lawCategory = immigrationLaw;
 
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
 
-    it("should render additional costs page", async () => {
+    it("should render page with validation errors if session has errors in", async () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+
       await showAdditionalCostsPage(req, res);
 
       expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
         fieldsToShow: displayableFees,
         csrfToken: "mocked-csrf-token",
         feeTypes: feeTypes,
+        errors: mockError,
+        formValues: mockFormValues,
+      });
+      expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
+      expect(getFeeDetails).toHaveBeenCalledWith(req);
+    });
+
+    it("should populate existing additional costs from session data if set", async () => {
+      getSessionData.mockReturnValue({
+        lawCategory: immigrationLaw,
+        additionalCosts: [
+          { levelCode: "LVL1", value: "2" },
+          { levelCode: "LVL3", value: true },
+          { levelCode: "LVL4", value: "2.34" },
+          { levelCode: "LVL5", value: "5" },
+        ],
+      });
+
+      await showAdditionalCostsPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
+        fieldsToShow: displayableFees,
+        csrfToken: "mocked-csrf-token",
+        feeTypes: feeTypes,
+        errors: {},
+        formValues: {
+          LVL1: "2",
+          LVL3: true,
+          LVL4: "2.34",
+          LVL5: "5",
+        },
+      });
+      expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
+      expect(getFeeDetails).toHaveBeenCalledWith(req);
+    });
+
+    it("should populate existing additional costs from session data if set", async () => {
+      getSessionData.mockReturnValue({
+        lawCategory: immigrationLaw,
+        additionalCosts: [
+          { levelCode: "LVL1", value: "2" },
+          { levelCode: "LVL3", value: true },
+          { levelCode: "LVL4", value: "2.34" },
+          { levelCode: "LVL5", value: "5" },
+        ],
+      });
+
+      await showAdditionalCostsPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
+        fieldsToShow: displayableFees,
+        csrfToken: "mocked-csrf-token",
+        feeTypes: feeTypes,
+        errors: {},
+        formValues: {
+          LVL1: "2",
+          LVL3: true,
+          LVL4: "2.34",
+          LVL5: "5",
+        },
       });
       expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
       expect(getFeeDetails).toHaveBeenCalledWith(req);
@@ -148,7 +213,9 @@ describe("additionalCostsController", () => {
 
     it("should redirect to the next page if not immigration law", async () => {
       getNextPage.mockReturnValue("nextPage");
-      req.session.data.lawCategory = familyLaw;
+      getSessionData.mockReturnValue({
+        lawCategory: familyLaw,
+      });
 
       await showAdditionalCostsPage(req, res);
 
@@ -261,19 +328,32 @@ describe("additionalCostsController", () => {
       expect(getFeeDetails).toHaveBeenCalledWith(req);
     });
 
-    it("render error page when validation fails", async () => {
+    it("redirect to the get so it can display validation errors if there are some", async () => {
       validateAndReturnAdditionalCostValue
         .mockReset()
-        .mockReturnValueOnce("2")
-        .mockImplementation(() => {
-          throw new Error("Validation failed");
-        });
+        .mockReturnValueOnce({ value: "2" })
+        .mockReturnValueOnce({ error: "Error" })
+        .mockReturnValueOnce({ value: "3" })
+        .mockReturnValueOnce({ error: "Error" });
 
       await postAdditionalCostsPage(req, res);
 
-      expect(res.render).toHaveBeenCalledWith("main/error", {
-        error: "An error occurred saving the answer.",
-        status: "An error occurred",
+      expect(res.redirect).toHaveBeenCalledWith(URL_AdditionalCosts);
+      expect(req.session.formError).toEqual({
+        list: [
+          { href: "#LVL3", text: "'Level 3' Error" },
+          { href: "#LVL5", text: "'Level 5' Error" },
+        ],
+        messages: {
+          LVL3: { text: "'Level 3' Error" },
+          LVL5: { text: "'Level 5' Error" },
+        },
+      });
+      expect(req.session.formValues).toEqual({
+        LVL1: "2",
+        LVL3: undefined,
+        LVL4: "3",
+        LVL5: undefined,
       });
       expect(req.session.data.additionalCosts).toBeUndefined();
     });
