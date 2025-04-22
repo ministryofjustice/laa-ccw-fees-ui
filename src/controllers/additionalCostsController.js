@@ -96,7 +96,7 @@ export async function postAdditionalCostsPage(req, res) {
       formValues[field.levelCode] = value;
     }
 
-    if (errors.list.length > 0) {
+    if (errors.list?.length > 0) {
       req.session.formError = errors;
       req.session.formValues = formValues;
 

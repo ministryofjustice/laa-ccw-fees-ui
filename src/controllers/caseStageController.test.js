@@ -2,10 +2,12 @@ import { postCaseStagePage, showCaseStagePage } from "./caseStageController";
 import { getCaseStages, isValidCaseStage } from "../service/caseStageService";
 import { getSessionData } from "../service/sessionDataService";
 import { getNextPage, URL_CaseStage } from "../routes/navigator";
+import { validateCaseStage } from "./validations/caseStageValidator";
 
 jest.mock("../service/caseStageService");
 jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
+jest.mock("./validations/caseStageValidator");
 
 const caseStages = [
   {
@@ -23,6 +25,9 @@ describe("caseStageController", () => {
   describe("showCaseStagePage", () => {
     let req = {
       csrfToken: jest.fn(),
+      session: {
+        data: {},
+      },
     };
     let res = {
       render: jest.fn(),
@@ -41,6 +46,40 @@ describe("caseStageController", () => {
       expect(res.render).toHaveBeenCalledWith("main/caseStage", {
         caseStages: caseStages,
         csrfToken: "mocked-csrf-token",
+        errors: {},
+        formValues: {},
+      });
+      expect(getCaseStages).toHaveBeenCalledWith(req);
+    });
+
+    it("should pre-populate the value if already set in session data", async () => {
+      req.session.data.caseStage = level1;
+      await showCaseStagePage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/caseStage", {
+        caseStages: caseStages,
+        csrfToken: "mocked-csrf-token",
+        errors: {},
+        formValues: {
+          caseStage: level1,
+        },
+      });
+      expect(getCaseStages).toHaveBeenCalledWith(req);
+    });
+
+    it("should display validation errors if set", async () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+
+      await showCaseStagePage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/caseStage", {
+        caseStages: caseStages,
+        csrfToken: "mocked-csrf-token",
+        errors: mockError,
+        formValues: mockFormValues,
       });
       expect(getCaseStages).toHaveBeenCalledWith(req);
     });
@@ -96,7 +135,7 @@ describe("caseStageController", () => {
 
     beforeEach(() => {
       getCaseStages.mockResolvedValue(caseStages);
-      isValidCaseStage.mockReturnValue(true);
+      validateCaseStage.mockReturnValue({});
 
       req = {
         session: {
@@ -108,7 +147,7 @@ describe("caseStageController", () => {
       };
     });
 
-    it("should redirect to result page if valid form data is supplied", async () => {
+    it("should redirect to next page if valid form data is supplied", async () => {
       getNextPage.mockReturnValue("nextPage");
 
       await postCaseStagePage(req, res);
@@ -116,82 +155,26 @@ describe("caseStageController", () => {
       expect(res.redirect).toHaveBeenCalledWith("nextPage");
       expect(req.session.data.caseStage).toEqual(level1);
       expect(getNextPage).toHaveBeenCalledWith(URL_CaseStage, req.session.data);
-      expect(isValidCaseStage).toHaveBeenCalledWith(caseStages, level1);
+      expect(validateCaseStage).toHaveBeenCalledWith(caseStages, level1);
       expect(getCaseStages).toHaveBeenCalledWith(req);
     });
 
-    it("render error page when case stage from form is missing", async () => {
-      req.body.caseStage = null;
+    it("should go back to the GET to display any validation errors", async () => {
+      const mockError = {
+        list: [{ error: "error" }],
+      };
+      validateCaseStage.mockReturnValue(mockError);
 
       await postCaseStagePage(req, res);
 
-      expect(res.render).toHaveBeenCalledWith("main/caseStage", {
-        caseStages: [
-          {
-            caseStage: "LVL1",
-            description: "Level 1",
-          },
-          {
-            caseStage: "LVL2",
-            description: "Level 2",
-          },
-        ],
-        errors: {
-          list: [
-            {
-              href: "#caseStage",
-              text: "'Case Stage / Level' not entered",
-            },
-          ],
-          messages: {
-            caseStage: {
-              text: "'Case Stage / Level' not entered",
-            },
-          },
-        },
-        formValues: {
-          caseStage: null,
-        },
+      expect(res.redirect).toHaveBeenCalledWith(URL_CaseStage);
+      expect(req.session.formError).toEqual(mockError);
+      expect(req.session.formValues).toEqual({
+        caseStage: level1,
       });
       expect(req.session.data.caseStage).toBeUndefined();
-    });
-
-    it("render error page when case stage is invalid", async () => {
-      isValidCaseStage.mockReturnValue(false);
-
-      await postCaseStagePage(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/caseStage", {
-        caseStages: [
-          {
-            caseStage: "LVL1",
-            description: "Level 1",
-          },
-          {
-            caseStage: "LVL2",
-            description: "Level 2",
-          },
-        ],
-        errors: {
-          list: [
-            {
-              href: "#caseStage",
-              text: "'Case Stage / Level' is not valid",
-            },
-          ],
-          messages: {
-            caseStage: {
-              text: "'Case Stage / Level' is not valid",
-            },
-          },
-        },
-        formValues: {
-          caseStage: "LVL1",
-        },
-      });
-
-      expect(req.session.data.caseStage).toBeUndefined();
-      expect(isValidCaseStage).toHaveBeenCalledWith(caseStages, level1);
+      expect(getNextPage).toHaveBeenCalledTimes(0);
+      expect(validateCaseStage).toHaveBeenCalledWith(caseStages, level1);
       expect(getCaseStages).toHaveBeenCalledWith(req);
     });
 
