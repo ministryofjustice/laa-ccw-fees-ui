@@ -54,7 +54,7 @@ describe("claimStartController", () => {
       });
     });
 
-    it("should render page with errors if session has errors in", () => {
+    it("should render page with validation errors if session has errors in", () => {
       const mockError = { error: true };
       const mockFormValues = { value1: 2, value2: 3 };
       req.session.formError = mockError;
@@ -67,6 +67,26 @@ describe("claimStartController", () => {
         today: today,
         errors: mockError,
         formValues: mockFormValues,
+      });
+    });
+
+    it("should pre-populate values if stored in session data", () => {
+      getSessionData.mockReturnValue({
+        startDate: today,
+        lawCategory: familyLaw,
+      });
+
+      showClaimStartPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/claimStart", {
+        categories: lawCategories,
+        csrfToken: "mocked-csrf-token",
+        today: today,
+        errors: {},
+        formValues: {
+          date: today,
+          category: familyLaw,
+        },
       });
     });
 
