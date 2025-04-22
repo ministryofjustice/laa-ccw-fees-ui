@@ -38,7 +38,6 @@ export function postClaimStartPage(req, res) {
 
     if (errors.list.length > 0) {
       res.render("main/claimStart", {
-        // csrfToken: req.csrfToken(),
         categories: getLawCategories(),
         today: todayString(),
         errors,

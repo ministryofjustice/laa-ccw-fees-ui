@@ -5,12 +5,17 @@
 
 {% block wrappedContent %}
 
+    {% include "main/errorSummary.njk" %}
+
     <h1 class="govuk-heading-xl">Additional costs and fees</h1>
     <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         
         {% for field in fieldsToShow %}
             {% set description = field.formQuestion or field.description %}
+            {% set fieldValue = formValues[field.levelCode] %}
+            {% set fieldErrorMessage = errors.messages[field.levelCode] %}
+
             {% if field.levelCodeType == feeTypes.optionalFee %}
                {{ govukInput({
                     label: {
@@ -23,7 +28,9 @@
                     classes: "govuk-input--width-5",
                     id: field.levelCode,
                     name: field.levelCode,
-                    prefix: {text: "£"}
+                    prefix: {text: "£"},
+                   value: fieldValue,
+                   errorMessage: fieldErrorMessage
                 }) }}
             {% elif field.levelCodeType == feeTypes.optionalUnit %}
                 {{ govukInput({
@@ -34,7 +41,9 @@
                     classes: "govuk-input--width-3",
                     id: field.levelCode,
                     name: field.levelCode,
-                    inputmode: "numeric"
+                    inputmode: "numeric",
+                    value: fieldValue,
+                    errorMessage: fieldErrorMessage
                 }) }}
             
             {% elif field.levelCodeType == feeTypes.optionalBool %}
@@ -57,7 +66,9 @@
                             value: "no",
                             text: "No"
                         }
-                    ]
+                    ],
+                    value: fieldValue,
+                    errorMessage: fieldErrorMessage
                 }) }}
             {% endif %}
         {% endfor %}
