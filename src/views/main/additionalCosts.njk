@@ -47,12 +47,11 @@
                 }) }}
             
             {% elif field.levelCodeType == feeTypes.optionalBool %}
+                {% set boolFieldValue = fieldValue %}
                 {% if fieldValue == true %}
                     {% set boolFieldValue = "yes" %}
                 {% elif fieldValue == false %}
                     {% set boolFieldValue = "no" %}
-                {% else %}
-                    {% set boolFieldValue = "" %}
                 {% endif %}
 
                 {{ govukRadios({

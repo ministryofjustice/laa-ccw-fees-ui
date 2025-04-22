@@ -12,8 +12,25 @@ export function showVatIndicatorPage(req, res) {
   try {
     validateSession(req);
 
+    let errors = {};
+    let formValues = {};
+
+    if (req.session.formError) {
+      errors = req.session.formError;
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (req.session.data.vatIndicator) {
+        formValues.vatIndicator = req.session.data.vatIndicator;
+      }
+    }
+    console.log(formValues)
     res.render("main/vatIndicator", {
       csrfToken: req.csrfToken(),
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -31,13 +48,12 @@ export function postVatIndicatorRate(req, res) {
 
     const errors = validateVatIndicator(vatIndicator);
 
-    if (errors.list.length > 0) {
-      res.render("main/vatIndicator", {
-        errors,
-        formValues: {
-          vatIndicator,
-        },
-      });
+    if (errors.list?.length > 0) {
+      req.session.formError = errors;
+      req.session.formValues = {
+        vatIndicator: vatIndicator,
+      };
+      res.redirect(URL_VatIndicator);
     } else {
       req.session.data.vatIndicator = vatIndicator === "yes" ? true : false;
 

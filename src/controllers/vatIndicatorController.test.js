@@ -4,14 +4,19 @@ import {
   showVatIndicatorPage,
 } from "./vatIndicatorController";
 import { getNextPage, URL_VatIndicator } from "../routes/navigator";
+import { validateVatIndicator } from "./validations/vatIndicatorValidator.js";
 
 jest.mock("../service/sessionDataService");
 jest.mock("../routes/navigator.js");
+jest.mock("./validations/vatIndicatorValidator");
 
 describe("vatIndicatorController", () => {
   describe("showVatIndicatorPage", () => {
     let req = {
       csrfToken: jest.fn(),
+      session: {
+        data: {},
+      },
     };
     let res = {
       render: jest.fn(),
@@ -28,7 +33,48 @@ describe("vatIndicatorController", () => {
 
       expect(res.render).toHaveBeenCalledWith("main/vatIndicator", {
         csrfToken: "mocked-csrf-token",
+        errors: {},
+        formValues: {},
       });
+    });
+
+    it("should pre-populate values if stored in session data", () => {
+      req.session.data.vatIndicator = true;
+
+      showVatIndicatorPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/vatIndicator", {
+        csrfToken: "mocked-csrf-token",
+        errors: {},
+        formValues: {
+          vatIndicator: true,
+        },
+      });
+    });
+
+    it("should render page with validation errors if session has errors in", () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+      showVatIndicatorPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/vatIndicator", {
+        csrfToken: "mocked-csrf-token",
+        errors: mockError,
+        formValues: mockFormValues,
+      });
+    });
+
+    it("should delete validation errors from session if been supplied them", () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+      showVatIndicatorPage(req, res);
+
+      expect(req.session.formError).toBeUndefined();
+      expect(req.session.formValues).toBeUndefined();
     });
 
     it("should render error page if fails to load page", async () => {
@@ -64,7 +110,7 @@ describe("vatIndicatorController", () => {
 
     let req = {
       session: {
-        data: sessionData,
+        data: {},
       },
       body: body,
     };
@@ -73,87 +119,44 @@ describe("vatIndicatorController", () => {
       redirect: jest.fn(),
     };
 
-    it("should redirect to result page if value is yes", () => {
-      getNextPage.mockReturnValue("nextPage");
-
+    beforeEach(() => {
+      validateVatIndicator.mockReturnValue({});
       body.vatIndicator = "yes";
-      postVatIndicatorRate(req, res);
-
-      expect(res.redirect).toHaveBeenCalledWith("nextPage");
-      expect(sessionData.vatIndicator).toEqual(true);
-
-      expect(getNextPage).toHaveBeenCalledWith(
-        URL_VatIndicator,
-        req.session.data,
-      );
     });
 
-    it("should redirect to result page if value is no", () => {
-      getNextPage.mockReturnValue("nextPage");
+    it.each([
+      ["yes", true],
+      ["no", false],
+    ])(
+      "should redirect to result page if value is valid",
+      (enteredValue, expectedValue) => {
+        body.vatIndicator = enteredValue;
+        getNextPage.mockReturnValue("nextPage");
 
-      body.vatIndicator = "no";
+        postVatIndicatorRate(req, res);
+
+        expect(res.redirect).toHaveBeenCalledWith("nextPage");
+        expect(req.session.data.vatIndicator).toEqual(expectedValue);
+
+        expect(getNextPage).toHaveBeenCalledWith(
+          URL_VatIndicator,
+          req.session.data,
+        );
+      },
+    );
+
+    it("render error page when value is invalid", async () => {
+      const mockError = {
+        list: [{ error: "error" }],
+      };
+      validateVatIndicator.mockReturnValue(mockError);
       postVatIndicatorRate(req, res);
 
-      expect(res.redirect).toHaveBeenCalledWith("nextPage");
-      expect(sessionData.vatIndicator).toEqual(false);
-
-      expect(getNextPage).toHaveBeenCalledWith(
-        URL_VatIndicator,
-        req.session.data,
-      );
-    });
-
-    it("render error page when VAT Indicator from form is missing", async () => {
-      body.vatIndicator = null;
-      sessionData = {};
-      postVatIndicatorRate(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/vatIndicator", {
-        errors: {
-          list: [
-            {
-              href: "#vatIndicator",
-              text: "'Are you VAT registered?' not entered",
-            },
-          ],
-          messages: {
-            vatIndicator: {
-              text: "'Are you VAT registered?' not entered",
-            },
-          },
-        },
-        formValues: {
-          vatIndicator: null,
-        },
+      expect(res.redirect).toHaveBeenCalledWith(URL_VatIndicator);
+      expect(req.session.formError).toEqual(mockError);
+      expect(req.session.formValues).toEqual({
+        vatIndicator: "yes",
       });
-      expect(sessionData.vatIndicator).toBeUndefined();
-    });
-
-    it("render error page when VAT Indicator is invalid", async () => {
-      body.vatIndicator = "foo";
-      sessionData = {};
-
-      postVatIndicatorRate(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/vatIndicator", {
-        errors: {
-          list: [
-            {
-              href: "#vatIndicator",
-              text: "'Are you VAT registered?' is not valid",
-            },
-          ],
-          messages: {
-            vatIndicator: {
-              text: "'Are you VAT registered?' is not valid",
-            },
-          },
-        },
-        formValues: {
-          vatIndicator: "foo",
-        },
-      });
-
       expect(sessionData.vatIndicator).toBeUndefined();
     });
   });
