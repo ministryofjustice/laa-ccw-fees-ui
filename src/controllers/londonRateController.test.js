@@ -1,4 +1,4 @@
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import {
   getLondonRates,
   isValidLondonRate,
@@ -34,7 +34,7 @@ describe("londonRateController", () => {
 
     beforeEach(() => {
       getLondonRates.mockReturnValue(londonRates);
-      getSessionData.mockReturnValue({});
+      validateSession.mockReturnValue(true);
 
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
@@ -62,7 +62,7 @@ describe("londonRateController", () => {
     });
 
     it("should render error page if no existing session data already (as skipped workflow)", async () => {
-      getSessionData.mockImplementation(() => {
+      validateSession.mockImplementation(() => {
         throw new Error("No session data found");
       });
 

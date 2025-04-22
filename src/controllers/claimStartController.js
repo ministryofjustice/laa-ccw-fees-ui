@@ -1,6 +1,6 @@
 import { getNextPage, URL_ClaimStart } from "../routes/navigator";
 import { getLawCategories } from "../service/lawCategoryService";
-import { cleanData, getSessionData } from "../service/sessionDataService";
+import { cleanData, validateSession } from "../service/sessionDataService";
 import { todayString } from "../utils/dateTimeUtils";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { validateClaimStart } from "./validations/claimStartValidator.js";
@@ -12,7 +12,7 @@ import { validateClaimStart } from "./validations/claimStartValidator.js";
  */
 export function showClaimStartPage(req, res) {
   try {
-    const sessionData = getSessionData(req);
+    validateSession(req);
 
     let errors = {};
     let formValues = {};
@@ -24,11 +24,11 @@ export function showClaimStartPage(req, res) {
       delete req.session.formError;
       delete req.session.formValues;
     } else {
-      if (sessionData.startDate) {
-        formValues.date = sessionData.startDate;
+      if (req.session.data.startDate) {
+        formValues.date = req.session.data.startDate;
       }
-      if (sessionData.lawCategory) {
-        formValues.category = sessionData.lawCategory;
+      if (req.session.data.lawCategory) {
+        formValues.category = req.session.data.lawCategory;
       }
     }
 

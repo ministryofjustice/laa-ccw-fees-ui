@@ -1,4 +1,4 @@
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import {
   postVatIndicatorRate,
   showVatIndicatorPage,
@@ -18,7 +18,7 @@ describe("vatIndicatorController", () => {
     };
 
     beforeEach(() => {
-      getSessionData.mockReturnValue({});
+      validateSession.mockReturnValue({});
 
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
@@ -45,7 +45,7 @@ describe("vatIndicatorController", () => {
     });
 
     it("should render error page if no existing session data already (as skipped workflow)", async () => {
-      getSessionData.mockImplementation(() => {
+      validateSession.mockImplementation(() => {
         throw new Error("No session data found");
       });
 

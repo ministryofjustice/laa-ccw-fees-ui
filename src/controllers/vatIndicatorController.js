@@ -1,5 +1,5 @@
 import { getNextPage, URL_VatIndicator } from "../routes/navigator";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { validateVatIndicator } from "./validations/vatIndicatorValidator.js";
 
@@ -10,7 +10,7 @@ import { validateVatIndicator } from "./validations/vatIndicatorValidator.js";
  */
 export function showVatIndicatorPage(req, res) {
   try {
-    getSessionData(req);
+    validateSession(req);
 
     res.render("main/vatIndicator", {
       csrfToken: req.csrfToken(),

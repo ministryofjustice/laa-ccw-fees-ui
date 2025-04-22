@@ -7,7 +7,7 @@ import {
 import { immigrationLaw } from "../service/lawCategoryService";
 import { getCaseStageForImmigration } from "../service/caseStageService";
 import { pageLoadError, pageSubmitError } from "./errorController";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { validateAndReturnAdditionalCostValue } from "./validations/additionalCostValidator";
 
 /**
@@ -18,7 +18,8 @@ import { validateAndReturnAdditionalCostValue } from "./validations/additionalCo
  */
 export async function showAdditionalCostsPage(req, res) {
   try {
-    const sessionData = getSessionData(req);
+    validateSession(req);
+    const sessionData = req.session.data
 
     if (sessionData.lawCategory !== immigrationLaw) {
       return res.redirect(getNextPage(URL_AdditionalCosts));

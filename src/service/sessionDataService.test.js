@@ -10,7 +10,7 @@ import {
   URL_Start,
   URL_VatIndicator,
 } from "../routes/navigator";
-import { cleanData, getSessionData } from "./sessionDataService";
+import { cleanData, validateSession } from "./sessionDataService";
 
 describe("cleanData", () => {
   let req = {
@@ -106,18 +106,18 @@ describe("cleanData", () => {
   });
 });
 
-describe("getSessionData", () => {
-  it("should return the session data object if defined but empty", () => {
+describe("validateSession", () => {
+  it("should return true if session data object is defined but empty", () => {
     const req = {
       session: {
         data: {},
       },
     };
 
-    expect(getSessionData(req)).toEqual({});
+    expect(validateSession(req)).toEqual(true);
   });
 
-  it("should return the session data object if defined and populated", () => {
+  it("should return true if defined and populated", () => {
     const data = {
       lawCategory: "family",
     };
@@ -128,7 +128,7 @@ describe("getSessionData", () => {
       },
     };
 
-    expect(getSessionData(req)).toEqual(data);
+    expect(validateSession(req)).toEqual(true);
   });
 
   it("should throw an error if session data missing", () => {
@@ -136,12 +136,12 @@ describe("getSessionData", () => {
       session: {},
     };
 
-    expect(() => getSessionData(req)).toThrow(Error);
+    expect(() => validateSession(req)).toThrow(Error);
   });
 
   it("should throw an error if session is missing", () => {
     const req = {};
 
-    expect(() => getSessionData(req)).toThrow(Error);
+    expect(() => validateSession(req)).toThrow(Error);
   });
 });

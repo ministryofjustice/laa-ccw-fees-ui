@@ -1,6 +1,6 @@
 import { getNextPage, URL_LondonRate } from "../routes/navigator";
 import { getLondonRates } from "../service/londonRateService";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { validateLondonRate } from "./validations/londonRateValidator.js";
 
@@ -11,7 +11,7 @@ import { validateLondonRate } from "./validations/londonRateValidator.js";
  */
 export function showLondonRatePage(req, res) {
   try {
-    getSessionData(req);
+    validateSession(req);
 
     res.render("main/londonRate", {
       csrfToken: req.csrfToken(),

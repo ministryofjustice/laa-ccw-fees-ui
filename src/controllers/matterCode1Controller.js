@@ -1,6 +1,6 @@
 import { getNextPage, URL_MatterCode1 } from "../routes/navigator";
 import { getMatterCode1s } from "../service/matterCode1Service";
-import { cleanData, getSessionData } from "../service/sessionDataService";
+import { cleanData, validateSession } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { validateMatterCode1 } from "./validations/matterCode1Validator.js";
 
@@ -11,7 +11,7 @@ import { validateMatterCode1 } from "./validations/matterCode1Validator.js";
  */
 export async function showMatterCode1Page(req, res) {
   try {
-    getSessionData(req);
+    validateSession(req);
 
     const matterCodes = await getMatterCode1s(req);
 

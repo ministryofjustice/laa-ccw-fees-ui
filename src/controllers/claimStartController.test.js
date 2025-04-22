@@ -2,7 +2,7 @@ import { postClaimStartPage, showClaimStartPage } from "./claimStartController";
 import { getLawCategories } from "../service/lawCategoryService";
 import { todayString } from "../utils/dateTimeUtils";
 import { getNextPage, URL_ClaimStart } from "../routes/navigator";
-import { cleanData, getSessionData } from "../service/sessionDataService";
+import { cleanData, validateSession } from "../service/sessionDataService";
 import { validateClaimStart } from "./validations/claimStartValidator";
 
 jest.mock("../service/lawCategoryService");
@@ -28,7 +28,9 @@ describe("claimStartController", () => {
   describe("showClaimStartPage", () => {
     let req = {
       csrfToken: jest.fn(),
-      session: {},
+      session: {
+        data :{}
+      },
     };
     let res = {
       render: jest.fn(),
@@ -37,7 +39,7 @@ describe("claimStartController", () => {
     beforeEach(() => {
       todayString.mockReturnValue(today);
       getLawCategories.mockReturnValue(lawCategories);
-      getSessionData.mockReturnValue({});
+      validateSession.mockReturnValue(true);
 
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
@@ -71,10 +73,8 @@ describe("claimStartController", () => {
     });
 
     it("should pre-populate values if stored in session data", () => {
-      getSessionData.mockReturnValue({
-        startDate: today,
-        lawCategory: familyLaw,
-      });
+      req.session.data.startDate = today;
+      req.session.data.lawCategory = familyLaw;
 
       showClaimStartPage(req, res);
 
@@ -115,7 +115,7 @@ describe("claimStartController", () => {
     });
 
     it("should render error page if no existing session data already (as skipped workflow)", async () => {
-      getSessionData.mockImplementation(() => {
+      validateSession.mockImplementation(() => {
         throw new Error("No session data found");
       });
 

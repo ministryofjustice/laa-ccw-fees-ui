@@ -7,7 +7,7 @@ import {
   showMatterCode1Page,
 } from "./matterCode1Controller";
 import { getNextPage, URL_MatterCode1 } from "../routes/navigator";
-import { cleanData, getSessionData } from "../service/sessionDataService";
+import { cleanData, validateSession } from "../service/sessionDataService";
 
 jest.mock("../service/matterCode1Service");
 jest.mock("../service/sessionDataService");
@@ -37,7 +37,7 @@ describe("matterCode1Controller", () => {
 
     beforeEach(() => {
       getMatterCode1s.mockResolvedValue(matterCode1s);
-      getSessionData.mockReturnValue({});
+      validateSession.mockReturnValue(true);
 
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
@@ -69,7 +69,7 @@ describe("matterCode1Controller", () => {
     });
 
     it("should render error page if no existing session data already (as skipped workflow)", async () => {
-      getSessionData.mockImplementation(() => {
+      validateSession.mockImplementation(() => {
         throw new Error("No session data found");
       });
 

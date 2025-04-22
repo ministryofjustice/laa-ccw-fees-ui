@@ -7,7 +7,10 @@ import {
   getFeeDetails,
   getDisplayableFees,
 } from "../service/feeDetailsService";
-import { getSessionData } from "../service/sessionDataService";
+import {
+  getSessiovalidateSessionnData,
+  validateSession,
+} from "../service/sessionDataService";
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import { familyLaw, immigrationLaw } from "../service/lawCategoryService";
 import { getCaseStageForImmigration } from "../service/caseStageService";
@@ -70,9 +73,8 @@ describe("additionalCostsController", () => {
     beforeEach(() => {
       getFeeDetails.mockResolvedValue(feeDetails);
       getCaseStageForImmigration.mockResolvedValue("_IMM01");
-      getSessionData.mockReturnValue({
-        lawCategory: immigrationLaw,
-      });
+      validateSession.mockReturnValue(true);
+      req.session.data.lawCategory = immigrationLaw;
       getDisplayableFees.mockReturnValue(displayableFees);
 
       req.csrfToken.mockReturnValue("mocked-csrf-token");
@@ -98,44 +100,12 @@ describe("additionalCostsController", () => {
     });
 
     it("should populate existing additional costs from session data if set", async () => {
-      getSessionData.mockReturnValue({
-        lawCategory: immigrationLaw,
-        additionalCosts: [
-          { levelCode: "LVL1", value: "2" },
-          { levelCode: "LVL3", value: true },
-          { levelCode: "LVL4", value: "2.34" },
-          { levelCode: "LVL5", value: "5" },
-        ],
-      });
-
-      await showAdditionalCostsPage(req, res);
-
-      expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
-        fieldsToShow: displayableFees,
-        csrfToken: "mocked-csrf-token",
-        feeTypes: feeTypes,
-        errors: {},
-        formValues: {
-          LVL1: "2",
-          LVL3: true,
-          LVL4: "2.34",
-          LVL5: "5",
-        },
-      });
-      expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
-      expect(getFeeDetails).toHaveBeenCalledWith(req);
-    });
-
-    it("should populate existing additional costs from session data if set", async () => {
-      getSessionData.mockReturnValue({
-        lawCategory: immigrationLaw,
-        additionalCosts: [
-          { levelCode: "LVL1", value: "2" },
-          { levelCode: "LVL3", value: true },
-          { levelCode: "LVL4", value: "2.34" },
-          { levelCode: "LVL5", value: "5" },
-        ],
-      });
+      req.session.data.additionalCosts = [
+        { levelCode: "LVL1", value: "2" },
+        { levelCode: "LVL3", value: true },
+        { levelCode: "LVL4", value: "2.34" },
+        { levelCode: "LVL5", value: "5" },
+      ];
 
       await showAdditionalCostsPage(req, res);
 
@@ -169,7 +139,7 @@ describe("additionalCostsController", () => {
     });
 
     it("should render error page if no existing session data already (as skipped workflow)", async () => {
-      getSessionData.mockImplementation(() => {
+      validateSession.mockImplementation(() => {
         throw new Error("No session data found");
       });
 
@@ -213,9 +183,7 @@ describe("additionalCostsController", () => {
 
     it("should redirect to the next page if not immigration law", async () => {
       getNextPage.mockReturnValue("nextPage");
-      getSessionData.mockReturnValue({
-        lawCategory: familyLaw,
-      });
+      req.session.data.lawCategory = familyLaw;
 
       await showAdditionalCostsPage(req, res);
 

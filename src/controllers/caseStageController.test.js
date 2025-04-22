@@ -1,6 +1,6 @@
 import { postCaseStagePage, showCaseStagePage } from "./caseStageController";
 import { getCaseStages, isValidCaseStage } from "../service/caseStageService";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { getNextPage, URL_CaseStage } from "../routes/navigator";
 import { validateCaseStage } from "./validations/caseStageValidator";
 
@@ -35,7 +35,7 @@ describe("caseStageController", () => {
 
     beforeEach(() => {
       getCaseStages.mockReturnValue(caseStages);
-      getSessionData.mockReturnValue({});
+      validateSession.mockReturnValue(true);
 
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
@@ -98,7 +98,7 @@ describe("caseStageController", () => {
     });
 
     it("should render error page if no existing session data already (as skipped workflow)", async () => {
-      getSessionData.mockImplementation(() => {
+      validateSession.mockImplementation(() => {
         throw new Error("No session data found");
       });
 
