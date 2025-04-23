@@ -1,0 +1,49 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/fees/list-available",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$[?(@.matterCode1 =~ /IALB|IACF|IMLB/)]"
+      }
+    ]
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "fees": [
+        {
+          "amount": 413.0,
+          "levelCode": "_IMSTD",
+          "levelCodeType": "A",
+          "description": "Immigration standard fee",
+          "formQuestion": "Immigration standard fee"
+        },
+        {
+          "amount": 266.0,
+          "levelCode": "_IMHOI",
+          "levelCodeType": "OU",
+          "description": "HO interview fee",
+          "formQuestion": "Number of Home Office interviews"
+        },
+        {
+          "amount": 0.0,
+          "levelCode": "_IMJRF",
+          "levelCodeType": "OF",
+          "description": "JR form filling costs",
+          "formQuestion": "Form filling costs (optional)"
+        },
+        {
+          "amount": 150.0,
+          "levelCode": "_IMNRM",
+          "levelCodeType": "O",
+          "description": "NRM advice",
+          "formQuestion": "Was this NRM advice?"
+        }
+      ]
+    }
+  }
+}

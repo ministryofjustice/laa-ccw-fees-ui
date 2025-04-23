@@ -1,0 +1,35 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/v1/fees/calculate",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$[?(@.matterCode1 =~ /FAMA|FAMC|FAMD/)]"
+      }
+    ]
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "fees": [
+        {
+          "feeType": "LVL1",
+          "amount": "86.00",
+          "vat": "17.20",
+          "total": "103.20",
+          "unit": "1.00"
+        },
+        {
+          "feeType": "totals",
+          "amount": "86.00",
+          "vat": "17.20",
+          "total": "103.20",
+          "unit": "1.0"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/matter-codes/(FAMA|FAMC|FAMD)/matter-code-2"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "matterCodes": [
+        {
+          "matterCode": "FPET",
+          "description": "Client is the petitioner in Divorce/Judicial Separation/Nullity/Dissolution of Civil Partnership"
+        },
+        {
+          "matterCode": "FRES",
+          "description": "Client is the respondent in Divorce/Judicial Separation/Nullity/Dissolution of Civil Partnership"
+        },
+        {
+          "matterCode": "FADV",
+          "description": "Client is seeking advice only"
+        },
+        {
+          "matterCode": "FAPP",
+          "description": "Client is or would be the applicant where proceedings issued"
+        },
+        {
+          "matterCode": "FREP",
+          "description": "Client is or would be the respondent where proceedings issued"
+        },
+        {
+          "matterCode": "FCHG",
+          "description": "Client is a child with a guardian"
+        },
+        {
+          "matterCode": "FCHS",
+          "description": "Client is a child instructing solicitor directly"
+        },
+        {
+          "matterCode": "FOTH",
+          "description": "Other"
+        }
+      ]
+    }
+  }
+}

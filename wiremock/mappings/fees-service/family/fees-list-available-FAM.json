@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/fees/list-available",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$[?(@.matterCode1 =~ /FAMA|FAMC|FAMD/)]"
+      }
+    ]
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "fees": [
+        {
+          "amount": 86.0,
+          "levelCode": "LVL1",
+          "levelCodeType": "A",
+          "description": "Level 1",
+          "formQuestion": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/matter-codes/FAM"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "matterCodes": [
+        {
+          "matterCode": "FAMA",
+          "description": "Divorce/Judicial Seperation/Nullity"
+        },
+        {
+          "matterCode": "FAMC",
+          "description": "Domestic Abuse"
+        },
+        {
+          "matterCode": "FAMD",
+          "description": "Private Law Children only"
+        }
+      ]
+    }
+  }
+}
