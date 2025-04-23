@@ -1,0 +1,35 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/v1/fees/calculate",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$[?(@.matterCode1 =~ /IALB|IACF|IMLB/)]"
+      }
+    ]
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "fees": [
+        {
+          "feeType": "_IMSTD",
+          "amount": "413.00",
+          "vat": "82.60",
+          "total": "495.60",
+          "unit": "1.00"
+        },
+        {
+          "feeType": "totals",
+          "amount": "413.00",
+          "vat": "82.60",
+          "total": "495.60",
+          "unit": "1.0"
+        }
+      ]
+    }
+  }
+}

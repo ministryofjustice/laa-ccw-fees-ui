@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/case-stages",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$[?(@.matterCode1 =~ /IALB|IACF|IMLB/)]"
+      }
+    ]
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "caseStages": [
+        {
+          "caseStage": "_IMM01",
+          "description": ""
+        }
+      ]
+    }
+  }
+}

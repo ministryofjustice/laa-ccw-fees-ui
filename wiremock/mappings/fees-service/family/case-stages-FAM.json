@@ -1,0 +1,29 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/case-stages",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$[?(@.matterCode1 =~ /FAMA|FAMC|FAMD/)]"
+      }
+    ]
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "caseStages": [
+        {
+          "caseStage": "FPL01",
+          "description": "Level 1"
+        },
+        {
+          "caseStage": "FPL10",
+          "description": "Div pet fee"
+        }
+      ]
+    }
+  }
+}

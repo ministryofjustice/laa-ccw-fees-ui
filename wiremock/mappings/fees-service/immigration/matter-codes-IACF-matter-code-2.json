@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/matter-codes/IACF/matter-code-2"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "matterCodes": [
+        {
+          "matterCode": "IASY",
+          "description": "Asylum Application"
+        }
+      ]
+    }
+  }
+}

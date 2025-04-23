@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/v1/matter-codes/IMM"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "matterCodes": [
+        {
+          "matterCode": "IALB",
+          "description": "Asylum - Stage 1 (LH)"
+        },
+        {
+          "matterCode": "IACF",
+          "description": "Asylum - Stage 2e (CLR)"
+        },
+        {
+          "matterCode": "IMLB",
+          "description": "Immigration - Stage 1 (LH)"
+        }
+      ]
+    }
+  }
+}
