@@ -1,6 +1,6 @@
 import { feeTypes, getFeeDetails } from "../service/feeDetailsService";
 import { getCalculationResult } from "../service/feeCalculatorService";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { showResultPage } from "./resultController";
 
 jest.mock("../service/sessionDataService");
@@ -26,6 +26,9 @@ describe("showResultPage", () => {
   let req = {
     csrfToken: jest.fn(),
     axiosMiddleware: axiosMiddleware,
+    session: {
+      data: {},
+    },
   };
   let res = {
     render: render,
@@ -34,14 +37,14 @@ describe("showResultPage", () => {
   beforeEach(() => {
     req.csrfToken.mockReturnValue("mocked-csrf-token");
     getFeeDetails.mockResolvedValue(feeDetails);
+    validateSession.mockReturnValue(true);
   });
 
   it("should render result page when no VAT", async () => {
     const sessionData = {
       vatIndicator: false,
     };
-
-    getSessionData.mockReturnValue(sessionData);
+    req.session.data = sessionData;
 
     getCalculationResult.mockReturnValue({
       amount: 120,
@@ -76,9 +79,9 @@ describe("showResultPage", () => {
   });
 
   it("should render result page when VAT", async () => {
-    getSessionData.mockReturnValue({
+    req.session.data = {
       vatIndicator: true,
-    });
+    };
 
     getCalculationResult.mockReturnValue({
       amount: 120,
@@ -112,7 +115,7 @@ describe("showResultPage", () => {
   });
 
   it("should build up the breakdown by replacing code with description and adding currency formatting", async () => {
-    getSessionData.mockReturnValue({
+    req.session.data = {
       vatIndicator: true,
       feeDetails: [
         {
@@ -126,7 +129,7 @@ describe("showResultPage", () => {
           description: "Misc",
         },
       ],
-    });
+    };
 
     getCalculationResult.mockReturnValue({
       amount: 120,
@@ -180,7 +183,7 @@ describe("showResultPage", () => {
   });
 
   it("should render result page with VAT if indicator undefined", async () => {
-    getSessionData.mockReturnValue({});
+    req.session.data = {};
 
     getCalculationResult.mockReturnValue({
       amount: 120,
@@ -197,7 +200,7 @@ describe("showResultPage", () => {
   });
 
   it("should render error page if no existing session data already (as skipped workflow)", async () => {
-    getSessionData.mockImplementation(() => {
+    validateSession.mockImplementation(() => {
       throw new Error("No session data found");
     });
 
@@ -210,7 +213,7 @@ describe("showResultPage", () => {
   });
 
   it("should render error page if api call throws error", async () => {
-    getSessionData.mockReturnValue({});
+    req.session.data = {};
 
     getCalculationResult.mockImplementation(() => {
       throw new Error("API error");

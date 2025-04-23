@@ -1,4 +1,4 @@
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import {
   getCalculationResult,
   totalHeading,
@@ -14,13 +14,16 @@ import { getFeeDetails } from "../service/feeDetailsService";
  */
 export async function showResultPage(req, res) {
   try {
-    const data = getSessionData(req);
+    validateSession(req);
     const calculatorResult = await getCalculationResult(
-      data,
+      req.session.data,
       req.axiosMiddleware,
     );
 
-    const isVat = data.vatIndicator != null ? data.vatIndicator : true;
+    const isVat =
+      req.session.data.vatIndicator != null
+        ? req.session.data.vatIndicator
+        : true;
 
     const total = isVat
       ? formatToPounds(calculatorResult.total)

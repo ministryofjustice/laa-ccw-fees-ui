@@ -1,6 +1,6 @@
 import { getNextPage, URL_ClaimStart } from "../routes/navigator";
 import { getLawCategories } from "../service/lawCategoryService";
-import { cleanData, getSessionData } from "../service/sessionDataService";
+import { cleanData, validateSession } from "../service/sessionDataService";
 import { todayString } from "../utils/dateTimeUtils";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { validateClaimStart } from "./validations/claimStartValidator.js";
@@ -12,12 +12,32 @@ import { validateClaimStart } from "./validations/claimStartValidator.js";
  */
 export function showClaimStartPage(req, res) {
   try {
-    getSessionData(req);
+    validateSession(req);
+
+    let errors = {};
+    let formValues = {};
+
+    if (req.session.formError) {
+      errors = req.session.formError;
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (req.session.data.startDate) {
+        formValues.date = req.session.data.startDate;
+      }
+      if (req.session.data.lawCategory) {
+        formValues.category = req.session.data.lawCategory;
+      }
+    }
 
     res.render("main/claimStart", {
       csrfToken: req.csrfToken(),
       categories: getLawCategories(),
       today: todayString(),
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -36,16 +56,14 @@ export function postClaimStartPage(req, res) {
 
     const errors = validateClaimStart(date, category);
 
-    if (errors.list.length > 0) {
-      res.render("main/claimStart", {
-        categories: getLawCategories(),
-        today: todayString(),
-        errors,
-        formValues: {
-          date,
-          category,
-        },
-      });
+    if (errors.list?.length > 0) {
+      req.session.formError = errors;
+      req.session.formValues = {
+        date: date,
+        category: category,
+      };
+
+      res.redirect(URL_ClaimStart);
     } else {
       const hasCategoryChanged = req.session.data?.lawCategory !== category;
       if (hasCategoryChanged) {

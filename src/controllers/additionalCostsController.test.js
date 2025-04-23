@@ -7,7 +7,7 @@ import {
   getFeeDetails,
   getDisplayableFees,
 } from "../service/feeDetailsService";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { getNextPage, URL_AdditionalCosts } from "../routes/navigator";
 import { familyLaw, immigrationLaw } from "../service/lawCategoryService";
 import { getCaseStageForImmigration } from "../service/caseStageService";
@@ -68,12 +68,11 @@ describe("additionalCostsController", () => {
     };
 
     beforeEach(() => {
-      getFeeDetails.mockReturnValue(feeDetails);
-      getCaseStageForImmigration.mockReturnValue("_IMM01");
-      getSessionData.mockReturnValue({});
-      getDisplayableFees.mockReturnValue(displayableFees);
-
+      getFeeDetails.mockResolvedValue(feeDetails);
+      getCaseStageForImmigration.mockResolvedValue("_IMM01");
+      validateSession.mockReturnValue(true);
       req.session.data.lawCategory = immigrationLaw;
+      getDisplayableFees.mockReturnValue(displayableFees);
 
       req.csrfToken.mockReturnValue("mocked-csrf-token");
     });
@@ -85,6 +84,69 @@ describe("additionalCostsController", () => {
         fieldsToShow: displayableFees,
         csrfToken: "mocked-csrf-token",
         feeTypes: feeTypes,
+        errors: {},
+        formValues: {},
+      });
+      expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
+      expect(getFeeDetails).toHaveBeenCalledWith(req);
+    });
+
+    it("should render page with validation errors if session has errors in", async () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+
+      await showAdditionalCostsPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
+        fieldsToShow: displayableFees,
+        csrfToken: "mocked-csrf-token",
+        feeTypes: feeTypes,
+        errors: mockError,
+        formValues: mockFormValues,
+      });
+      expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
+      expect(getFeeDetails).toHaveBeenCalledWith(req);
+    });
+
+    it("should delete validation errors from session if been supplied them", async () => {
+      const mockError = { error: true };
+      const mockFormValues = { value1: 2, value2: 3 };
+      req.session.formError = mockError;
+      req.session.formValues = mockFormValues;
+      console.log(req.session.formError);
+
+      await showAdditionalCostsPage(req, res);
+      console.log(req.session.formError);
+
+      expect(req.session.formError).toBeUndefined();
+      console.log(req.session.formError);
+
+      expect(req.session.formValues).toBeUndefined();
+    });
+
+    it("should populate existing additional costs from session data if set", async () => {
+      req.session.data.additionalCosts = [
+        { levelCode: "LVL1", value: "2" },
+        { levelCode: "LVL3", value: true },
+        { levelCode: "LVL4", value: "2.34" },
+        { levelCode: "LVL5", value: "5" },
+      ];
+
+      await showAdditionalCostsPage(req, res);
+
+      expect(res.render).toHaveBeenCalledWith("main/additionalCosts", {
+        fieldsToShow: displayableFees,
+        csrfToken: "mocked-csrf-token",
+        feeTypes: feeTypes,
+        errors: {},
+        formValues: {
+          LVL1: "2",
+          LVL3: true,
+          LVL4: "2.34",
+          LVL5: "5",
+        },
       });
       expect(getCaseStageForImmigration).toHaveBeenCalledWith(req);
       expect(getFeeDetails).toHaveBeenCalledWith(req);
@@ -104,7 +166,7 @@ describe("additionalCostsController", () => {
     });
 
     it("should render error page if no existing session data already (as skipped workflow)", async () => {
-      getSessionData.mockImplementation(() => {
+      validateSession.mockImplementation(() => {
         throw new Error("No session data found");
       });
 
@@ -261,19 +323,32 @@ describe("additionalCostsController", () => {
       expect(getFeeDetails).toHaveBeenCalledWith(req);
     });
 
-    it("render error page when validation fails", async () => {
+    it("redirect to the get so it can display validation errors if there are some", async () => {
       validateAndReturnAdditionalCostValue
         .mockReset()
-        .mockReturnValueOnce("2")
-        .mockImplementation(() => {
-          throw new Error("Validation failed");
-        });
+        .mockReturnValueOnce({ value: "2" })
+        .mockReturnValueOnce({ error: "Error" })
+        .mockReturnValueOnce({ value: "3" })
+        .mockReturnValueOnce({ error: "Error" });
 
       await postAdditionalCostsPage(req, res);
 
-      expect(res.render).toHaveBeenCalledWith("main/error", {
-        error: "An error occurred saving the answer.",
-        status: "An error occurred",
+      expect(res.redirect).toHaveBeenCalledWith(URL_AdditionalCosts);
+      expect(req.session.formError).toEqual({
+        list: [
+          { href: "#LVL3", text: "'Level 3' Error" },
+          { href: "#LVL5", text: "'Level 5' Error" },
+        ],
+        messages: {
+          LVL3: { text: "'Level 3' Error" },
+          LVL5: { text: "'Level 5' Error" },
+        },
+      });
+      expect(req.session.formValues).toEqual({
+        LVL1: "2",
+        LVL3: undefined,
+        LVL4: "3",
+        LVL5: undefined,
       });
       expect(req.session.data.additionalCosts).toBeUndefined();
     });

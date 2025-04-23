@@ -7,7 +7,7 @@ import {
 import { immigrationLaw } from "../service/lawCategoryService";
 import { getCaseStageForImmigration } from "../service/caseStageService";
 import { pageLoadError, pageSubmitError } from "./errorController";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { validateAndReturnAdditionalCostValue } from "./validations/additionalCostValidator";
 
 /**
@@ -18,15 +18,15 @@ import { validateAndReturnAdditionalCostValue } from "./validations/additionalCo
  */
 export async function showAdditionalCostsPage(req, res) {
   try {
-    getSessionData(req);
+    validateSession(req);
+    const sessionData = req.session.data;
 
-    if (req.session.data.lawCategory !== immigrationLaw) {
+    if (sessionData.lawCategory !== immigrationLaw) {
       return res.redirect(getNextPage(URL_AdditionalCosts));
     }
 
     await getCaseStageForImmigration(req);
     const feeDetails = await getFeeDetails(req);
-
     const fields = getDisplayableFees(feeDetails);
 
     if (fields.length === 0) {
@@ -34,10 +34,32 @@ export async function showAdditionalCostsPage(req, res) {
       return res.redirect(getNextPage(URL_AdditionalCosts));
     }
 
+    let errors = {};
+    let formValues = {};
+
+    if (req.session.formError) {
+      errors = req.session.formError;
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (sessionData.additionalCosts) {
+        for (const field of fields) {
+          const savedCost = sessionData.additionalCosts.find(
+            (cost) => cost.levelCode === field.levelCode,
+          )?.value;
+          formValues[field.levelCode] = savedCost;
+        }
+      }
+    }
+
     res.render("main/additionalCosts", {
       csrfToken: req.csrfToken(),
       fieldsToShow: fields,
       feeTypes: feeTypes,
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -75,13 +97,11 @@ export async function postAdditionalCostsPage(req, res) {
       formValues[field.levelCode] = value;
     }
 
-    if (errors.list.length > 0) {
-      res.render("main/additionalCosts", {
-        fieldsToShow: fields,
-        feeTypes: feeTypes,
-        errors,
-        formValues,
-      });
+    if (errors.list?.length > 0) {
+      req.session.formError = errors;
+      req.session.formValues = formValues;
+
+      res.redirect(URL_AdditionalCosts);
     } else {
       req.session.data.additionalCosts = enteredAdditionalCosts;
 

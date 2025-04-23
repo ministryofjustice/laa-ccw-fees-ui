@@ -1,6 +1,6 @@
 import { getNextPage, URL_CaseStage } from "../routes/navigator";
 import { getCaseStages } from "../service/caseStageService";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { validateCaseStage } from "./validations/caseStageValidator.js";
 
@@ -11,13 +11,29 @@ import { validateCaseStage } from "./validations/caseStageValidator.js";
  */
 export async function showCaseStagePage(req, res) {
   try {
-    getSessionData(req);
+    validateSession(req);
+
+    let errors = {};
+    let formValues = {};
+    if (req.session.formError) {
+      errors = req.session.formError;
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (req.session.data.caseStage) {
+        formValues.caseStage = req.session.data.caseStage;
+      }
+    }
 
     const caseStages = await getCaseStages(req);
 
     res.render("main/caseStage", {
       csrfToken: req.csrfToken(),
       caseStages: caseStages,
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -37,14 +53,13 @@ export async function postCaseStagePage(req, res) {
 
     const errors = validateCaseStage(validCaseStages, caseStage);
 
-    if (errors.list.length > 0) {
-      res.render("main/caseStage", {
-        caseStages: validCaseStages,
-        errors,
-        formValues: {
-          caseStage,
-        },
-      });
+    if (errors.list?.length > 0) {
+      req.session.formError = errors;
+      req.session.formValues = {
+        caseStage: caseStage,
+      };
+
+      res.redirect(URL_CaseStage);
     } else {
       req.session.data.caseStage = caseStage;
 

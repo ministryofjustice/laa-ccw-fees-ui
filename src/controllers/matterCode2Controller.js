@@ -1,7 +1,7 @@
 import { getNextPage, URL_MatterCode2 } from "../routes/navigator";
 import { getMatterCode2s } from "../service/matterCode2Service";
 import { pageLoadError, pageSubmitError } from "./errorController";
-import { cleanData, getSessionData } from "../service/sessionDataService";
+import { cleanData, validateSession } from "../service/sessionDataService";
 import { validateMatterCode2 } from "./validations/matterCode2Validator.js";
 
 /**
@@ -11,7 +11,21 @@ import { validateMatterCode2 } from "./validations/matterCode2Validator.js";
  */
 export async function showMatterCode2Page(req, res) {
   try {
-    getSessionData(req);
+    validateSession(req);
+
+    let errors = {};
+    let formValues = {};
+    if (req.session.formError) {
+      errors = req.session.formError;
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (req.session.data.matterCode2) {
+        formValues.matterCode2 = req.session.data.matterCode2;
+      }
+    }
 
     const matterCodes = await getMatterCode2s(req);
 
@@ -20,6 +34,8 @@ export async function showMatterCode2Page(req, res) {
       matterCodes: matterCodes,
       id: "matterCode2",
       label: "Matter Code 2",
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -39,16 +55,13 @@ export async function postMatterCode2Page(req, res) {
 
     const errors = validateMatterCode2(validMatterCode2s, matterCode2);
 
-    if (errors.list.length > 0) {
-      res.render("main/matterCode", {
-        matterCodes: validMatterCode2s,
-        id: "matterCode2",
-        label: "Matter Code 2",
-        errors,
-        formValues: {
-          matterCode2: matterCode2,
-        },
-      });
+    if (errors.list?.length > 0) {
+      req.session.formError = errors;
+      req.session.formValues = {
+        matterCode2: matterCode2,
+      };
+
+      res.redirect(URL_MatterCode2);
     } else {
       const hasMatterCodeChanged = req.session.data?.matterCode2 != matterCode2;
       if (hasMatterCodeChanged) {

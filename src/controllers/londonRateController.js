@@ -1,6 +1,6 @@
 import { getNextPage, URL_LondonRate } from "../routes/navigator";
 import { getLondonRates } from "../service/londonRateService";
-import { getSessionData } from "../service/sessionDataService";
+import { validateSession } from "../service/sessionDataService";
 import { pageLoadError, pageSubmitError } from "./errorController";
 import { validateLondonRate } from "./validations/londonRateValidator.js";
 
@@ -11,11 +11,27 @@ import { validateLondonRate } from "./validations/londonRateValidator.js";
  */
 export function showLondonRatePage(req, res) {
   try {
-    getSessionData(req);
+    validateSession(req);
+
+    let errors = {};
+    let formValues = {};
+    if (req.session.formError) {
+      errors = req.session.formError;
+      formValues = req.session.formValues;
+
+      delete req.session.formError;
+      delete req.session.formValues;
+    } else {
+      if (req.session.data.londonRate) {
+        formValues.londonRate = req.session.data.londonRate;
+      }
+    }
 
     res.render("main/londonRate", {
       csrfToken: req.csrfToken(),
       rates: getLondonRates(),
+      errors: errors,
+      formValues: formValues,
     });
   } catch (ex) {
     pageLoadError(req, res, ex);
@@ -33,14 +49,13 @@ export function postLondonRatePage(req, res) {
 
     const errors = validateLondonRate(londonRate);
 
-    if (errors.list.length > 0) {
-      res.render("main/londonRate", {
-        rates: getLondonRates(),
-        errors,
-        formValues: {
-          londonRate,
-        },
-      });
+    if (errors.list?.length > 0) {
+      req.session.formError = errors;
+      req.session.formValues = {
+        londonRate: londonRate,
+      };
+
+      res.redirect(URL_LondonRate);
     } else {
       req.session.data.londonRate = londonRate;
 
