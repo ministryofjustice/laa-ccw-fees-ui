@@ -199,6 +199,7 @@ const buildMojFrontend = async () => {
         "./node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js",
       ],
       bundle: false, // No need to bundle, just copy
+      format: "esm",
       outfile: `public/js/moj-frontend.${buildNumber}.min.js`,
     })
     .catch((error) => {
