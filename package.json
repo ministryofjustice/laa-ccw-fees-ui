@@ -39,7 +39,7 @@
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.26.3",
     "@babel/preset-env": "^7.26.9",
-    "@eslint/js": "^9.25.0",
+    "@eslint/js": "^9.26.0",
     "chokidar": "^3.6.0",
     "connect-livereload": "^0.6.1",
     "esbuild": "^0.25.0",
