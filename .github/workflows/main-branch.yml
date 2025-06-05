@@ -2,7 +2,7 @@ name: Main Branch
 
 on:
   push:
-    branches: [fix-ingress]
+    branches: [main]
 jobs:
   build-test:
     runs-on: ubuntu-latest
